@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COIS 2020H — Data Structures & Algorithms (Complete Lecture)</title>
+
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root{
+      /* --- MASTER THEME (Based on lec1p2) --- */
+      --stage-0:#0b1220;
+      --stage-1:#0f1a2e;
+
+      --slide-bg:#ffffff;
+      --ink:#0f172a;
+      --muted:#475569;
+
+      --soft:#e2e8f0;
+      --soft2:#f1f5f9;
+
+      --accent:#16a34a;   /* Primary Green */
+      --accent-2:#22c55e; /* Brighter Green */
+      
+      /* Colors for complexity charts (from lec1p3) */
+      --c-log: #0ea5e9;
+      --c-nlogn: #8b5cf6;
+      --c-quad: #f97316;
+      --c-cubic: #d946ef; /* Added for O(N^3) */
+      --c-exp: #ef4444;
+
+      --radius: 20px;
+      --shadow: 0 25px 60px rgba(0,0,0,.45);
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+
+      --baseW: 1600;
+      --baseH: 900;
+      --scale: 1;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background:
+        radial-gradient(1400px 800px at 20% 10%, rgba(34,197,94,.15), transparent 60%),
+        radial-gradient(1200px 800px at 85% 20%, rgba(22,163,74,.10), transparent 55%),
+        linear-gradient(180deg, var(--stage-0), var(--stage-1));
+      color:#e5e7eb;
+      overflow:hidden;
+    }
+
+    /* Progress Bar */
+    #progress-container{
+      position:fixed; top:0; left:0; width:100%; height:8px;
+      background: rgba(255,255,255,.10); z-index:9999; backdrop-filter: blur(6px);
+    }
+    #progress-bar{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .25s ease;
+    }
+
+    /* Stage */
+    .stage{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding: 18px;
+    }
+    .deck-wrap{
+      width: calc(var(--baseW) * 1px);
+      height: calc(var(--baseH) * 1px);
+      transform: scale(var(--scale));
+      transform-origin:center center;
+      position:relative;
+    }
+    .deck{ width:100%; height:100%; position:relative; }
+
+    /* Slide Styles */
+    .slide{
+      width:100%; height:100%;
+      background: var(--slide-bg);
+      color: var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position:absolute; inset:0;
+      display:none;
+      overflow:hidden;
+      padding: 50px 60px;
+      animation: slideIn .28s ease;
+    }
+    .slide.active{ display:block; }
+    
+    @keyframes slideIn{
+      from{ opacity:0; transform: translateY(14px) scale(.99); }
+      to{ opacity:1; transform: translateY(0) scale(1); }
+    }
+
+    /* Decorative Triangles */
+    .slide::before, .slide::after{
+      content:""; position:absolute; width: 240px; height: 240px; pointer-events:none; opacity:.95; z-index: 0;
+    }
+    .slide::before{
+      top:-1px; left:-1px;
+      background: radial-gradient(circle at 0% 0%, rgba(34,197,94,.22), transparent 55%),
+                  linear-gradient(135deg, rgba(22,163,74,.95), rgba(34,197,94,.55));
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+    .slide::after{
+      bottom:-1px; right:-1px;
+      background: radial-gradient(circle at 100% 100%, rgba(34,197,94,.22), transparent 55%),
+                  linear-gradient(315deg, rgba(22,163,74,.95), rgba(34,197,94,.55));
+      clip-path: polygon(100% 100%, 100% 0, 0 100%);
+    }
+
+    /* Typography */
+    .slide-top{
+      position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom: 22px;
+    }
+    .meta{ display:flex; flex-direction:column; gap:4px; line-height:1.15; }
+    .meta .course{ font-weight:800; letter-spacing:.06em; text-transform:uppercase; color: var(--ink); font-size: 16px; }
+    .meta .sub{ font-size: 15px; color: var(--muted); }
+    
+    .logo{ width: 180px; height:auto; object-fit:contain; border-radius: 12px; border: 1px solid var(--soft); background: #fff; padding: 8px 12px; }
+
+    h1{ font-size: 56px; margin: 8px 0 10px; letter-spacing:-1.1px; line-height:1.06; position:relative; z-index:2; }
+    h2{ font-size: 40px; margin: 6px 0 18px; letter-spacing:-0.8px; position:relative; z-index:2; border-bottom: 3px solid var(--accent); padding-bottom:10px; display:inline-block; }
+    h3{ font-size: 26px; margin: 14px 0 10px; color: #0b2a14; position:relative; z-index:2; }
+    p, li{ font-size: 20px; line-height:1.6; color: var(--ink); position:relative; z-index:2; }
+    
+    .muted{ color: var(--muted); }
+    code{ font-family: var(--mono); font-size: .92em; background: #f3f4f6; padding: 2px 6px; border-radius: 8px; border: 1px solid #e5e7eb; }
+
+    /* Layout Helpers */
+    .grid-2{ display:grid; grid-template-columns: 1.25fr 1fr; gap: 26px; align-items:start; position:relative; z-index:2; }
+    .grid-3{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items:start; position:relative; z-index:2; }
+    
+    .card{ background: var(--soft2); border: 1px solid var(--soft); border-radius: 18px; padding: 18px; position:relative; z-index:2; }
+    .card-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 14px; position:relative; z-index:2; }
+
+    .info-card{ background: #ffffff; border: 1px solid var(--soft); border-left: 6px solid var(--accent); border-radius: 16px; padding: 16px; transition: transform .15s ease, box-shadow .15s ease; cursor: default; }
+    .info-card:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.10); }
+
+    .pill{ display:inline-block; border:1px solid var(--soft); background: var(--soft2); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--muted); font-family: var(--mono); white-space:nowrap; }
+    .callout{ border-left: 6px solid var(--accent); padding: 18px 22px; background: #f6fffa; border-radius: 16px; margin-top: 14px; position:relative; z-index:2; }
+    
+    /* Tables */
+    table{ width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius: 18px; border: 1px solid var(--soft); margin-top: 14px; position:relative; z-index:2; background:#fff; }
+    th, td{ padding: 14px 18px; text-align:left; border-bottom: 1px solid var(--soft); font-size: 18px; vertical-align:top; }
+    th{ background:#0b2a14; color:#fff; font-weight:800; letter-spacing:.2px; }
+    tr:last-child td{ border-bottom:none; }
+    tr:nth-child(even) td{ background:#fbfdff; }
+
+    /* Footer */
+    .slide-footer{ position:absolute; left: 60px; right: 60px; bottom: 26px; display:flex; align-items:center; justify-content:space-between; color: var(--muted); font-size: 14px; z-index:2; }
+    .slide-no{ font-family: var(--mono); background: var(--soft2); border: 1px solid var(--soft); padding: 6px 12px; border-radius: 999px; color: var(--muted); }
+
+    /* --- WIDGETS --- */
+    .filter-container{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin: 12px 0 10px; position:relative; z-index:2; }
+    .filter-btn{ background:#ffffff; border: 2px solid var(--accent); color: #0b2a14; padding: 7px 14px; border-radius: 999px; cursor:pointer; font-weight: 800; font-size: 14px; transition: all .15s ease; }
+    .filter-btn:hover{ background:#f0fff6; }
+    .filter-btn.active{ background: var(--accent); border-color: var(--accent); color:#ffffff; }
+    
+    .type-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 14px 0; position:relative; z-index:2; }
+    .type-box{ background: var(--soft2); border: 1px solid var(--soft); padding: 14px; border-radius: 14px; text-align:center; font-weight: 800; color: var(--ink); transition: all .2s ease; opacity: 1; }
+    .type-box.dimmed{ opacity:.28; transform: scale(.98); }
+    .type-box.highlight{ background: #f0fff6; border-color: rgba(22,163,74,.55); transform: scale(1.02); box-shadow: 0 10px 22px rgba(22,163,74,.18); }
+
+    .demo-area{ border: 2px dashed #cbd5e1; padding: 16px; border-radius: 16px; margin-top: 10px; text-align:center; background: #fbfdff; position:relative; z-index:2; }
+    .stack-box{ display:flex; flex-direction: column-reverse; align-items:center; min-height: 160px; gap: 6px; }
+    .queue-box{ display:flex; align-items:center; min-height: 90px; gap: 6px; overflow-x:auto; padding-bottom: 6px; }
+    .data-unit{ background: var(--accent); color:#ffffff; padding: 9px 14px; border-radius: 12px; font-weight: 900; font-size: 14px; animation: popIn .18s ease; }
+    @keyframes popIn{ from{ transform: scale(.92); opacity:0; } to{ transform: scale(1); opacity:1; } }
+
+    .codebox{ background:#0b1220; border:1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 14px; color:#cbd5e1; font-family: var(--mono); font-size: 13px; line-height:1.55; }
+    .code-line{ padding: 4px 8px; border-radius: 10px; cursor: help; transition: background .15s ease, color .15s ease; }
+    .code-line:hover{ background: rgba(34,197,94,.18); color:#fff; }
+    .tooltip{ background:#fff; border:1px solid var(--soft); border-left:6px solid var(--accent); border-radius: 16px; padding: 14px; min-height: 160px; }
+    .math{ margin-top:10px; font-weight: 900; color:#0b2a14; font-family: var(--mono); font-size: 18px; min-height: 26px; }
+
+    .bar-wrap{ height: 34px; background:#e5e7eb; border-radius: 999px; overflow:hidden; border:1px solid #d1d5db; }
+    .bar{ height:100%; width:0%; transition: width .18s ease; display:flex; align-items:center; justify-content:flex-end; padding-right: 12px; color:#fff; font-weight:900; font-family: var(--mono); font-size: 12px; }
+    
+    .bar.linear, .bar.binary { background: var(--accent); } 
+    .bar.const{ background:#334155; }
+    .bar.log{ background: var(--c-log); }
+    .bar.nlogn{ background: var(--c-nlogn); }
+    .bar.quad{ background: var(--c-quad); }
+    .bar.cubic{ background: var(--c-cubic); } /* New */
+    .bar.exp{ background: var(--c-exp); }
+
+    .cmp-row{ display:grid; grid-template-columns: 240px 1fr 180px; gap: 12px; align-items:center; margin: 10px 0; }
+    .cmp-label{ font-weight:900; display:flex; flex-direction:column; gap:2px; }
+    .cmp-small{ font-size:12px; color: var(--muted); font-family: var(--mono); font-weight:800; }
+    .cmp-ops{ text-align:right; font-family: var(--mono); font-weight:900; color:#0b2a14; }
+
+    .game-grid{ display:grid; grid-template-columns: repeat(10, 1fr); gap: 6px; max-width: 760px; }
+    .cell{ background:#eff6ff; border:1px solid #cbd5e1; border-radius: 10px; padding: 10px 0; text-align:center; font-family: var(--mono); font-size: 12px; font-weight:900; color:#0f172a; cursor:pointer; user-select:none; transition:transform 0.1s; }
+    .cell.elim{ opacity:.18; pointer-events:none; background:#cbd5e1; }
+    .cell.hit{ background: var(--accent); color:#fff; transform: scale(1.05); border-color: rgba(22,163,74,.6); }
+    canvas{ width:100%; max-width: 760px; height:auto; border-radius: 16px; background:#0b1220; border:1px solid rgba(255,255,255,.12); }
+
+    .reveal{ display:none; margin-top:10px; background:#f0fff6; border:1px solid rgba(22,163,74,.25); padding: 10px; border-radius: 12px; font-size: 14px; color:#0b2a14; }
+    .reveal.show{ display:block; animation: pop .18s ease; }
+    @keyframes pop{ from{ transform: scale(.98); opacity:.7;} to{ transform: scale(1); opacity:1;} }
+    
+    .linked-list-viz{ display:flex; align-items:center; gap:8px; margin: 14px 0 12px; flex-wrap:wrap; position:relative; z-index:2; }
+    .node{ border: 2px solid #0b2a14; padding: 10px 14px; border-radius: 12px; background:#ffffff; min-width: 70px; text-align:center; font-weight: 800; font-size: 16px; }
+    .arrow{ font-size: 18px; font-weight: 900; color: var(--accent); }
+
+    .controls{ position:fixed; right: 18px; bottom: 18px; z-index:10000; display:flex; gap: 10px; align-items:center; }
+    .iconbtn{ width: 44px; height: 44px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: rgba(15,23,42,.45); color:#e5e7eb; display:grid; place-items:center; cursor:pointer; backdrop-filter: blur(10px); transition: transform .12s ease, background .12s ease; user-select:none; }
+    .iconbtn:hover{ transform: translateY(-2px); background: rgba(15,23,42,.65); }
+    .iconbtn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+    .iconbtn svg{ width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+    .mini-btn{ background:#0f1a2e; color:#e5e7eb; border:1px solid rgba(255,255,255,.18); padding: 8px 14px; border-radius: 12px; cursor:pointer; font-weight:900; font-size: 13px; transition: transform .12s ease; user-select:none; }
+    .mini-btn:hover{ transform: translateY(-1px); background:#13213a; }
+  </style>
+</head>
+
+<body>
+  <div id="progress-container"><div id="progress-bar"></div></div>
+
+  <div class="stage">
+    <div class="deck-wrap" id="deckWrap">
+      <div class="deck" id="deck">
+
+        <section class="slide active">
+          <div class="slide-top">
+            <div class="meta">
+              <div class="course">COIS 2020H • Data Structures & Algorithms</div>
+              <div class="sub">Lecture 1 — Course Introduction</div>
+            </div>
+            <img class="logo" src="resources/logo_trent.png" alt="Trent University" onerror="this.style.display='none';" />
+          </div>
+          <h1>COIS 2020H</h1>
+          <h2 style="margin-top:0; border:none; color:var(--muted);">Data Structures and Algorithms</h2>
+          <div class="card" style="margin-top: 22px;">
+            <p style="margin:0;"><strong>Instructor:</strong> Ahmad Mousa<br /><span class="muted">Trent University — Durham GTA</span></p>
+            <div class="grid-3" style="margin-top:16px;">
+              <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">TERM</div><div style="font-weight:900;">Winter 2026</div></div>
+              <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">TIME</div><div style="font-weight:900;">Mondays • 6:30 PM</div></div>
+              <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">EMAIL</div><div style="font-weight:900;">ahmadmousa@trentu.ca</div></div>
+            </div>
+          </div>
+          <div class="slide-footer"><div class="muted">Trent University</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Course Description</div><div class="sub">What we study</div></div>
+            <span class="pill">Topics</span>
+          </div>
+          <h2>What This Course Covers</h2>
+          <div class="grid-2">
+            <div>
+              <ul>
+                <li>Data structures: representation.</li>
+                <li>Algorithms: manipulation.</li>
+                <li>Key concepts: encapsulation, inheritance.</li>
+                <li>Complexity: time/space analysis.</li>
+                <li>Topics: arrays, lists, heaps, trees, graphs.</li>
+                <li>Primary language: <strong>C#</strong>.</li>
+              </ul>
+            </div>
+            <div class="card" style="display:flex; align-items:center; justify-content:center; text-align:center;">
+              <div class="muted">
+                <div style="font-size:62px; margin-bottom:12px;">🧠</div>
+                <div style="font-size:22px; font-weight:800;">Representation + Efficiency</div>
+              </div>
+            </div>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Learning Outcomes</div><div class="sub">Goals</div></div>
+            <span class="pill">Skills</span>
+          </div>
+          <h2>Learning Outcomes</h2>
+          <div class="grid-2">
+            <div>
+              <ul>
+                <li>Understand key tenets of OOP.</li>
+                <li>Appreciate pros/cons of linear and non-linear structures.</li>
+                <li>Design and analyze algorithms using time and space complexity.</li>
+              </ul>
+            </div>
+            <div class="card" style="display:flex; align-items:center; justify-content:center; text-align:center;">
+              <div class="muted">
+                <div style="font-size:62px; margin-bottom:12px;">⚙️</div>
+                <div style="font-size:22px; font-weight:800;">Theory + Practice</div>
+              </div>
+            </div>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Context</div><div class="sub">Connecting Knowledge</div></div>
+            <span class="pill">Big Picture</span>
+          </div>
+          <h2>COIS 1020 vs COIS 2020H</h2>
+          <div class="grid-2">
+            <div class="card">
+              <h3 style="margin-top:0;">COIS 1020</h3>
+              <ul>
+                <li>Focus on <strong>syntax</strong> and <strong>logic</strong>.</li>
+                <li>Getting the computer to do what you want (Correctness).</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3 style="margin-top:0;">COIS 2020H</h3>
+              <ul>
+                <li>Focus on <strong>efficiency</strong> and <strong>organization</strong>.</li>
+                <li>Choosing the right structure so programs scale (Performance).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="slide-footer"><div class="muted">Efficiency matters as data grows</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Motivation</div><div class="sub">Problem Solving</div></div>
+            <span class="pill">Design</span>
+          </div>
+          <h2>Data Structures Problems</h2>
+          <div class="card">
+            <p class="muted" style="margin-top:0;">Example: Objects on a grid.</p>
+            <ul>
+              <li>Does the object know its location? Does the grid know what objects are in it?</li>
+              <li>Do cells need quick access to neighbours?</li>
+              <li>How do you find the nearest object efficiently?</li>
+              <li>How do you find all objects within distance X?</li>
+            </ul>
+          </div>
+          <div class="callout"><p style="margin:0;">These are design questions that dictate which data structure to use.</p></div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Motivation</div><div class="sub">Real World</div></div>
+              <span class="pill">Examples</span>
+            </div>
+            <h2>Other Problems</h2>
+            <div class="card">
+              <ul>
+                <li>Find the oldest student? (Linear scan vs Sorted list)</li>
+                <li>Sort the class alphabetically? (Complexity costs)</li>
+                <li>Does anyone have exactly 86%? (Search speed)</li>
+                <li>List all graduates with > 86%? (Range query)</li>
+              </ul>
+            </div>
+            <div class="slide-footer"><div class="muted">The answer changes based on the structure</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Assessments</div><div class="sub">Workload</div></div>
+              <span class="pill">Requirements</span>
+            </div>
+            <h2>Assessments</h2>
+            <div class="grid-2">
+                <div>
+                    <ul>
+                        <li><strong>Assignments (2):</strong> Individual coding.</li>
+                        <li><strong>In-class Practicals (2):</strong> Timed problem solving.</li>
+                        <li><strong>Midterm:</strong> Written exam (Weeks 1-6).</li>
+                        <li><strong>Final:</strong> Cumulative.</li>
+                    </ul>
+                </div>
+                <div class="card" style="display:flex; align-items:center; justify-content:center; text-align:center;">
+                    <div class="muted">
+                      <div style="font-size:62px; margin-bottom:12px;">📝</div>
+                      <div style="font-size:22px; font-weight:800;">Build + Test + Explain</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Grading</div><div class="sub">Breakdown</div></div>
+              <span class="pill">Weights</span>
+            </div>
+            <h2>Grading Breakdown</h2>
+            <table>
+              <tr><th style="width:55%;">Component</th><th style="width:15%;">Weight</th><th>Details</th></tr>
+              <tr><td><strong>Assignments</strong></td><td>25%</td><td class="muted">2 × 12.5%</td></tr>
+              <tr><td><strong>In-class Practical Exercises</strong></td><td>20%</td><td class="muted">2 × 10%</td></tr>
+              <tr><td><strong>Midterm Exam</strong></td><td>15%</td><td class="muted">Written exam</td></tr>
+              <tr><td><strong>Final Exam</strong></td><td>40%</td><td class="muted">Cumulative</td></tr>
+            </table>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Guidelines</div><div class="sub">Policies</div></div>
+              <span class="pill">Rules</span>
+            </div>
+            <h2>Course Guidelines</h2>
+            <div class="grid-2">
+                <div>
+                    <h3>Attendance</h3>
+                    <ul><li>In-person course. Missing classes impacts performance.</li></ul>
+                    <h3 style="margin-top:18px;">Late Submissions</h3>
+                    <ul>
+                        <li>Up to 1 day late: Accepted (no penalty).</li>
+                        <li>Up to 3 days late: 10% penalty/day.</li>
+                        <li>> 4 days: Not accepted.</li>
+                    </ul>
+                </div>
+                <div class="card" style="display:flex; align-items:center; justify-content:center; text-align:center;">
+                    <div class="muted">
+                      <div style="font-size:62px; margin-bottom:12px;">⏱️</div>
+                      <div style="font-size:22px; font-weight:800;">Stay Consistent</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Policy</div><div class="sub">Integrity</div></div>
+              <span class="pill">Important</span>
+            </div>
+            <h2>Academic Integrity</h2>
+            <div class="callout">
+                <p style="margin:0;">Academic dishonesty is a serious offence. Know and follow Trent's policy.</p>
+            </div>
+            <div class="grid-2" style="margin-top:20px;">
+                <div class="card">
+                    <ul>
+                        <li>Do not share code.</li>
+                        <li>Do not distribute course content.</li>
+                        <li>Cite sources.</li>
+                    </ul>
+                </div>
+                <div class="card" style="display:flex; align-items:center; justify-content:center; text-align:center;">
+                    <div class="muted">
+                        <div style="font-size:62px; margin-bottom:12px;">🛡️</div>
+                        <div style="font-size:22px; font-weight:800;">Your Work</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Resources</div><div class="sub">Tools & Text</div></div>
+              <span class="pill">Requirements</span>
+            </div>
+            <h2>Learning Resources</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="card">
+                        <h3 style="margin-top:0;">Textbook</h3>
+                        <p style="margin:0;"><strong>Cormen et al. (CLRS)</strong><br/>
+                        <em>Introduction to Algorithms</em>, 3rd Ed. (MIT Press)<br/>
+                        <span class="muted">Language agnostic standard in industry.</span></p>
+                    </div>
+                    <div class="card" style="margin-top:14px;">
+                        <h3 style="margin-top:0;">Software</h3>
+                        <p style="margin:0;"><strong>Visual Studio</strong><br/>
+                        <span class="muted">Version 2017 or newer required for C# labs.</span></p>
+                    </div>
+                </div>
+                <div class="card" style="display:flex; align-items:center; justify-content:center; text-align:center;">
+                    <div class="muted">
+                        <div style="font-size:62px; margin-bottom:12px;">📚</div>
+                        <div style="font-size:22px; font-weight:800;">Read + Implement</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+        
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Wrap-Up</div><div class="sub">Part 1</div></div>
+              <span class="pill">Checklist</span>
+            </div>
+            <h2>Before Next Class</h2>
+            <div class="card">
+                <ul>
+                    <li>Confirm access to course site.</li>
+                    <li>Set up Visual Studio (2019/2022).</li>
+                    <li>Review C# OOP basics.</li>
+                </ul>
+            </div>
+            <div class="slide-footer"><div class="muted">Next: Data Structures Fundamentals</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Part 2</div><div class="sub">Fundamentals</div></div>
+              <span class="pill">Definitions</span>
+            </div>
+            <h1>Data & Structures</h1>
+            <h2 style="margin-top:0; border:none; color:var(--muted);">Core Concepts</h2>
+            <div class="card" style="margin-top:20px;">
+                <ul>
+                    <li>What is data?</li>
+                    <li>What is a data structure?</li>
+                    <li>Primitive types.</li>
+                    <li>Stacks and Queues.</li>
+                </ul>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Concepts</div><div class="sub">Foundations</div></div>
+            <span class="pill">Definitions</span>
+          </div>
+          <h2>What is Data?</h2>
+          <p>In computing, <strong>data</strong> is any information that can be stored, processed, or transmitted by a computer.</p>
+          <div class="grid-3" style="margin-top:20px;">
+            <div class="info-card"><h3>Abstract View</h3><p style="font-size:16px;">Values, symbols, and measurements representing facts.</p></div>
+            <div class="info-card"><h3>Examples</h3><p style="font-size:16px;">Names, IDs, grades, sensor readings, images.</p></div>
+            <div class="info-card"><h3>In Programs</h3><p style="font-size:16px;">Stored in consistent formats for reliability.</p></div>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Concepts</div><div class="sub">Organizing Data</div></div>
+            <span class="pill">Structure</span>
+          </div>
+          <h2>What is a Data Structure?</h2>
+          <p>A systematic way of organizing and storing data so that it can be accessed and updated efficiently.</p>
+          <ul>
+            <li>Provides a layout or “shape” for data in memory.</li>
+            <li>Determines which operations are easy (cheap) or hard (expensive).</li>
+            <li>Examples: Arrays, Lists, Stacks, Queues, Trees, Hash Tables.</li>
+          </ul>
+          <div class="callout">
+            <p style="margin:0; font-size:18px;"><strong>Design choice:</strong> Pick the structure that matches the operations you perform most often.</p>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Concepts</div><div class="sub">Abstraction</div></div>
+            <span class="pill">Theory</span>
+          </div>
+          <h2>ADT vs Data Structure</h2>
+          <div class="grid-2">
+            <div class="card">
+                <h3 style="margin-top:0;">Abstract Data Type (ADT)</h3>
+                <p><strong>What it does.</strong></p>
+                <p>A logical description of how we view the data and the operations allowed. The user cares about <em>behavior</em>.</p>
+                <p class="muted">Example: "A List stores items in order."</p>
+            </div>
+            <div class="card">
+                <h3 style="margin-top:0;">Data Structure</h3>
+                <p><strong>How it works.</strong></p>
+                <p>The concrete implementation. The user cares about <em>efficiency</em>.</p>
+                <p class="muted">Example: "An Array of size 10 storing integers."</p>
+            </div>
+          </div>
+          <div class="slide-footer"><div class="muted">Interface vs Implementation</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Concepts</div><div class="sub">Solving Problems</div></div>
+            <span class="pill">Process</span>
+          </div>
+          <h2>What is an Algorithm?</h2>
+          <p>An <strong>algorithm</strong> is a finite, step-by-step procedure for solving a problem.</p>
+          <ul>
+            <li>Operates on data stored in structures.</li>
+            <li>Must be correct and terminate.</li>
+            <li>We analyze time and memory usage.</li>
+          </ul>
+          <div class="card" style="margin-top:20px;">Same algorithm + different data structure → very different performance.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">C# Essentials</div><div class="sub">Primitive Types</div></div>
+            <span class="pill">Interactive</span>
+          </div>
+          <h2>Exploring Primitive Data Types</h2>
+          <div class="filter-container">
+            <button class="filter-btn active" onclick="filterTypes('all', this)">Show All</button>
+            <button class="filter-btn" onclick="filterTypes('int', this)">Whole Numbers</button>
+            <button class="filter-btn" onclick="filterTypes('float', this)">Decimals</button>
+            <button class="filter-btn" onclick="filterTypes('text', this)">Text &amp; Logic</button>
+          </div>
+          <div class="type-grid">
+            <div class="type-box t-text" id="type-bool">Bool</div>
+            <div class="type-box t-int" id="type-byte">Byte</div>
+            <div class="type-box t-text" id="type-char">Char</div>
+            <div class="type-box t-text" id="type-string">String</div>
+            <div class="type-box t-int" id="type-int">Int</div>
+            <div class="type-box t-float" id="type-float">Float</div>
+            <div class="type-box t-float" id="type-double">Double</div>
+            <div class="type-box t-float" id="type-decimal">Decimal</div>
+            <div class="type-box t-int" id="type-long">Long</div>
+            <div class="type-box t-int" id="type-short">Short</div>
+            <div class="type-box t-base" id="type-object">Object</div>
+            <div class="type-box t-int" id="type-uint">Uint</div>
+          </div>
+          <div class="card" style="text-align:center;">
+            <input type="text" class="card" style="background:#fff; width:60%; padding:10px; font-size:16px;" placeholder="Type here to test (e.g. 42, 3.14, True)..." onkeyup="checkInputType(this.value)">
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Design</div><div class="sub">Trade-offs</div></div>
+              <span class="pill">Core Idea</span>
+            </div>
+            <h2>Design Trade-offs</h2>
+            <p>No single structure is best for all problems.</p>
+            <div class="card-grid">
+                <div class="info-card"><h3>Speed</h3><p>Search/Insert/Delete time.</p></div>
+                <div class="info-card"><h3>Memory</h3><p>Space overhead (pointers).</p></div>
+                <div class="info-card"><h3>Complexity</h3><p>Implementation difficulty.</p></div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Structures</div><div class="sub">Array</div></div>
+              <span class="pill">Contiguous</span>
+            </div>
+            <h2>Arrays</h2>
+            <p>Single contiguous block of memory. Identified by index.</p>
+            <ul>
+                <li>Fast random access (index <code>i</code> is O(1)).</li>
+                <li>Fixed size.</li>
+                <li>Insertion/Removal is expensive (shifting).</li>
+            </ul>
+            <div class="linked-list-viz">
+                <div class="node" style="background:var(--soft2);">[0]</div>
+                <div class="node" style="background:var(--soft2);">[1]</div>
+                <div class="node" style="background:var(--soft2);">[2]</div>
+                <div class="node" style="background:var(--soft2);">[3]</div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Structures</div><div class="sub">Linked List</div></div>
+              <span class="pill">Pointers</span>
+            </div>
+            <h2>Singly Linked Lists</h2>
+            <p>Sequence of nodes. Each stores value and pointer to next.</p>
+            <ul>
+                <li>Efficient insertion/deletion (if you have the node).</li>
+                <li>No random access (must traverse).</li>
+                <li>Extra memory for pointers.</li>
+            </ul>
+            <div class="linked-list-viz">
+                <div class="node">Head</div><div class="arrow">→</div>
+                <div class="node">A</div><div class="arrow">→</div>
+                <div class="node">B</div><div class="arrow">→</div>
+                <div class="node">Null</div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Structures</div><div class="sub">Linked List</div></div>
+              <span class="pill">Bidirectional</span>
+            </div>
+            <h2>Doubly Linked Lists</h2>
+            <p>Each node stores pointers to both previous and next nodes.</p>
+            <ul>
+                <li>Allows traversal in both directions.</li>
+                <li>Insertion/deletion efficient.</li>
+                <li>More memory overhead (2 pointers/node).</li>
+            </ul>
+            <div class="linked-list-viz">
+                <div class="node">Null</div><div class="arrow">⇄</div>
+                <div class="node">A</div><div class="arrow">⇄</div>
+                <div class="node">B</div><div class="arrow">⇄</div>
+                <div class="node">Null</div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Structures</div><div class="sub">Stack (LIFO)</div></div>
+            <span class="pill">Linear</span>
+          </div>
+          <h2>Stack: Last In, First Out</h2>
+          <div class="grid-2">
+            <div>
+                <p>Insertion and removal happen at one end only (the top).</p>
+                <ul>
+                    <li>Ops: <code>push</code>, <code>pop</code>, <code>peek</code>.</li>
+                    <li>Usage: Call stacks, undo features.</li>
+                </ul>
+                <div style="margin-top:20px; display:flex; gap:10px;">
+                    <button class="mini-btn" onclick="pushStack()">Push</button>
+                    <button class="mini-btn" onclick="popStack()">Pop</button>
+                    <button class="mini-btn" onclick="resetStack()">Reset</button>
+                </div>
+            </div>
+            <div class="demo-area">
+                <div id="stackViz" class="stack-box"></div>
+                <div class="muted" style="font-size:12px; margin-top:5px;">Stack Visualization</div>
+            </div>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Structures</div><div class="sub">Queue (FIFO)</div></div>
+              <span class="pill">Linear</span>
+            </div>
+            <h2>Queue: First In, First Out</h2>
+            <div class="grid-2">
+              <div>
+                  <p>Inserts at the back, removes from the front.</p>
+                  <ul>
+                      <li>Ops: <code>enqueue</code>, <code>dequeue</code>.</li>
+                      <li>Usage: Scheduling, Buffering, BFS.</li>
+                  </ul>
+                  <div style="margin-top:20px; display:flex; gap:10px;">
+                      <button class="mini-btn" onclick="enqueue()">Enqueue</button>
+                      <button class="mini-btn" onclick="dequeue()">Dequeue</button>
+                      <button class="mini-btn" onclick="resetQueue()">Reset</button>
+                  </div>
+              </div>
+              <div class="demo-area" style="display:flex; align-items:center; justify-content:center;">
+                  <div id="queueViz" class="queue-box"></div>
+              </div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Summary</div><div class="sub">Operations</div></div>
+              <span class="pill">Wrap-up</span>
+            </div>
+            <h2>Standard Operations</h2>
+            <div class="card-grid">
+                <div class="info-card"><h3>Create</h3><p>Initialize structure.</p></div>
+                <div class="info-card"><h3>Insert</h3><p>Add element.</p></div>
+                <div class="info-card"><h3>Remove</h3><p>Delete element.</p></div>
+                <div class="info-card"><h3>Search</h3><p>Find element.</p></div>
+            </div>
+            <div class="slide-footer"><div class="muted">Next: Algorithm Analysis</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part 3</div><div class="sub">Analysis</div></div>
+            <span class="pill">Algorithms</span>
+          </div>
+          <h1>Analyzing Algorithms</h1>
+          <h2 style="margin-top:0; border:none; color:var(--muted);">Scalability & Big-O</h2>
+          <div class="card" style="margin-top:20px;">
+             <ul>
+                 <li>Why scalability matters.</li>
+                 <li>Computing Big-O.</li>
+                 <li>Growth classes (Linear, Quadratic, etc).</li>
+                 <li>Search algorithms.</li>
+             </ul>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Analysis</div><div class="sub">Big-O Notation</div></div>
+            <span class="pill">Scalability</span>
+          </div>
+          <h2>Why We Analyze Algorithms</h2>
+          <div class="grid-2">
+            <div class="info-card">
+              <h3>Same code, different N</h3>
+              <p>An algorithm that feels fast on \(N=100\) can become unusable on \(N=10^6\). We measure growth.</p>
+            </div>
+            <div class="info-card">
+              <h3>Asymptotic Notation</h3>
+              <ul>
+                <li><strong>Big-O:</strong> Upper bound (Worst case).</li>
+                <li><strong>Big-Ω:</strong> Lower bound (Best case).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout">
+            Key idea: We measure <strong>growth rates</strong> (operations vs input size), not exact seconds.
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Math</div></div>
+              <span class="pill">Definitions</span>
+            </div>
+            <h2>Asymptotic Notation</h2>
+            <div class="grid-3">
+              <div class="info-card"><h3>Big-O</h3><p>Upper Bound. "It won't get worse than this."</p></div>
+              <div class="info-card"><h3>Big-Ω</h3><p>Lower Bound. "It takes at least this long."</p></div>
+              <div class="info-card"><h3>Big-Θ</h3><p>Tight Bound. Exact growth class.</p></div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Simplification</div></div>
+              <span class="pill">Rules</span>
+            </div>
+            <h2>Simplifying to Big-O</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Rules</h3>
+                    <ul>
+                        <li>Drop constants: \(100N \to O(N)\).</li>
+                        <li>Keep dominant term: \(N^2 + N \to O(N^2)\).</li>
+                        <li>Nested loops multiply.</li>
+                        <li>Sequential blocks add.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Example: Sorting</h3>
+                    <p>Suppose 2 algorithms:</p>
+                    <ul>
+                        <li>Alg 1: \(1000 \log N\)</li>
+                        <li>Alg 2: \(2 \log N\)</li>
+                    </ul>
+                    <div class="callout" style="margin-top:10px;">
+                        Both are <strong>\(O(\log N)\)</strong>. Asymptotically they are the same class, even if one is slower.
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">Constants matter in reality, but not in Big-O</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Examples</div></div>
+              <span class="pill">Loops</span>
+            </div>
+            <h2>Worked Example: Single Loop</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <pre style="font-family:var(--mono);">
+sum = 0
+for i = 1 to N:
+   sum = sum + A[i]</pre>
+                </div>
+                <div class="info-card">
+                    <h3>Reasoning</h3>
+                    <ul>
+                        <li>Loop runs \(N\) times.</li>
+                        <li>Statement inside is \(O(1)\).</li>
+                        <li>Total: \(N \times O(1) = O(N)\).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+                <div class="meta"><div class="course">Analysis</div><div class="sub">Counting Operations</div></div>
+                <span class="pill">Interactive</span>
+            </div>
+            <h2>Counting Operations (Code Walker)</h2>
+            <p class="muted">Interact with the code to see how structure affects Big-O.</p>
+            <div class="grid-2" style="margin-top:14px;">
+                <div class="codebox">
+                <div class="code-line" onmouseover="explainCode('init')" onmouseout="clearCode()"><span style="color:#a78bfa;">int</span> total = 0;</div>
+                <div class="code-line" onmouseover="explainCode('outer')" onmouseout="clearCode()"><span style="color:#a78bfa;">for</span> (<span style="color:#a78bfa;">int</span> i = 0; i &lt; N; i++) {</div>
+                <div style="padding-left:18px; border-left:2px solid rgba(148,163,184,.25); margin-left:8px;">
+                    <div class="code-line" onmouseover="explainCode('inner')" onmouseout="clearCode()"><span style="color:#a78bfa;">for</span> (<span style="color:#a78bfa;">int</span> j = 0; j &lt; N; j++) {</div>
+                    <div style="padding-left:18px; border-left:2px solid rgba(148,163,184,.25); margin-left:8px;">
+                    <div class="code-line" onmouseover="explainCode('op')" onmouseout="clearCode()">total = total + (i * j);</div>
+                    </div>
+                    <div class="code-line">}</div>
+                </div>
+                <div class="code-line">}</div>
+                </div>
+
+                <div class="tooltip">
+                <h3 id="code-title">Operation analysis</h3>
+                <p class="muted" id="code-desc">Hover over lines to see cost.</p>
+                <div class="math" id="code-math"></div>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Classes</div></div>
+              <span class="pill">Theory</span>
+            </div>
+            <h2>Order of Growth (Big-O)</h2>
+            <div class="card">
+                <ul>
+                    <li><strong>\(O(1)\)</strong>: Constant. (Array access)</li>
+                    <li><strong>\(O(\log N)\)</strong>: Logarithmic. (Binary search)</li>
+                    <li><strong>\(O(N)\)</strong>: Linear. (Simple loop)</li>
+                    <li><strong>\(O(N \log N)\)</strong>: Linearithmic. (Sorting)</li>
+                    <li><strong>\(O(N^2)\)</strong>: Quadratic. (Nested loops)</li>
+                    <li><strong>\(O(N^3)\)</strong>: Cubic. (Three nested loops)</li>
+                    <li><strong>\(O(2^N)\)</strong>: Exponential. (Brute force)</li>
+                </ul>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+                <div class="meta"><div class="course">Analysis</div><div class="sub">Growth Classes</div></div>
+                <span class="pill">Comparison</span>
+            </div>
+            <h2>Interactive Comparison: All Growth Classes</h2>
+            <div class="card">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;">
+                  <div style="font-weight:900;">Input Size (N): <span id="cmpNVal" class="pill">128</span></div>
+                  <input id="cmpInput" type="range" min="2" max="2048" step="1" value="128" style="flex:1;" />
+                </div>
+  
+                <div class="card" style="background:#fff;">
+                  <div class="cmp-row">
+                    <div class="cmp-label"><span>\(O(1)\)</span><span class="cmp-small">Constant</span></div>
+                    <div class="bar-wrap"><div id="cmpBarConst" class="bar const"></div></div>
+                    <div id="cmpOpsConst" class="cmp-ops">1</div>
+                  </div>
+                  <div class="cmp-row">
+                    <div class="cmp-label"><span>\(O(\log N)\)</span><span class="cmp-small">Logarithmic</span></div>
+                    <div class="bar-wrap"><div id="cmpBarLog" class="bar log"></div></div>
+                    <div id="cmpOpsLog" class="cmp-ops"></div>
+                  </div>
+                  <div class="cmp-row">
+                    <div class="cmp-label"><span>\(O(N)\)</span><span class="cmp-small">Linear</span></div>
+                    <div class="bar-wrap"><div id="cmpBarLin" class="bar linear"></div></div>
+                    <div id="cmpOpsLin" class="cmp-ops"></div>
+                  </div>
+                  <div class="cmp-row">
+                    <div class="cmp-label"><span>\(O(N^2)\)</span><span class="cmp-small">Quadratic</span></div>
+                    <div class="bar-wrap"><div id="cmpBarQuad" class="bar quad"></div></div>
+                    <div id="cmpOpsQuad" class="cmp-ops"></div>
+                  </div>
+                  <div class="cmp-row">
+                    <div class="cmp-label"><span>\(O(N^3)\)</span><span class="cmp-small">Cubic</span></div>
+                    <div class="bar-wrap"><div id="cmpBarCube" class="bar cubic"></div></div>
+                    <div id="cmpOpsCube" class="cmp-ops"></div>
+                  </div>
+                  <div class="cmp-row">
+                    <div class="cmp-label"><span>\(O(2^N)\)</span><span class="cmp-small">Exponential</span></div>
+                    <div class="bar-wrap"><div id="cmpBarExp" class="bar exp"></div></div>
+                    <div id="cmpOpsExp" class="cmp-ops"></div>
+                  </div>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">Bars use Log Scale</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+                <div class="meta"><div class="course">Analysis</div><div class="sub">Linear vs Binary</div></div>
+                <span class="pill">Simulation</span>
+            </div>
+            <h2>Comparison: Linear vs Binary Search</h2>
+            <div class="card">
+                <div style="margin-bottom: 18px;">
+                  <div style="display:flex; justify-content:space-between; font-weight:900;">
+                    <span style="color:#a16207;">Linear Search \(O(N)\)</span>
+                    <span id="linear-steps">Steps: 0</span>
+                  </div>
+                  <div class="bar-wrap"><div id="linear-bar" class="bar linear">0%</div></div>
+                </div>
+  
+                <div style="margin-bottom: 18px;">
+                  <div style="display:flex; justify-content:space-between; font-weight:900;">
+                    <span style="color:#0b2a14;">Binary Search \(O(\log N)\)</span>
+                    <span id="binary-steps">Steps: 0</span>
+                  </div>
+                  <div class="bar-wrap"><div id="binary-bar" class="bar binary">0%</div></div>
+                </div>
+  
+                <button class="mini-btn" onclick="startRace()">Start Race</button>
+                <div id="race-result" style="margin-top:10px; font-weight:900; color:#0b2a14; min-height:22px;"></div>
+            </div>
+            <div class="card" style="margin-top:14px;">
+                <strong>Why?</strong> Binary search halves the search space every step. \(1000 \to 500 \to 250 \dots\)
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Search</div></div>
+              <span class="pill">Theory</span>
+            </div>
+            <h2>Binary Search Reasoning</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Sorted Required</h3>
+                    <p>Binary search only works on sorted data.</p>
+                </div>
+                <div class="info-card">
+                    <h3>Why \(O(\log N)\)?</h3>
+                    <ul>
+                        <li>Each step eliminates half the range.</li>
+                        <li>After \(k\) steps: \(\frac{N}{2^k}\).</li>
+                        <li>Stop when 1 item left: \(k \approx \log_2 N\).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+                <div class="meta"><div class="course">Analysis</div><div class="sub">Binary Search Logic</div></div>
+                <span class="pill">Game</span>
+            </div>
+            <h2>Interactive: Binary Chopper</h2>
+            <p class="muted">Try to locate the hidden number (0-99). Every click is one "step".</p>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="game-grid" id="binary-grid"></div>
+                </div>
+                <div class="card">
+                    <button class="mini-btn" style="width:100%; margin-bottom:10px;" onclick="initBinaryGame()">Start New Game</button>
+                    <div class="info-card">
+                        <div id="game-instruction" style="font-weight:900; color:#0b2a14;">Click Start</div>
+                        <div class="muted" id="step-counter" style="margin-top:6px;">Steps: 0</div>
+                    </div>
+                    <p style="font-size:16px; margin-top:10px;">Optimal strategy: Always pick the middle of the remaining green area.</p>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+        
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Predictions</div></div>
+              <span class="pill">Time</span>
+            </div>
+            <h2>Growth Prediction</h2>
+            <p>If \(N=10\) takes 1 second:</p>
+            <div class="card-grid">
+                <div class="info-card"><h3>Linear</h3><p>At N=100: 10 seconds.</p></div>
+                <div class="info-card"><h3>Quadratic</h3><p>At N=100: 100 seconds.</p></div>
+                <div class="info-card"><h3>Exponential</h3><p>At N=100: Billions of years.</p></div>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Analysis</div><div class="sub">Quadratic Growth</div></div>
+            <span class="pill">Visual</span>
+          </div>
+          <h2>The Handshake Problem \(O(N^2)\)</h2>
+          <p class="muted">If every person shakes hands with everyone else, how many handshakes?</p>
+          <div class="grid-2">
+            <div class="card">
+              <label style="font-weight:900;">People (N): <span id="shakeN" class="pill">5</span></label>
+              <input type="range" id="shakeSlider" min="2" max="30" value="5" style="width:100%; margin-top:10px;"/>
+              <div class="info-card" style="margin-top:20px;">
+                <div class="muted" style="font-size:12px;">Handshakes</div>
+                <div style="font-size:28px; font-weight:900;" id="shakeLines">10</div>
+                <div class="muted" style="font-size:13px; margin-top:6px;">Formula: \(\frac{N(N-1)}{2}\)</div>
+              </div>
+            </div>
+            <div class="card" style="display:flex; justify-content:center; align-items:center;">
+              <canvas id="shakeCanvas" width="640" height="420"></canvas>
+            </div>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Nuance</div></div>
+              <span class="pill">Real World</span>
+            </div>
+            <h2>Input Dependence</h2>
+            <p>Big-O talks about \(N\) (quantity). But the <strong>type</strong> of data matters too.</p>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Integers</h3>
+                    <p>Processing 1000 integers.</p>
+                    <div class="pill">Fast</div>
+                </div>
+                <div class="card">
+                    <h3>Images</h3>
+                    <p>Processing 1000 high-res photos.</p>
+                    <div class="pill">Slow</div>
+                </div>
+            </div>
+            <div class="card" style="margin-top:20px;">
+                <p style="margin:0;">The algorithm might still be \(O(N)\), but the "constant factor" ($k$) for a photo is much larger than for an int.</p>
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Context</div></div>
+              <span class="pill">Reality</span>
+            </div>
+            <h2>Complexity Meets Reality</h2>
+            <p>Theory predicts growth. System load (Background apps, OS updates) adds constant factors or noise.</p>
+            <div class="callout">
+                Big-O ignores constants, but in the real world, constants matter for small N.
+            </div>
+            <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+        
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Warning</div></div>
+              <span class="pill">Exponential</span>
+            </div>
+            <h2>Exponential Explosion</h2>
+            <p>Exponential growth \(O(2^N)\) is why brute force solutions fail.</p>
+            <ul>
+                <li>N=20: ~1 million ops (Milliseconds).</li>
+                <li>N=30: ~1 billion ops (Seconds).</li>
+                <li>N=100: Universe heat death.</li>
+            </ul>
+            <div class="slide-footer"><div class="muted">Avoid exponential algorithms</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Summary</div><div class="sub">Final Review</div></div>
+            <span class="pill">Review</span>
+          </div>
+          <h2>Summary and Practice</h2>
+          <div class="grid-3" style="margin-top:14px;">
+            <div class="info-card">
+              <h3 style="margin:0;">Big-O</h3>
+              <p style="font-size:16px;">Communicates worst-case growth. Drop constants.</p>
+            </div>
+            <div class="info-card">
+              <h3 style="margin:0;">Data Structures</h3>
+              <p style="font-size:16px;">Tools to store data. Each has trade-offs (Speed vs Space).</p>
+            </div>
+            <div class="info-card">
+              <h3 style="margin:0;">Scaling</h3>
+              <p style="font-size:16px;">Prefer \(O(\log N)\) or \(O(N)\) for large systems.</p>
+            </div>
+          </div>
+          <div class="card" style="margin-top:20px;">
+            <h3 style="margin-top:0;">For Next Class</h3>
+            <ul>
+                <li>Set up Visual Studio.</li>
+                <li>Review C# Classes and Interfaces.</li>
+                <li>Attempt the Week 1 lab exercises.</li>
+            </ul>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="controls" aria-label="Presentation controls">
+    <button class="iconbtn" id="prevBtn" onclick="go(-1)" aria-label="Previous slide" title="Previous (←)">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="iconbtn" id="nextBtn" onclick="go(1)" aria-label="Next slide" title="Next (→ / Space)">
+      <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <button class="iconbtn" id="fsBtn" onclick="toggleFullScreen()" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+      <svg viewBox="0 0 24 24">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+        <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
+        <path d="M8 21H5a2 2 0 0 1-2-2v-3"/>
+        <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    // --- 1. SLIDESHOW CORE ---
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const progressBar = document.getElementById("progress-bar");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const fsBtn = document.getElementById("fsBtn");
+
+    let current = 0;
+
+    function applyScale(){
+      const pad = 24;
+      const w = window.innerWidth - pad*2;
+      const h = window.innerHeight - pad*2;
+      const baseW = 1600;
+      const baseH = 900;
+      const s = Math.min(w/baseW, h/baseH);
+      document.documentElement.style.setProperty('--scale', String(Math.max(0.3, Math.min(s, 1.5))));
+    }
+
+    function updateSlideNumbers(){
+      slides.forEach((s, i) => {
+        const holder = s.querySelector("[data-slide-no]");
+        if (holder) holder.textContent = `${i + 1} / ${slides.length}`;
+      });
+    }
+
+    function updateProgress(){
+      progressBar.style.width = ((current + 1) / slides.length) * 100 + "%";
+    }
+
+    function updateUI(){
+      slides.forEach(s => s.classList.remove("active"));
+      slides[current].classList.add("active");
+
+      updateProgress();
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === slides.length - 1;
+
+      // Update specific components if they exist on the current slide
+      if(slides[current].querySelector('#shakeCanvas')) updateHandshake();
+      if(slides[current].querySelector('#cmpInput')) updateAllComplexities();
+      
+      // Re-render math
+      if(window.MathJax) MathJax.typesetPromise();
+
+      localStorage.setItem("cois2020_combined_slide", String(current));
+    }
+
+    function go(dir){
+      const nextIndex = current + dir;
+      if(nextIndex < 0 || nextIndex >= slides.length) return;
+      current = nextIndex;
+      updateUI();
+    }
+
+    // Toggles for reveal elements
+    function toggleReveal(id){
+        const el = document.getElementById(id);
+        if(el) el.classList.toggle("show");
+    }
+    window.toggleReveal = toggleReveal;
+
+    function toggleFullScreen(){
+      if(!document.fullscreenElement){
+        document.documentElement.requestFullscreen?.();
+      }else{
+        document.exitFullscreen?.();
+      }
+    }
+    
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "ArrowRight" || e.key === " " || e.key === "Enter"){
+        if (e.key === " ") e.preventDefault();
+        go(1);
+      } else if(e.key === "ArrowLeft"){
+        go(-1);
+      } else if(e.key.toLowerCase() === "f"){
+        toggleFullScreen();
+      }
+    });
+    window.addEventListener("resize", applyScale);
+
+    // --- 2. DATA STRUCTURE INTERACTIVES ---
+    function filterTypes(category, btn) {
+      const allTypes = document.querySelectorAll('.type-box');
+      const allButtons = document.querySelectorAll('.filter-btn');
+
+      allButtons.forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      allTypes.forEach(box => {
+        box.classList.remove('highlight');
+        if (category === 'all') {
+          box.classList.remove('dimmed');
+        } else {
+          if (box.classList.contains('t-' + category)) {
+            box.classList.remove('dimmed');
+            box.classList.add('highlight');
+          } else {
+            box.classList.add('dimmed');
+          }
+        }
+      });
+    }
+
+    function checkInputType(val) {
+      const allTypes = document.querySelectorAll('.type-box');
+      allTypes.forEach(box => {
+        box.classList.remove('highlight');
+        box.classList.add('dimmed');
+      });
+      const highlight = (id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.remove('dimmed');
+          el.classList.add('highlight');
+        }
+      };
+      if (val.length === 0) {
+        allTypes.forEach(box => box.classList.remove('dimmed'));
+        return;
+      }
+      const lowerVal = val.toLowerCase().trim();
+      if (lowerVal === 'true' || lowerVal === 'false') {
+        highlight('type-bool');
+      } else if (!isNaN(val) && val.trim() !== '') {
+        if (val.includes('.')) {
+          highlight('type-float'); highlight('type-double'); highlight('type-decimal');
+        } else {
+          highlight('type-int'); highlight('type-byte'); highlight('type-short'); highlight('type-long'); highlight('type-uint');
+        }
+      } else if (val.length === 1) {
+        highlight('type-char'); highlight('type-string');
+      } else {
+        highlight('type-string'); highlight('type-object');
+      }
+    }
+
+    let stackCounter = 0;
+    function pushStack() {
+      if (stackCounter < 6) {
+        stackCounter++;
+        const div = document.createElement('div');
+        div.className = 'data-unit';
+        div.innerText = 'Book ' + stackCounter;
+        document.getElementById('stackViz').appendChild(div);
+      }
+    }
+    function popStack() {
+      const container = document.getElementById('stackViz');
+      if (container.lastChild) { container.removeChild(container.lastChild); stackCounter--; }
+    }
+    function resetStack(){ document.getElementById('stackViz').innerHTML = ""; stackCounter = 0; }
+
+    let queueCounter = 0;
+    function enqueue() {
+      if (queueCounter < 6) {
+        queueCounter++;
+        const div = document.createElement('div');
+        div.className = 'data-unit';
+        div.innerText = 'P' + queueCounter;
+        document.getElementById('queueViz').appendChild(div);
+      }
+    }
+    function dequeue() {
+      const container = document.getElementById('queueViz');
+      if (container.firstChild) container.removeChild(container.firstChild);
+    }
+    function resetQueue(){ document.getElementById('queueViz').innerHTML = ""; queueCounter = 0; }
+
+    // --- 3. ALGORITHM ANALYSIS INTERACTIVES ---
+    
+    // Code Explainer
+    function explainCode(part) {
+      const title = document.getElementById('code-title');
+      const desc = document.getElementById('code-desc');
+      const math = document.getElementById('code-math');
+      if (part === 'init') {
+        title.textContent = "Initialization"; desc.textContent = "Executes once."; math.innerHTML = "\\( O(1) \\)";
+      } else if (part === 'outer') {
+        title.textContent = "Outer loop"; desc.textContent = "Runs N times."; math.innerHTML = "\\( O(N) \\)";
+      } else if (part === 'inner') {
+        title.textContent = "Inner loop"; desc.textContent = "Runs N times for each outer."; math.innerHTML = "\\( N \\times N = O(N^2) \\)";
+      } else if (part === 'op') {
+        title.textContent = "Dominant op"; desc.textContent = "Executed most frequently."; math.innerHTML = "\\( O(N^2) \\)";
+      }
+      if(window.MathJax) MathJax.typesetPromise();
+    }
+    function clearCode() {
+      document.getElementById('code-title').textContent = "Operation analysis";
+      document.getElementById('code-desc').textContent = "Hover over lines to see cost.";
+      document.getElementById('code-math').innerHTML = "";
+    }
+
+    // Complexity Chart
+    const cmpInput = document.getElementById("cmpInput");
+    const cmpNVal = document.getElementById("cmpNVal");
+    function fmtNum(x){
+      if (!isFinite(x)) return "∞";
+      if (x < 1000) return (Math.round(x*100)/100).toString();
+      if (x < 1e9) return x.toLocaleString();
+      return x.toExponential(2);
+    }
+    function setBar(el, pct){
+      const p = Math.max(0, Math.min(100, pct));
+      el.style.width = p + "%";
+      el.textContent = p >= 18 ? Math.round(p) + "%" : "";
+    }
+    function updateAllComplexities(){
+      if(!cmpInput) return;
+      const n = Math.max(2, parseInt(cmpInput.value || "128", 10));
+      cmpNVal.textContent = n;
+      const c1 = 1; const clog = Math.log2(n); const cn = n; const cnlog = n * Math.log2(n); const cn2 = n * n;
+      const cn3 = n * n * n; // Cubic
+      const capN = Math.min(n, 30); const cexp = Math.pow(2, capN);
+
+      document.getElementById("cmpOpsConst").textContent = fmtNum(c1);
+      document.getElementById("cmpOpsLog").textContent   = fmtNum(clog);
+      document.getElementById("cmpOpsLin").textContent   = fmtNum(cn);
+      document.getElementById("cmpOpsNlogN").textContent = fmtNum(cnlog);
+      document.getElementById("cmpOpsQuad").textContent  = fmtNum(cn2);
+      document.getElementById("cmpOpsCube").textContent  = fmtNum(cn3);
+      document.getElementById("cmpOpsExp").textContent   = (n > 30) ? `${fmtNum(cexp)} (cap)` : fmtNum(cexp);
+
+      const values = [c1, clog, cn, cnlog, cn2, cn3, cexp].map(v => Math.max(v, 1e-9));
+      const logs = values.map(v => Math.log10(v));
+      const minL = Math.min(...logs); const maxL = Math.max(...logs);
+      const span = Math.max(1e-9, maxL - minL);
+      const pct = (v) => ((Math.log10(Math.max(v,1e-9)) - minL) / span) * 100;
+
+      setBar(document.getElementById("cmpBarConst"), pct(c1));
+      setBar(document.getElementById("cmpBarLog"),   pct(clog));
+      setBar(document.getElementById("cmpBarLin"),   pct(cn));
+      setBar(document.getElementById("cmpBarNlogN"), pct(cnlog));
+      setBar(document.getElementById("cmpBarQuad"),  pct(cn2));
+      setBar(document.getElementById("cmpBarCube"),  pct(cn3));
+      setBar(document.getElementById("cmpBarExp"),   pct(cexp));
+    }
+    if (cmpInput) cmpInput.addEventListener("input", updateAllComplexities);
+
+    // Race
+    function startRace(){
+      const linearBar = document.getElementById('linear-bar');
+      const binaryBar = document.getElementById('binary-bar');
+      const result = document.getElementById('race-result');
+      linearBar.style.width = '0%'; binaryBar.style.width = '0%';
+      result.textContent = "Running…";
+      let lin = 0;
+      const linInterval = setInterval(() => {
+        lin++; linearBar.style.width = lin + '%'; linearBar.textContent = lin + '%';
+        if(lin >= 98){ clearInterval(linInterval); finish(); }
+      }, 22);
+      const binStepsArr = [50, 75, 88, 94, 97, 98, 98]; let bi = 0;
+      const binInterval = setInterval(() => {
+        const w = binStepsArr[Math.min(bi, binStepsArr.length-1)];
+        binaryBar.style.width = w + '%'; binaryBar.textContent = w + '%'; bi++;
+        if(bi >= binStepsArr.length){ clearInterval(binInterval); finish(); }
+      }, 260);
+      let done = 0;
+      function finish(){ done++; if(done >= 2) result.innerHTML = "✅ Binary is much faster on large inputs."; }
+    }
+
+    // Binary Chopper Game
+    let targetNum = -1; let steps = 0; let low = 0, high = 99;
+    function initBinaryGame(){
+      const grid = document.getElementById("binary-grid"); grid.innerHTML = "";
+      steps = 0; targetNum = Math.floor(Math.random()*100); low = 0; high = 99;
+      document.getElementById("step-counter").textContent = "Steps: 0";
+      document.getElementById("game-instruction").textContent = "Target generated. Find it." ;
+      for(let i=0;i<100;i++){
+        const d = document.createElement("div"); d.className = "cell"; d.textContent = i; d.id = "cell-"+i;
+        d.onclick = ()=> handleGuess(i, d); grid.appendChild(d);
+      }
+    }
+    function handleGuess(val, el){
+      if(val === targetNum){
+        el.classList.add("hit"); document.getElementById("game-instruction").textContent = `Found in ${steps+1} steps!`; return;
+      }
+      steps++; document.getElementById("step-counter").textContent = `Steps: ${steps}`;
+      if(val < targetNum){
+        for(let i=low; i<=val; i++){ const c = document.getElementById("cell-"+i); if(c) c.classList.add("elim"); }
+        low = Math.max(low, val+1);
+      }else{
+        for(let i=val; i<=high; i++){ const c = document.getElementById("cell-"+i); if(c) c.classList.add("elim"); }
+        high = Math.min(high, val-1);
+      }
+    }
+
+    // Handshake
+    const shakeSlider = document.getElementById('shakeSlider');
+    const shakeCanvas = document.getElementById('shakeCanvas');
+    const ctx = shakeCanvas ? shakeCanvas.getContext('2d') : null;
+    function updateHandshake(){
+      if(!ctx) return;
+      const n = parseInt(shakeSlider.value);
+      document.getElementById('shakeN').textContent = n;
+      document.getElementById('shakeLines').textContent = (n*(n-1))/2;
+      ctx.clearRect(0,0,shakeCanvas.width, shakeCanvas.height);
+      const cx = shakeCanvas.width/2; const cy = shakeCanvas.height/2; const r  = Math.min(cx,cy) - 70;
+      const nodes = [];
+      for(let i=0;i<n;i++){
+        const a = (i/n)*2*Math.PI; nodes.push({ x: cx + r*Math.cos(a), y: cy + r*Math.sin(a) });
+      }
+      ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(34,197,94,.28)';
+      for(let i=0;i<n;i++){
+        for(let j=i+1;j<n;j++){
+          ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.stroke();
+        }
+      }
+      ctx.fillStyle = '#22c55e';
+      nodes.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,6,0,2*Math.PI); ctx.fill(); });
+    }
+    if(shakeSlider) shakeSlider.addEventListener("input", updateHandshake);
+
+    // --- INIT ---
+    applyScale();
+    updateSlideNumbers();
+    
+    // Restore slide
+    const saved = Number(localStorage.getItem("cois2020_combined_slide"));
+    if (!Number.isNaN(saved) && saved >= 0 && saved < slides.length) current = saved;
+    
+    updateUI();
+  </script>
+</body>
+</html>
