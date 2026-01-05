@@ -1,14 +1,137 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>COIS 2020H – Course Materials</title>
-</head>
-<body>
-  <h1>COIS 2020H – Course Materials</h1>
-  <ul>
-    <li><a href="lec1.html">Lecture 1</a></li>
-    <li><a href="lec2.html">Lecture 2</a></li>
-  </ul>
-</body>
-</html>
+<style>
+  .course-schedule {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  }
+  .course-schedule thead tr {
+    background-color: #005f73;
+    color: #ffffff;
+    text-align: left;
+  }
+  .course-schedule th, .course-schedule td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dddddd;
+  }
+  .course-schedule tbody tr:hover {
+    background-color: #f3f3f3;
+  }
+  .special-event {
+    background-color: #eaf4f4;
+    font-style: italic;
+    color: #555;
+  }
+  .deadline {
+    color: #ae2012;
+    font-weight: bold;
+    font-size: 0.9em;
+    display: block;
+    margin-top: 5px;
+  }
+  .btn-download {
+    text-decoration: none;
+    color: #005f73;
+    font-weight: 600;
+    border: 1px solid #005f73;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    transition: all 0.3s ease;
+  }
+  .btn-download:hover {
+    background-color: #005f73;
+    color: white;
+  }
+</style>
+
+<section>
+  <h2>Course Schedule & Materials</h2>
+  <p>
+    Access lecture slides, notes, and code examples below. Please review the assigned materials prior to attending class.
+  </p>
+
+  <table class="course-schedule">
+    <thead>
+      <tr>
+        <th width="15%">Lecture</th>
+        <th width="50%">Topic</th>
+        <th width="35%">Resources & Deadlines</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Lecture 1</td>
+        <td>Course Introduction & OOP Review</td>
+        <td><a href="lec1.html" class="btn-download">Download Slides</a></td>
+      </tr>
+      <tr>
+        <td>Lecture 2</td>
+        <td>Time Complexity & Big-O Analysis</td>
+        <td><a href="lec2.html" class="btn-download">Download Slides</a></td>
+      </tr>
+      <tr>
+        <td>Lecture 3</td>
+        <td>Arrays and Dynamic Arrays</td>
+        <td><a href="lec3.html" class="btn-download">Download Slides</a></td>
+      </tr>
+      <tr>
+        <td>Lecture 4</td>
+        <td>Linked Lists</td>
+        <td><a href="lec4.html" class="btn-download">Download Slides</a></td>
+      </tr>
+      <tr>
+        <td>Lecture 5</td>
+        <td>Stacks, Queues & Hash Tables</td>
+        <td>
+          <a href="lec5.html" class="btn-download">Download Slides</a>
+          <span class="deadline">⚠️ Assignment 1 Due</span>
+        </td>
+      </tr>
+      <tr class="special-event">
+        <td>Week 6</td>
+        <td>Reading Week</td>
+        <td>No Class</td>
+      </tr>
+      <tr>
+        <td>Lecture 7</td>
+        <td>Practical Exercise I & Midterm Review</td>
+        <td><a href="lec7.html" class="btn-download">View Practice Problems</a></td>
+      </tr>
+      <tr class="special-event">
+        <td>Lecture 8</td>
+        <td><strong>Midterm Exam</strong></td>
+        <td>In-class examination</td>
+      </tr>
+      <tr>
+        <td>Lecture 9</td>
+        <td>Trees (Part I): Binary Trees & BSTs</td>
+        <td><a href="lec9.html" class="btn-download">Download Slides</a></td>
+      </tr>
+      <tr>
+        <td>Lecture 10</td>
+        <td>Searching & Sorting Algorithms</td>
+        <td><a href="lec10.html" class="btn-download">Download Slides</a></td>
+      </tr>
+      <tr>
+        <td>Lecture 11</td>
+        <td>Trees (Part II): Balanced Trees</td>
+        <td>
+            <a href="lec11.html" class="btn-download">Download Slides</a>
+            <span class="deadline">⚠️ Assignment 2 Due</span>
+        </td>
+      </tr>
+      <tr>
+        <td>Lecture 12</td>
+        <td>Practical Exercise II</td>
+        <td><a href="lec12.html" class="btn-download">View Practice Problems</a></td>
+      </tr>
+      <tr>
+        <td>Lecture 13</td>
+        <td>Course Review & Final Exam Prep</td>
+        <td><a href="lec13.html" class="btn-download">Review Materials</a></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
