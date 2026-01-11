@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>COIS 2020H — Data Structures & Algorithms (Complete Lecture)</title>
+  <title>COIS 2020H — Data Structures & Algorithms (Interactive)</title>
 
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
@@ -27,7 +27,7 @@
       --c-log: #0ea5e9;
       --c-nlogn: #8b5cf6;
       --c-quad: #f97316;
-      --c-cubic: #d946ef; /* Added for O(N^3) */
+      --c-cubic: #d946ef;
       --c-exp: #ef4444;
 
       --radius: 20px;
@@ -181,7 +181,7 @@
     .tooltip{ background:#fff; border:1px solid var(--soft); border-left:6px solid var(--accent); border-radius: 16px; padding: 14px; min-height: 160px; }
     .math{ margin-top:10px; font-weight: 900; color:#0b2a14; font-family: var(--mono); font-size: 18px; min-height: 26px; }
 
-    .bar-wrap{ height: 34px; background:#e5e7eb; border-radius: 999px; overflow:hidden; border:1px solid #d1d5db; }
+    .bar-wrap{ height: 34px; background:#e5e7eb; border-radius: 999px; overflow:hidden; border:1px solid #d1d5db; position:relative;}
     .bar{ height:100%; width:0%; transition: width .18s ease; display:flex; align-items:center; justify-content:flex-end; padding-right: 12px; color:#fff; font-weight:900; font-family: var(--mono); font-size: 12px; }
     
     .bar.linear, .bar.binary { background: var(--accent); } 
@@ -189,7 +189,7 @@
     .bar.log{ background: var(--c-log); }
     .bar.nlogn{ background: var(--c-nlogn); }
     .bar.quad{ background: var(--c-quad); }
-    .bar.cubic{ background: var(--c-cubic); } /* New */
+    .bar.cubic{ background: var(--c-cubic); }
     .bar.exp{ background: var(--c-exp); }
 
     .cmp-row{ display:grid; grid-template-columns: 240px 1fr 180px; gap: 12px; align-items:center; margin: 10px 0; }
@@ -219,6 +219,53 @@
 
     .mini-btn{ background:#0f1a2e; color:#e5e7eb; border:1px solid rgba(255,255,255,.18); padding: 8px 14px; border-radius: 12px; cursor:pointer; font-weight:900; font-size: 13px; transition: transform .12s ease; user-select:none; }
     .mini-btn:hover{ transform: translateY(-1px); background:#13213a; }
+
+    /* STUDENT DEMO STYLES */
+    .student-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+      margin-top: 15px; perspective: 1000px;
+    }
+    .student-card {
+      background: white; border: 2px solid var(--soft); border-radius: 12px; padding: 10px;
+      text-align: center; font-size: 14px; transition: all 0.4s ease;
+      position: relative; overflow: hidden;
+    }
+    .student-card .s-grade { font-weight: 900; color: var(--accent); font-size: 1.2em; display:block; }
+    .student-card .s-name { font-weight: 800; color: var(--ink); margin: 4px 0; display:block;}
+    .student-card .s-age { color: var(--muted); font-size: 0.85em; }
+    
+    .student-card.scanning { border-color: #f97316; background: #fff7ed; transform: scale(1.05); z-index: 10; }
+    .student-card.found { border-color: var(--accent); background: #f0fff6; transform: scale(1.1); box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 10; }
+    .student-card.dimmed { opacity: 0.3; filter: grayscale(100%); }
+
+    .demo-controls { display:flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+    .demo-log { font-family: var(--mono); font-size: 14px; color: var(--accent); min-height: 20px; margin-top: 10px; font-weight: 900; }
+    
+    .q-btn { background: #fff; border: 1px solid var(--soft); color: var(--ink); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 700; transition: all 0.2s; }
+    .q-btn:hover { background: var(--soft2); border-color: var(--accent); }
+    .q-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+    /* RACE STYLES */
+    .race-track {
+        display: flex; flex-direction: column; gap: 15px;
+        background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid var(--soft);
+    }
+    .lane { display: flex; align-items: center; gap: 15px; }
+    .lane-label { width: 80px; font-weight: 900; font-family: var(--mono); font-size: 14px; text-align: right; }
+    .track-bg { flex: 1; height: 40px; background: #e2e8f0; border-radius: 99px; position: relative; overflow: hidden; }
+    .racer {
+        height: 100%; width: 50px; border-radius: 99px;
+        position: absolute; top: 0; left: 0;
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 20px; font-weight: bold;
+        transition: left 0.1s linear;
+    }
+    .finish-line {
+        position: absolute; right: 20px; top: 0; bottom: 0; width: 4px; background: rgba(0,0,0,0.1);
+        z-index: 1;
+    }
+    .finish-flag { position: absolute; right: 0; top: -15px; font-size: 20px; }
+
   </style>
 </head>
 
@@ -346,20 +393,47 @@
         </section>
 
         <section class="slide">
-            <div class="slide-top">
-              <div class="meta"><div class="course">Motivation</div><div class="sub">Real World</div></div>
-              <span class="pill">Examples</span>
+          <div class="slide-top">
+            <div class="meta"><div class="course">Interactive Lab</div><div class="sub">Structure & Queries</div></div>
+            <span class="pill">Simulation</span>
+          </div>
+          
+          <div class="grid-2">
+            <div>
+              <div class="demo-controls">
+                <button class="mini-btn" onclick="StudentDemo.shuffle()">🔀 Unsort (Shuffle)</button>
+                <button class="mini-btn" onclick="StudentDemo.sortGrade()">📊 Sort by Grade</button>
+                <button class="mini-btn" onclick="StudentDemo.sortAge()">🎂 Sort by Age</button>
+                <button class="mini-btn" onclick="StudentDemo.sortName()">Aa Sort by Name</button>
+              </div>
+
+              <div id="studentGrid" class="student-grid"></div>
+              <div id="demoLog" class="demoLog"></div>
             </div>
-            <h2>Other Problems</h2>
-            <div class="card">
-              <ul>
-                <li>Find the oldest student? (Linear scan vs Sorted list)</li>
-                <li>Sort the class alphabetically? (Complexity costs)</li>
-                <li>Does anyone have exactly 86%? (Search speed)</li>
-                <li>List all graduates with > 86%? (Range query)</li>
-              </ul>
+
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              <div class="card">
+                 <h3 style="margin-top:0; font-size:18px;">Search Scenarios</h3>
+                 <div style="display:flex; flex-direction:column; gap:8px;">
+                   <button class="q-btn" onclick="StudentDemo.runQuery('oldest')">👴 Find the oldest student?</button>
+                   <button class="q-btn" onclick="StudentDemo.runQuery('find86')">🔍 Does anyone have exactly 86%?</button>
+                   <button class="q-btn" onclick="StudentDemo.runQuery('range86')">📈 List graduates > 86%</button>
+                   <button class="q-btn" onclick="StudentDemo.runQuery('sortCost')">⚡ Sorting Cost Analysis</button>
+                 </div>
+                 <div id="demo-result" class="demo-log">Select a query...</div>
+              </div>
+
+              <div class="info-card">
+                <h3 style="margin-top:0; font-size:16px;">Architecture Check</h3>
+                <ul style="font-size:14px; padding-left:20px;">
+                  <li id="ans-loc"><strong>Object Location:</strong> Does the student object know its index? Usually no.</li>
+                  <li id="ans-grid"><strong>Container Knowledge:</strong> The Array/List knows where everyone is.</li>
+                  <li id="ans-neigh"><strong>Neighbours:</strong> In a List, index \(i\) knows \(i-1\) and \(i+1\).</li>
+                </ul>
+              </div>
             </div>
-            <div class="slide-footer"><div class="muted">The answer changes based on the structure</div><div class="slide-no" data-slide-no></div></div>
+          </div>
+          <div class="slide-footer"><div class="muted">Try sorting before searching to see efficiency gains</div><div class="slide-no" data-slide-no></div></div>
         </section>
 
         <section class="slide">
@@ -502,7 +576,38 @@
             </div>
             <div class="slide-footer"><div class="muted">Next: Data Structures Fundamentals</div><div class="slide-no" data-slide-no></div></div>
         </section>
-
+<section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Analysis</div><div class="sub">Experiment</div></div>
+              <span class="pill">Activity</span>
+            </div>
+            <h2>Proving Bounds: Best vs Worst Case</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="card">
+                        <h3>The Experiment</h3>
+                        <p>We need to find the number <strong style="color:var(--accent);">42</strong> hidden in this array.</p>
+                        <p class="muted">The algorithm checks boxes one by one from left to right (Linear Search).</p>
+                    </div>
+                    <div style="margin-top:20px; display:flex; gap:10px;">
+                        <button class="mini-btn" onclick="BoundsDemo.runBest()">🌟 Run Best Case</button>
+                        <button class="mini-btn" onclick="BoundsDemo.runWorst()">🔥 Run Worst Case</button>
+                    </div>
+                    <div id="bounds-log" class="callout" style="min-height:100px; display:flex; align-items:center;">
+                        <span class="muted">Click a button to see the difference in operations...</span>
+                    </div>
+                </div>
+                <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center; background:#f8fafc;">
+                    <div id="bounds-grid" style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:20px;">
+                        </div>
+                    <div class="info-card" style="text-align:center; min-width: 200px;">
+                         <div style="font-size:13px; font-weight:800; color:var(--muted); letter-spacing:1px;">OPERATIONS</div>
+                         <div id="bounds-count" style="font-size:42px; font-weight:900; color:var(--ink); line-height:1;">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">Same algorithm + Different data = Drastically different speed</div><div class="slide-no" data-slide-no></div></div>
+        </section>
 
         <section class="slide">
             <div class="slide-top">
@@ -828,6 +933,50 @@
               <div class="info-card"><h3>Big-Θ</h3><p>Tight Bound. Exact growth class.</p></div>
             </div>
             <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+                <div class="meta"><div class="course">Activity</div><div class="sub">Game</div></div>
+                <span class="pill">Interactive</span>
+            </div>
+            <h2>Activity: The Growth Race</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="card">
+                        <h3 style="margin-top:0;">Set the Input Size (N)</h3>
+                        <p>Drag the slider to change the amount of data, then click "Run Race".</p>
+                        <div style="display:flex; align-items:center; gap:15px; margin: 15px 0;">
+                            <span style="font-weight:900; font-family:var(--mono);">N = <span id="raceNVal">10</span></span>
+                            <input type="range" id="raceSlider" min="10" max="1000" step="10" value="10" style="flex:1;">
+                        </div>
+                        <button class="mini-btn" style="width:100%; font-size:16px; padding:12px;" onclick="GrowthRace.run()">🏁 Run Race</button>
+                    </div>
+                    <div class="callout" id="race-commentary">
+                        Set N and run to see who wins!
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="race-track">
+                        <div class="lane">
+                            <div class="lane-label">\(O(\log N)\)</div>
+                            <div class="track-bg"><div id="racer-log" class="racer" style="background:var(--c-log);">🚀</div><div class="finish-line"></div><div class="finish-flag">🏁</div></div>
+                        </div>
+                        <div class="lane">
+                            <div class="lane-label">\(O(N)\)</div>
+                            <div class="track-bg"><div id="racer-lin" class="racer" style="background:var(--accent);">🏃</div><div class="finish-line"></div><div class="finish-flag">🏁</div></div>
+                        </div>
+                        <div class="lane">
+                            <div class="lane-label">\(O(N^2)\)</div>
+                            <div class="track-bg"><div id="racer-quad" class="racer" style="background:var(--c-quad);">🐢</div><div class="finish-line"></div><div class="finish-flag">🏁</div></div>
+                        </div>
+                    </div>
+                    <p style="font-size:14px; color:var(--muted); margin-top:15px; text-align:center;">
+                        Notice how the gap between the runners changes drastically as you increase N.
+                    </p>
+                </div>
+            </div>
+            <div class="slide-footer"><div class="muted">Quadratic algorithms fail at scale</div><div class="slide-no" data-slide-no></div></div>
         </section>
 
         <section class="slide">
@@ -1377,6 +1526,217 @@ for i = 1 to N:
     }
     function resetQueue(){ document.getElementById('queueViz').innerHTML = ""; queueCounter = 0; }
 
+    // --- STUDENT DEMO LOGIC ---
+    const StudentDemo = (() => {
+      const rawData = [
+        {name: "Alice", age: 20, grade: 72}, {name: "Ben", age: 24, grade: 86},
+        {name: "Carla", age: 19, grade: 91}, {name: "Dan", age: 22, grade: 64},
+        {name: "Eve", age: 21, grade: 88}, {name: "Frank", age: 25, grade: 86},
+        {name: "Grace", age: 20, grade: 78}, {name: "Hank", age: 23, grade: 95},
+        {name: "Ivy", age: 19, grade: 82}, {name: "Jack", age: 21, grade: 86},
+        {name: "Kate", age: 22, grade: 70}, {name: "Leo", age: 20, grade: 60}
+      ];
+
+      let data = [...rawData];
+      let isSorted = false;
+      let sortMode = 'none';
+
+      const grid = document.getElementById('studentGrid');
+      const log = document.getElementById('demoLog');
+      const res = document.getElementById('demo-result');
+
+      function render() {
+        grid.innerHTML = '';
+        data.forEach((s, idx) => {
+          const div = document.createElement('div');
+          div.className = 'student-card';
+          div.id = `stu-${idx}`;
+          div.innerHTML = `
+            <span class="s-grade">${s.grade}%</span>
+            <span class="s-name">${s.name}</span>
+            <span class="s-age">Age: ${s.age}</span>
+          `;
+          grid.appendChild(div);
+        });
+      }
+
+      function shuffle() {
+        data = [...rawData].sort(() => Math.random() - 0.5);
+        isSorted = false; sortMode = 'none';
+        res.innerHTML = "List shuffled. Searches will be linear \(O(N)\).";
+        render();
+      }
+
+      function sortGrade() {
+        data.sort((a,b) => a.grade - b.grade);
+        isSorted = true; sortMode = 'grade';
+        res.innerHTML = "Sorted by Grade. Binary search \(O(\log N)\) enabled.";
+        render();
+      }
+
+      function sortAge() {
+        data.sort((a,b) => a.age - b.age);
+        isSorted = true; sortMode = 'age';
+        res.innerHTML = "Sorted by Age. Finding the oldest/youngest is now O(1)!";
+        render();
+      }
+
+      function sortName() {
+        data.sort((a,b) => a.name.localeCompare(b.name));
+        isSorted = true; sortMode = 'name';
+        res.innerHTML = "Sorted by Name. Binary search enabled for names.";
+        render();
+      }
+
+      const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+      async function runQuery(type) {
+        // Reset styles
+        document.querySelectorAll('.student-card').forEach(c => {
+          c.classList.remove('scanning', 'found', 'dimmed');
+        });
+        
+        // 1. Find Oldest
+        if (type === 'oldest') {
+          if (isSorted && sortMode === 'age') {
+             // O(1) Optimization
+             res.innerHTML = "Sorted by Age: Oldest is at the end. O(1) Access.";
+             const lastIdx = data.length - 1;
+             const card = document.getElementById(`stu-${lastIdx}`);
+             card.classList.add('found');
+             // Dim others
+             for(let k=0; k<lastIdx; k++) document.getElementById(`stu-${k}`).classList.add('dimmed');
+          } else {
+             // Linear Scan
+             res.innerHTML = "Scanning for oldest student... (Linear Scan)";
+             let maxAge = -1;
+             let maxIdx = -1;
+             
+             for(let i=0; i<data.length; i++){
+                const card = document.getElementById(`stu-${i}`);
+                card.classList.add('scanning');
+                await wait(150); // visual delay
+                if (data[i].age > maxAge) {
+                   maxAge = data[i].age;
+                   maxIdx = i;
+                }
+                card.classList.remove('scanning');
+                card.classList.add('dimmed');
+             }
+             if(maxIdx !== -1) {
+                const winner = document.getElementById(`stu-${maxIdx}`);
+                winner.classList.remove('dimmed');
+                winner.classList.add('found');
+                res.innerHTML = `Found ${data[maxIdx].name} (Age ${maxAge}). Scanned all items.`;
+             }
+          }
+        }
+
+        // 2. Find Exactly 86%
+        else if (type === 'find86') {
+          if (!isSorted || sortMode !== 'grade') {
+            res.innerHTML = "Unsorted (or wrong sort): Linear Search \(O(N)\)";
+            let count = 0;
+            for(let i=0; i<data.length; i++){
+              const card = document.getElementById(`stu-${i}`);
+              card.classList.add('scanning');
+              await wait(100);
+              if (data[i].grade === 86) {
+                card.classList.remove('scanning');
+                card.classList.add('found');
+                count++;
+              } else {
+                card.classList.remove('scanning');
+                card.classList.add('dimmed');
+              }
+            }
+            res.innerHTML = `Linear search found ${count} students.`;
+          } else {
+            // Binary Search visual approximation
+            res.innerHTML = "Sorted by Grade: Binary Search \(O(\log N)\)";
+            let l = 0, r = data.length - 1;
+            let foundIdx = -1;
+            while (l <= r) {
+               let mid = Math.floor((l+r)/2);
+               const card = document.getElementById(`stu-${mid}`);
+               card.classList.add('scanning');
+               await wait(300);
+               
+               if (data[mid].grade === 86) {
+                 foundIdx = mid;
+                 // Expand to find neighbours if duplicates
+                 card.classList.remove('scanning');
+                 card.classList.add('found');
+                 // Check neighbors visually for duplicates (simplified)
+                 let temp = mid - 1;
+                 while(temp >=0 && data[temp].grade === 86) {
+                    document.getElementById(`stu-${temp}`).classList.add('found'); temp--;
+                 }
+                 temp = mid + 1;
+                 while(temp < data.length && data[temp].grade === 86) {
+                    document.getElementById(`stu-${temp}`).classList.add('found'); temp++;
+                 }
+                 break;
+               } else if (data[mid].grade < 86) {
+                 // Dim left half
+                 for(let k=l; k<=mid; k++) document.getElementById(`stu-${k}`).classList.add('dimmed');
+                 card.classList.remove('scanning');
+                 l = mid + 1;
+               } else {
+                 // Dim right half
+                 for(let k=mid; k<=r; k++) document.getElementById(`stu-${k}`).classList.add('dimmed');
+                 card.classList.remove('scanning');
+                 r = mid - 1;
+               }
+            }
+            res.innerHTML = "Binary search complete. Much faster.";
+          }
+        }
+
+        // 3. Range > 86
+        else if (type === 'range86') {
+           if (!isSorted || sortMode !== 'grade') {
+             res.innerHTML = "Unsorted: Check everyone \(O(N)\).";
+             for(let i=0; i<data.length; i++){
+                const card = document.getElementById(`stu-${i}`);
+                card.classList.add('scanning');
+                await wait(50);
+                card.classList.remove('scanning');
+                if (data[i].grade > 86) card.classList.add('found');
+                else card.classList.add('dimmed');
+             }
+           } else {
+             res.innerHTML = "Sorted: Find cut-off point, select rest. Fast.";
+             // Find first index > 86
+             let found = false;
+             for(let i=0; i<data.length; i++) {
+               if(data[i].grade > 86) {
+                 for(let j=i; j<data.length; j++) {
+                   document.getElementById(`stu-${j}`).classList.add('found');
+                 }
+                 // dim previous
+                 for(let k=0; k<i; k++) document.getElementById(`stu-${k}`).classList.add('dimmed');
+                 found = true;
+                 break;
+               }
+             }
+           }
+        }
+
+        else if (type === 'sortCost') {
+            res.innerHTML = "Sorting isn't free! It costs \(O(N \log N)\) upfront to save time later.";
+        }
+      }
+
+      return {
+        render, shuffle, sortGrade, sortAge, sortName, runQuery
+      };
+    })();
+    
+    // Initialize demo
+    StudentDemo.render();
+
+
     // --- 3. ALGORITHM ANALYSIS INTERACTIVES ---
     
     // Code Explainer
@@ -1426,7 +1786,6 @@ for i = 1 to N:
       document.getElementById("cmpOpsConst").textContent = fmtNum(c1);
       document.getElementById("cmpOpsLog").textContent   = fmtNum(clog);
       document.getElementById("cmpOpsLin").textContent   = fmtNum(cn);
-      document.getElementById("cmpOpsNlogN").textContent = fmtNum(cnlog);
       document.getElementById("cmpOpsQuad").textContent  = fmtNum(cn2);
       document.getElementById("cmpOpsCube").textContent  = fmtNum(cn3);
       document.getElementById("cmpOpsExp").textContent   = (n > 30) ? `${fmtNum(cexp)} (cap)` : fmtNum(cexp);
@@ -1440,7 +1799,6 @@ for i = 1 to N:
       setBar(document.getElementById("cmpBarConst"), pct(c1));
       setBar(document.getElementById("cmpBarLog"),   pct(clog));
       setBar(document.getElementById("cmpBarLin"),   pct(cn));
-      setBar(document.getElementById("cmpBarNlogN"), pct(cnlog));
       setBar(document.getElementById("cmpBarQuad"),  pct(cn2));
       setBar(document.getElementById("cmpBarCube"),  pct(cn3));
       setBar(document.getElementById("cmpBarExp"),   pct(cexp));
@@ -1521,6 +1879,87 @@ for i = 1 to N:
     }
     if(shakeSlider) shakeSlider.addEventListener("input", updateHandshake);
 
+    // --- NEW: GROWTH RACE DEMO ---
+    const GrowthRace = (() => {
+        const slider = document.getElementById('raceSlider');
+        const nVal = document.getElementById('raceNVal');
+        const comm = document.getElementById('race-commentary');
+        
+        if(slider) {
+            slider.addEventListener('input', () => {
+                nVal.textContent = slider.value;
+                reset();
+            });
+        }
+
+        function reset() {
+            ['racer-log', 'racer-lin', 'racer-quad'].forEach(id => {
+               document.getElementById(id).style.left = '0';
+            });
+            comm.innerHTML = "Ready to race... Press Run.";
+        }
+
+        function run() {
+            const n = parseInt(slider.value);
+            const racers = [
+                { id: 'racer-log', val: Math.log2(n), name: 'Logarithmic' },
+                { id: 'racer-lin', val: n, name: 'Linear' },
+                { id: 'racer-quad', val: n * n, name: 'Quadratic' }
+            ];
+            
+            // Normalize speed so the fastest reasonable time takes ~2 seconds
+            // Base speed factor relative to N=1000
+            const maxVal = 1000 * 1000; // Worst case Quad
+            // This is tricky to visualize because N^2 is huge. 
+            // We'll use a visual speed = 1 / complexity. 
+            
+            // Actually, let's just animate "distance" covered in a fixed time?
+            // No, race implies reaching the end.
+            // Let's set a duration for the CSS transition.
+            
+            const baseTime = 1.5; // seconds for fast things
+            
+            // Calculate durations. 
+            // Log N is basically instant.
+            // Linear N scales linearly.
+            // Quad N scales quadratically.
+            
+            // We cap max duration to avoid boring the user, but make it visibly slow.
+            // Let's say at N=10, Linear takes 1s. Quad takes 1s.
+            // At N=100, Linear takes 1s. Quad takes 10s.
+            
+            // Better visual logic:
+            // Calculate "Pixels per second".
+            // Distance = 100%.
+            
+            comm.innerHTML = "GO! GO! GO!";
+            
+            racers.forEach(r => {
+               const el = document.getElementById(r.id);
+               // Simple heuristic for demo visual
+               let duration = 0;
+               if (r.name === 'Logarithmic') duration = 0.5 + (Math.log2(n)/50); // Nearly constant
+               if (r.name === 'Linear') duration = 0.5 + (n / 200); // 1000 => 5.5s
+               if (r.name === 'Quadratic') duration = 0.5 + ( (n*n) / 5000 ); // 100 => 2.5s, 1000 => 200s!
+               
+               // Cap duration for UI sanity, but show "DNF" if too slow
+               let finalLeft = "calc(100% - 50px)";
+               
+               if (duration > 10) {
+                   duration = 10;
+                   // It won't finish in 10s visually if it's super slow
+                   finalLeft = "20%"; // Stuck
+                   if(r.name === 'Quadratic' && n > 100) comm.innerHTML = `Quadratic is struggling with N=${n}!`;
+               }
+               
+               el.style.transition = `left ${duration}s linear`;
+               el.style.left = finalLeft;
+            });
+        }
+        
+        return { run, reset };
+    })();
+
     // --- INIT ---
     applyScale();
     updateSlideNumbers();
@@ -1530,6 +1969,81 @@ for i = 1 to N:
     if (!Number.isNaN(saved) && saved >= 0 && saved < slides.length) current = saved;
     
     updateUI();
+    // --- BOUNDS DEMO (New Slide Logic) ---
+    const BoundsDemo = (() => {
+        const size = 10;
+        
+        function init() {
+            const grid = document.getElementById('bounds-grid');
+            const counter = document.getElementById('bounds-count');
+            if(!grid) return;
+            
+            grid.innerHTML = '';
+            for(let i=0; i<size; i++){
+                const d = document.createElement('div');
+                d.className = 'node'; // Reusing existing CSS class
+                d.style.minWidth = '50px';
+                d.style.padding = '12px 0';
+                d.style.color = 'var(--ink)';
+                d.style.transition = 'all 0.2s ease';
+                d.innerText = '?';
+                d.id = `b-node-${i}`;
+                grid.appendChild(d);
+            }
+            if(counter) counter.innerText = '0';
+        }
+
+        async function run(type) {
+            init(); // Reset
+            const log = document.getElementById('bounds-log');
+            const counter = document.getElementById('bounds-count');
+            const targetIdx = type === 'best' ? 0 : size - 1;
+            const delay = 250;
+            
+            log.innerHTML = `<div><strong>Running ${type === 'best' ? 'Best' : 'Worst'} Case...</strong><br/><span class="muted">Scanning array indices...</span></div>`;
+            
+            for(let i=0; i<size; i++){
+                const node = document.getElementById(`b-node-${i}`);
+                
+                // Highlight scanning
+                node.style.borderColor = '#f97316'; 
+                node.style.background = '#fff7ed';
+                node.style.transform = 'scale(1.1)';
+                
+                counter.innerText = i + 1;
+                await new Promise(r => setTimeout(r, delay));
+
+                if(i === targetIdx) {
+                    // Found
+                    node.innerText = '42';
+                    node.style.borderColor = 'var(--accent)';
+                    node.style.background = '#dcfce7'; // Green
+                    node.style.fontWeight = '900';
+                    node.style.transform = 'scale(1.15)';
+                    
+                    if(type === 'best') {
+                        log.innerHTML = `<div><strong style="color:var(--accent)">Found immediately!</strong><br/>1 Operation.<br/>This is the <strong>Lower Bound $\\Omega(1)$</strong>.</div>`;
+                    } else {
+                        log.innerHTML = `<div><strong style="color:#f97316">Found at the very end.</strong><br/>${size} Operations.<br/>This is the <strong>Upper Bound $O(N)$</strong>.</div>`;
+                    }
+                    if(window.MathJax) MathJax.typesetPromise();
+                    return;
+                } else {
+                    // Not found, dim out
+                    node.innerText = Math.floor(Math.random() * 40);
+                    node.style.borderColor = '#cbd5e1';
+                    node.style.background = '#f1f5f9'; // Gray
+                    node.style.color = '#94a3b8';
+                    node.style.transform = 'scale(1)';
+                }
+            }
+        }
+        
+        // Initialize on load
+        setTimeout(init, 500); 
+        
+        return { runBest: () => run('best'), runWorst: () => run('worst') };
+    })();
   </script>
 </body>
 </html>
