@@ -854,8 +854,8 @@ var s = new Student {
   <h2>The <span class="mono">new</span> Keyword</h2>
   <p>This is the detonator. It triggers memory allocation.</p>
   
-  <div class="code-block" style="font-size:24px; color: darkblue;">
-    Student s = <span class="kw" style="color: #00008B; font-weight: bold;">new</span> Student();
+  <div class="code-block" style="font-size:24px; color: rgb(232, 232, 240);">
+    Student s = <span class="kw" style="color: #9999e9; font-weight: bold;">new</span> Student();
   </div>
 
   <div class="grid-3" style="margin-top:30px;">
@@ -2312,30 +2312,33 @@ list.Add(<span class="str">"Text"</span>); <span class="com">// Mixed types allo
 b.Content = 5; <span class="com">// Type Safe!</span></div>
     </section>
 
-    <section class="slide">
-      <h2>Generics Lab</h2>
-      <div class="sim-box">
-         <span class="sim-title">Type Safe Box&lt;T&gt;</span>
-         <div class="grid-2">
-            <div>
-               <p style="margin-bottom:10px;">Define Box Type:</p>
-               <select id="genSelector" class="sim-input" style="width:100%;" onchange="resetGenLab()">
-                  <option value="int">Box&lt;int&gt;</option>
-                  <option value="string">Box&lt;string&gt;</option>
-               </select>
-            </div>
-            <div>
-               <p style="margin-bottom:10px;">Try to insert value:</p>
-               <div class="btn-row">
-                  <button class="btn" onclick="tryGenInsert(100)">Insert 100</button>
-                  <button class="btn secondary" onclick="tryGenInsert('Hello')">Insert "Hello"</button>
-               </div>
-            </div>
+<section class="slide">
+   <h2 style="color: #035322;">Generics Lab</h2>
+   
+   <div class="sim-box">
+      <span class="sim-title" style="color: #beb8b8; font-weight: bold;">Type Safe Box&lt;T&gt;</span>
+      
+      <div class="grid-2">
+         <div>
+            <p style="margin-bottom:10px; color: #e5dada;">Define Box Type:</p>
+            <select id="genSelector" class="sim-input" style="width:100%;" onchange="resetGenLab()">
+               <option value="int">Box&lt;int&gt;</option>
+               <option value="string">Box&lt;string&gt;</option>
+            </select>
          </div>
-         <div id="genLog" class="console-out" style="margin-top:20px;">Waiting...</div>
+         <div>
+            <p style="margin-bottom:10px; color: #ded7d7;">Try to insert value:</p>
+       <div class="btn-row">
+   <button class="btn" style="color: #ffffff;" onclick="tryGenInsert(100)">Insert 100</button>
+   
+   <button class="btn secondary" style="color: #dfddd7;" onclick="tryGenInsert('Hello')">Insert "Hello"</button>
+</div>
+         </div>
       </div>
-    </section>
-
+      
+      <div id="genLog" class="console-out" style="margin-top:20px; color: #28a745; font-weight: mono;">Waiting...</div>
+   </div>
+</section>
     <section class="slide">
       <h2>Generic Constraints</h2>
       <p>Restricting what <code>T</code> can be.</p>

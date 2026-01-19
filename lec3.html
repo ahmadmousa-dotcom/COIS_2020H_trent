@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lecture 3: Lists & Arrays</title>
+
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root{
+      /* --- THEME CONFIGURATION --- */
+      --stage-0: #0b1220;      /* Dark background outer */
+      --stage-1: #0f1a2e;      /* Dark background inner */
+
+      --slide-bg: #ffffff;     /* Slide background */
+      --ink: #0f172a;          /* Text color */
+      --muted: #475569;        /* Subtext color */
+
+      --soft: #e2e8f0;         /* Borders */
+      --soft2: #f1f5f9;        /* Light backgrounds */
+
+      --accent: #16a34a;       /* Primary Accent (Green) */
+      --accent-2: #22c55e;     /* Brighter Accent */
+      
+      --radius: 20px;
+      --shadow: 0 25px 60px rgba(0,0,0,.45);
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+
+      --baseW: 1600;
+      --baseH: 900;
+      --scale: 1;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background:
+        radial-gradient(1400px 800px at 20% 10%, rgba(34,197,94,.15), transparent 60%),
+        radial-gradient(1200px 800px at 85% 20%, rgba(22,163,74,.10), transparent 55%),
+        linear-gradient(180deg, var(--stage-0), var(--stage-1));
+      color:#e5e7eb;
+      overflow:hidden;
+    }
+
+    /* Progress Bar */
+    #progress-container{
+      position:fixed; top:0; left:0; width:100%; height:8px;
+      background: rgba(255,255,255,.10); z-index:9999; backdrop-filter: blur(6px);
+    }
+    #progress-bar{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .25s ease;
+    }
+
+    /* Stage & Deck */
+    .stage{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding: 18px;
+    }
+    .deck-wrap{
+      width: calc(var(--baseW) * 1px);
+      height: calc(var(--baseH) * 1px);
+      transform: scale(var(--scale));
+      transform-origin:center center;
+      position:relative;
+    }
+    .deck{ width:100%; height:100%; position:relative; }
+
+    /* Slide Logic */
+    .slide{
+      width:100%; height:100%;
+      background: var(--slide-bg);
+      color: var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position:absolute; inset:0;
+      display:none;
+      overflow:hidden;
+      padding: 50px 60px;
+      animation: slideIn .28s ease;
+    }
+    .slide.active{ display:block; }
+    
+    @keyframes slideIn{
+      from{ opacity:0; transform: translateY(14px) scale(.99); }
+      to{ opacity:1; transform: translateY(0) scale(1); }
+    }
+
+    /* Decorative Triangles */
+    .slide::before, .slide::after{
+      content:""; position:absolute; width: 240px; height: 240px; pointer-events:none; opacity:.95; z-index: 0;
+    }
+    .slide::before{
+      top:-1px; left:-1px;
+      background: radial-gradient(circle at 0% 0%, rgba(34,197,94,.22), transparent 55%),
+                  linear-gradient(135deg, rgba(22,163,74,.95), rgba(34,197,94,.55));
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+    .slide::after{
+      bottom:-1px; right:-1px;
+      background: radial-gradient(circle at 100% 100%, rgba(34,197,94,.22), transparent 55%),
+                  linear-gradient(315deg, rgba(22,163,74,.95), rgba(34,197,94,.55));
+      clip-path: polygon(100% 100%, 100% 0, 0 100%);
+    }
+
+    /* Typography & Header */
+    .slide-top{
+      position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom: 22px;
+    }
+    .meta{ display:flex; flex-direction:column; gap:4px; line-height:1.15; }
+    .meta .course{ font-weight:800; letter-spacing:.06em; text-transform:uppercase; color: var(--ink); font-size: 16px; }
+    .meta .sub{ font-size: 15px; color: var(--muted); }
+    
+    h1{ font-size: 56px; margin: 8px 0 10px; letter-spacing:-1.1px; line-height:1.06; position:relative; z-index:2; }
+    h2{ font-size: 40px; margin: 6px 0 18px; letter-spacing:-0.8px; position:relative; z-index:2; border-bottom: 3px solid var(--accent); padding-bottom:10px; display:inline-block; }
+    h3{ font-size: 26px; margin: 14px 0 10px; color: #0b2a14; position:relative; z-index:2; }
+    p, li{ font-size: 20px; line-height:1.6; color: var(--ink); position:relative; z-index:2; }
+    
+    .muted{ color: var(--muted); }
+    code{ font-family: var(--mono); font-size: .92em; background: #f3f4f6; padding: 2px 6px; border-radius: 8px; border: 1px solid #e5e7eb; }
+    pre { background: #1e293b; color: #e2e8f0; padding: 20px; border-radius: 12px; overflow-x: auto; font-family: var(--mono); font-size: 18px; position:relative; z-index:2; }
+
+    /* Layout Utilities */
+    .grid-2{ display:grid; grid-template-columns: 1.25fr 1fr; gap: 26px; align-items:start; position:relative; z-index:2; }
+    .grid-3{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items:start; position:relative; z-index:2; }
+    
+    /* Components */
+    .card{ background: var(--soft2); border: 1px solid var(--soft); border-radius: 18px; padding: 18px; position:relative; z-index:2; }
+    .card-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 14px; position:relative; z-index:2; }
+
+    .info-card{ background: #ffffff; border: 1px solid var(--soft); border-left: 6px solid var(--accent); border-radius: 16px; padding: 16px; transition: transform .15s ease, box-shadow .15s ease; cursor: default; }
+    .info-card:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.10); }
+
+    .pill{ display:inline-block; border:1px solid var(--soft); background: var(--soft2); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--muted); font-family: var(--mono); white-space:nowrap; }
+    .callout{ border-left: 6px solid var(--accent); padding: 18px 22px; background: #f6fffa; border-radius: 16px; margin-top: 14px; position:relative; z-index:2; }
+    
+    /* Tables */
+    table{ width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius: 18px; border: 1px solid var(--soft); margin-top: 14px; position:relative; z-index:2; background:#fff; }
+    th, td{ padding: 14px 18px; text-align:left; border-bottom: 1px solid var(--soft); font-size: 18px; vertical-align:top; }
+    th{ background:#0b2a14; color:#fff; font-weight:800; letter-spacing:.2px; }
+    tr:last-child td{ border-bottom:none; }
+    tr:nth-child(even) td{ background:#fbfdff; }
+
+    /* Footer */
+    .slide-footer{ position:absolute; left: 60px; right: 60px; bottom: 26px; display:flex; align-items:center; justify-content:space-between; color: var(--muted); font-size: 14px; z-index:2; }
+    .slide-no{ font-family: var(--mono); background: var(--soft2); border: 1px solid var(--soft); padding: 6px 12px; border-radius: 999px; color: var(--muted); }
+
+    /* Controls (Floating Buttons) */
+    .controls{ position:fixed; right: 18px; bottom: 18px; z-index:10000; display:flex; gap: 10px; align-items:center; }
+    .iconbtn{ width: 44px; height: 44px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: rgba(15,23,42,.45); color:#e5e7eb; display:grid; place-items:center; cursor:pointer; backdrop-filter: blur(10px); transition: transform .12s ease, background .12s ease; user-select:none; }
+    .iconbtn:hover{ transform: translateY(-2px); background: rgba(15,23,42,.65); }
+    .iconbtn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+    .iconbtn svg{ width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  </style>
+</head>
+
+<body>
+  <div id="progress-container"><div id="progress-bar"></div></div>
+
+  <div class="stage">
+    <div class="deck-wrap" id="deckWrap">
+      <div class="deck" id="deck">
+
+        <section class="slide active">
+          <div class="slide-top">
+            <div class="meta">
+              <div class="course">COIS 2020H</div>
+              <div class="sub">Data Structures</div>
+            </div>
+            <span class="pill">Lecture 3</span>
+          </div>
+          
+          <h1>Lists using Arrays</h1>
+          <h2 style="margin-top:0; border:none; color:var(--muted);">Implementation, Operations, and Encapsulation</h2>
+          
+          <div class="card" style="margin-top: 22px;">
+            <p style="margin:0;"><strong>Instructor:</strong> Ahmad Mousa<br /><span class="muted">Trent University - GTA</span></p>
+            <div class="grid-3" style="margin-top:16px;">
+                <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">FOCUS</div><div style="font-weight:900;">Array Logic</div></div>
+                <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">TYPE</div><div style="font-weight:900;">Generics</div></div>
+                <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">TECH</div><div style="font-weight:900;">C#</div></div>
+            </div>
+          </div>
+          
+          <div class="slide-footer"><div class="muted">Based on lecture notes by Brian Srivastava & Alaa Alslaity</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+<section class="slide">
+          <div class="slide-top">
+             <div class="meta"><div class="course">Foundations</div><div class="sub">Concept</div></div>
+             <span class="pill">Interactive Lab</span>
+          </div>
+          
+          <h2>Implementation Vs. Theory</h2>
+          
+          <div class="grid-2">
+            <div>
+              <p>It is important to understand the distinction between a logical data structure and its underlying implementation.</p>
+              <ul>
+                <li><strong>Implementation (Hardware):</strong> The physical storage mechanism. In this case, a fixed-size <strong>Array</strong>.</li>
+                <li><strong>Logic (Software):</strong> The rules we follow when deciding <em>where</em> to put data.</li>
+              </ul>
+              <div class="callout">
+                <p style="margin:0;"><strong>Try the buttons on the right.</strong><br/>
+                Notice that the <strong>Array</strong> (the 5 boxes) never changes. Only the <strong>Logic</strong> (how we insert numbers) changes.</p>
+              </div>
+            </div>
+            
+            <div class="card" style="background:#f8fafc; border-left:6px solid var(--ink);">
+              
+              <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px;">
+                  <h3 style="margin:0; font-size:20px; color:var(--ink);">Array Memory</h3>
+                  <span id="logic-label" class="pill" style="background:#e2e8f0; color:var(--ink); font-weight:bold;">Empty</span>
+              </div>
+
+              <div id="array-vis" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-bottom:20px;">
+                  <div class="box-slot"></div>
+                  <div class="box-slot"></div>
+                  <div class="box-slot"></div>
+                  <div class="box-slot"></div>
+                  <div class="box-slot"></div>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                      <button class="mini-btn" onclick="addUnsorted()" style="background:var(--muted);">
+                          + Add (Unsorted Logic)
+                      </button>
+                      <button class="mini-btn" onclick="addSorted()" style="background:var(--accent);">
+                          + Add (Sorted Logic)
+                      </button>
+                  </div>
+                  <button class="mini-btn" onclick="resetDemo()" style="background:transparent; color:var(--ink); border:1px solid var(--soft);">
+                      Reset Memory
+                  </button>
+              </div>
+
+              <div id="logic-feedback" style="margin-top:15px; font-size:15px; color:var(--muted); min-height:40px; line-height:1.4;">
+                  Waiting for input...
+              </div>
+
+            </div>
+          </div>
+          
+          <div class="slide-footer"><div class="muted">Same Array, Different Logic</div><div class="slide-no" data-slide-no></div></div>
+
+          <script>
+            // Internal logic for this specific slide
+            let demoData = [];
+            const capacity = 5;
+
+            // Helper to draw the current state of the array
+            function drawArray() {
+                const container = document.getElementById('array-vis');
+                container.innerHTML = ''; // Clear current
+
+                for (let i = 0; i < capacity; i++) {
+                    const val = demoData[i] !== undefined ? demoData[i] : "";
+                    
+                    // Style depends on whether slot is full or empty
+                    let style = "height:60px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:20px; transition:all 0.3s ease;";
+                    
+                    if(val !== "") {
+                        style += "background:white; border:2px solid var(--accent); color:var(--ink); font-weight:800; box-shadow:0 4px 10px rgba(0,0,0,0.05); transform:scale(1.02);";
+                    } else {
+                        style += "border:2px dashed #cbd5e1; background:transparent; color:#94a3b8;";
+                    }
+
+                    container.innerHTML += `<div style="${style}">${val}</div>`;
+                }
+            }
+
+            function addUnsorted() {
+                if (demoData.length >= capacity) {
+                    document.getElementById('logic-feedback').innerHTML = "<span style='color:#ef4444; font-weight:bold;'>Array is Full!</span> Crash or Grow needed.";
+                    return;
+                }
+                const num = Math.floor(Math.random() * 99) + 1;
+                
+                // LOGIC: Just push to the end
+                demoData.push(num);
+                
+                drawArray();
+                updateLabel("Unsorted List");
+                document.getElementById('logic-feedback').innerHTML = `Added <strong>${num}</strong> to the first empty slot. <br>Fast, but messy.`;
+            }
+
+            function addSorted() {
+                if (demoData.length >= capacity) {
+                    document.getElementById('logic-feedback').innerHTML = "<span style='color:#ef4444; font-weight:bold;'>Array is Full!</span> Crash or Grow needed.";
+                    return;
+                }
+                const num = Math.floor(Math.random() * 99) + 1;
+                
+                // LOGIC: Push then Sort
+                demoData.push(num);
+                demoData.sort((a, b) => a - b);
+                
+                drawArray();
+                updateLabel("Sorted List");
+                document.getElementById('logic-feedback').innerHTML = `Added <strong>${num}</strong> and shifted items to maintain order. <br>Slower, but organized.`;
+            }
+
+            function resetDemo() {
+                demoData = [];
+                drawArray();
+                updateLabel("Empty");
+                document.getElementById('logic-feedback').innerHTML = "Memory cleared.";
+            }
+
+            function updateLabel(text){
+                document.getElementById('logic-label').innerText = text;
+            }
+
+            // Initialize on load
+            setTimeout(drawArray, 100);
+          </script>
+        </section>
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Definition</div><div class="sub">Types</div></div>
+              <span class="pill">Structure</span>
+            </div>
+            
+            <h2>What is a List?</h2>
+            <p>A list is a collection of objects. It is the starting point for all data structures in this course.</p>
+            
+            <div class="card-grid">
+                <div class="info-card">
+                  <h3>Ordering</h3>
+                  <p>Can be <strong>Ordered</strong> (sorted) or <strong>Unordered</strong> (random insertion).</p>
+                </div>
+                <div class="info-card">
+                  <h3>Sizing</h3>
+                  <p>Can be <strong>Fixed Size</strong> (classic array) or <strong>Dynamic Size</strong> (growable).</p>
+                </div>
+                <div class="info-card">
+                  <h3>Complexity</h3>
+                  <p>Can contain complex objects, metadata, or even be a <strong>List of Lists</strong>.</p>
+                </div>
+            </div>
+            
+            <div class="slide-footer"><div class="muted">Purpose drives implementation </div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Functionality</div><div class="sub">Methods</div></div>
+              <span class="pill">Overview</span>
+            </div>
+            
+            <h2>Key List Operations</h2>
+            <p>Every robust list implementation usually supports the following:</p>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <ul style="margin:0; padding-left:20px;">
+                        <li><strong>Create</strong>: Initialize</li>
+                        <li><strong>Grow</strong>: Increase capacity</li>
+                        <li><strong>AddOne</strong>: Append to end</li>
+                        <li><strong>InsertOne</strong>: Place at index</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <ul style="margin:0; padding-left:20px;">
+                        <li><strong>DeleteOne</strong>: Remove item</li>
+                        <li><strong>DeleteAll</strong>: Clear list</li>
+                        <li><strong>Search</strong>: Find item</li>
+                        <li><strong>Traverse</strong>: Print/Visit all</li>
+                    </ul>
+                </div>
+                 <div class="card">
+                    <ul style="margin:0; padding-left:20px;">
+                        <li><strong>Sort</strong>: Order items</li>
+                        <li><strong>Randomize</strong>: Shuffle</li>
+                        <li><strong>Merge</strong>: Combine lists</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="slide-footer"><div class="muted">Operations dictate performance requirements</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Code</div><div class="sub">Generics</div></div>
+              <span class="pill">C#</span>
+            </div>
+            
+            <h2>Generic Array Implementation</h2>
+            <p>Using Generics <code>&lt;T&gt;</code> allows the list to handle any data type.</p>
+            
+            <div class="grid-2">
+                <pre><code class="language-csharp">public class GenericArray&lt;T&gt; {
+    private T[] array; // The actual array
+
+    // Constructor
+    public GenericArray(int size) {
+        array = new T[size];
+    }
+
+    public void setItem(int index, T value) {
+        array[index] = value;
+    }
+    
+    public T getItem(int index) {
+        return array[index];
+    }
+}</code></pre>
+                <div>
+                    <div class="callout">
+                        <h3>Why Generics?</h3>
+                        <p>Allows code reuse. You can create a <code>GenericArray&lt;int&gt;</code> or <code>GenericArray&lt;string&gt;</code> using the same class definition.</p>
+                    </div>
+                    <p class="muted" style="font-size:16px; margin-top:20px;">Access is \(O(1)\) if index is known.</p>
+                </div>
+            </div>
+            
+            <div class="slide-footer"><div class="muted">See Slide 11 for code details</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Limitations</div><div class="sub">Memory</div></div>
+              <span class="pill">Complexity</span>
+            </div>
+            
+            <h2>The "Grow" Operation</h2>
+            <div class="grid-2">
+                <div>
+                    <p>Arrays have a fixed size. If you try to add an element beyond the size, the program crashes:.</p>
+                    <p>To "grow" an array:</p>
+                    <ol>
+                        <li>Create a new, larger array.</li>
+                        <li>Copy all elements from the old array to the new one.</li>
+                    </ol>
+                    <p><strong>Complexity:</strong> Access is \(O(1)\), but Growing is \(O(N)\).</p>
+                </div>
+                <div class="card">
+                    <h3>Resize Strategy</h3>
+                    <p>A common strategy is to <strong>double</strong> the size when full.</p>
+                    <pre><code class="language-csharp">public void Grow(int newSize) {
+   // Resize is O(N) cost
+   Array.Resize(ref array, newSize); 
+}</code></pre>
+                    <p class="muted" style="font-size:14px;">Warning: Doubling very large arrays can cause memory issues.</p>
+                </div>
+            </div>
+            
+            <div class="slide-footer"><div class="muted">Grow is a main limitation of arrays</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Operations</div><div class="sub">Manipulation</div></div>
+              <span class="pill">Logic</span>
+            </div>
+            
+            <h2>Insertion & Shifting</h2>
+            <p><strong>Add vs. Insert:</strong> Adding typically happens at the end. Inserting happens between existing values[cite: 144, 145].</p>
+            
+            <div class="grid-2">
+                <div class="callout">
+                    <h3>The Shift Problem</h3>
+                    <p>If you insert at index <code>[2]</code>, you cannot just overwrite. You must shift existing values at <code>[2], [3], ... [n]</code> to the right to make room[cite: 160].</p>
+                </div>
+                <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                                        <div style="margin-top:15px; font-weight:bold; color:var(--accent);">Shift Right \(\rightarrow\)</div>
+                    <div style="font-family:var(--mono); margin-top:10px;">[A][B][C][D][_] <br> Insert 'X' at [2] <br> [A][B][X][C][D]</div>
+                </div>
+            </div>
+
+            <div class="slide-footer"><div class="muted">Insertion in arrays is computationally expensive</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Operations</div><div class="sub">Removal</div></div>
+              <span class="pill">Logic</span>
+            </div>
+            
+            <h2>Deleting Elements</h2>
+            <p>Deleting from an array introduces holes or requires shifting.</p>
+            
+            <div class="card-grid">
+                <div class="info-card">
+                    <h3>Simple Delete</h3>
+                    <p>Set <code>array[i] = null</code>. <br><strong>Issue:</strong> Leaves a "hole" in the list[cite: 201, 202].</p>
+                </div>
+                <div class="info-card">
+                    <h3>Delete from End</h3>
+                    <p>Set <code>array[n] = null</code>. <br><strong>Efficient:</strong> No shifting required[cite: 223].</p>
+                </div>
+                <div class="info-card">
+                    <h3>Delete from Front</h3>
+                    <p>Requires shifting all subsequent elements left (or using a Circular Array)[cite: 226, 227].</p>
+                </div>
+            </div>
+
+            <p class="muted" style="margin-top:20px; font-size:18px;"><strong>Note:</strong> Deleting the structure (the list) is different from deleting the objects (data) it contains. Objects may remain in memory if referenced elsewhere[cite: 347, 350].</p>
+            
+            <div class="slide-footer"><div class="muted">Shift Left \(\leftarrow\) is required to close holes</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Algorithms</div><div class="sub">Processing</div></div>
+              <span class="pill">Overview</span>
+            </div>
+            
+            <h2>Search & Sort</h2>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>Search</h3>
+                    <p><strong>Linear Search:</strong> Check every element one by one.</p>
+                    <pre><code class="language-csharp">for(int i=0; i&lt;len; i++) {
+  if(array[i].Equals(val)) 
+     return true;
+}</code></pre>
+                    <p class="muted">Simple but slow for large datasets[cite: 236].</p>
+                </div>
+                <div>
+                    <h3>Bubble Sort</h3>
+                    <p>Repeatedly swap adjacent elements if they are in the wrong order.</p>
+                    <ul>
+                        <li>Easy to implement[cite: 293].</li>
+                        <li>Slow: \(O(n^2)\) complexity[cite: 301].</li>
+                        <li>Not suitable for large arrays[cite: 295].</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="slide-footer"><div class="muted">More efficient algorithms (Binary Search, QuickSort) covered later.</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Framework</div><div class="sub">System.Collections</div></div>
+              <span class="pill">.NET</span>
+            </div>
+            
+            <h2>The .NET ArrayList</h2>
+            <p>C# provides a built-in <code>ArrayList</code> which is robust but complex[cite: 354].</p>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Features</h3>
+                    <ul>
+                        <li><strong>Dynamic:</strong> Grows automatically.</li>
+                        <li><strong>Flexible:</strong> Accepts <code>null</code> and duplicates[cite: 360, 361].</li>
+                        <li><strong>Untyped:</strong> Stores <code>object</code> types (requires casting).</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Encapsulation</h3>
+                    <p>The internal array is hidden. The class handles <code>Grow</code> and <code>Shift</code> automatically.</p>
+                    <p class="muted">"The calling function has no idea about the details." [cite: 397]</p>
+                </div>
+            </div>
+            
+            <div class="callout" style="margin-top:20px;">
+                <strong>Common Methods:</strong> <code>Add</code>, <code>BinarySearch</code>, <code>Clear</code>, <code>Contains</code>, <code>Remove</code>, <code>Sort</code> [cite: 377-384].
+            </div>
+            
+            <div class="slide-footer"><div class="muted">Encapsulation hides complexity [cite: 391]</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Advanced</div><div class="sub">Comparison</div></div>
+              <span class="pill">Interfaces</span>
+            </div>
+            
+            <h2>IEquatable & IComparable</h2>
+            <p>To sort or search custom objects (like a <code>Car</code> class), we must tell C# how to compare them.</p>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>IEquatable</h3>
+                    <p>Used to determine if two objects are equal (e.g., for <code>Contains</code>)[cite: 412].</p>
+                    <code style="display:block; margin-bottom:10px;">bool Equals(Car other)</code>
+                </div>
+                <div>
+                    <h3>IComparable</h3>
+                    <p>Used for <strong>Sorting</strong>. Returns an integer indicating order[cite: 420, 424].</p>
+                    <code style="display:block; margin-bottom:10px;">int CompareTo(Object other)</code>
+                </div>
+            </div>
+
+            <table style="margin-top:20px;">
+              <tr>
+                <th>Value</th>
+                <th>Meaning</th>
+              </tr>
+              <tr>
+                <td><strong>&lt; 0</strong></td>
+                <td>This instance precedes the object (smaller).</td>
+              </tr>
+              <tr>
+                <td><strong>0</strong></td>
+                <td>This instance is equal to the object.</td>
+              </tr>
+              <tr>
+                <td><strong>&gt; 0</strong></td>
+                <td>This instance follows the object (larger).</td>
+              </tr>
+            </table>
+            
+            <div class="slide-footer"><div class="muted">Required for Array.Sort() [cite: 460]</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Conclusion</div><div class="sub">Summary</div></div>
+              <span class="pill">End</span>
+            </div>
+            
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:60%;">
+                <h1>Thank You</h1>
+                <p>Lists using Arrays provide fast access \(O(1)\) but costly insertion/growth \(O(N)\).</p>
+                <div class="callout">
+                    <h3>Next Class: Linked Lists</h3>
+                    <p>We will look at lists that implement these features differently to solve the "Shift" problem[cite: 482].</p>
+                </div>
+            </div>
+            
+            <div class="slide-footer"><div class="muted">Lecture 3 Complete</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="controls" aria-label="Presentation controls">
+    <button class="iconbtn" id="prevBtn" onclick="go(-1)" aria-label="Previous slide" title="Previous (←)">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="iconbtn" id="nextBtn" onclick="go(1)" aria-label="Next slide" title="Next (→ / Space)">
+      <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <button class="iconbtn" id="fsBtn" onclick="toggleFullScreen()" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+      <svg viewBox="0 0 24 24">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+        <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
+        <path d="M8 21H5a2 2 0 0 1-2-2v-3"/>
+        <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    // --- CORE ENGINE ---
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const progressBar = document.getElementById("progress-bar");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const fsBtn = document.getElementById("fsBtn");
+
+    let current = 0;
+
+    // SCALING LOGIC
+    function applyScale(){
+      const pad = 24;
+      const w = window.innerWidth - pad*2;
+      const h = window.innerHeight - pad*2;
+      const baseW = 1600;
+      const baseH = 900;
+      const s = Math.min(w/baseW, h/baseH);
+      document.documentElement.style.setProperty('--scale', String(Math.max(0.3, Math.min(s, 1.5))));
+    }
+
+    // UPDATE UI
+    function updateSlideNumbers(){
+      slides.forEach((s, i) => {
+        const holder = s.querySelector("[data-slide-no]");
+        if (holder) holder.textContent = `${i + 1} / ${slides.length}`;
+      });
+    }
+
+    function updateProgress(){
+      progressBar.style.width = ((current + 1) / slides.length) * 100 + "%";
+    }
+
+    function updateUI(){
+      slides.forEach(s => s.classList.remove("active"));
+      slides[current].classList.add("active");
+
+      updateProgress();
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === slides.length - 1;
+
+      // Re-render math if MathJax is present
+      if(window.MathJax) MathJax.typesetPromise();
+    }
+
+    function go(dir){
+      const nextIndex = current + dir;
+      if(nextIndex < 0 || nextIndex >= slides.length) return;
+      current = nextIndex;
+      updateUI();
+    }
+
+    function toggleFullScreen(){
+      if(!document.fullscreenElement){
+        document.documentElement.requestFullscreen?.();
+      }else{
+        document.exitFullscreen?.();
+      }
+    }
+    
+    // KEYBOARD NAVIGATION
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "ArrowRight" || e.key === " " || e.key === "Enter"){
+        if (e.key === " ") e.preventDefault();
+        go(1);
+      } else if(e.key === "ArrowLeft"){
+        go(-1);
+      } else if(e.key.toLowerCase() === "f"){
+        toggleFullScreen();
+      }
+    });
+    
+    // INIT
+    window.addEventListener("resize", applyScale);
+    applyScale();
+    updateSlideNumbers();
+    updateUI();
+  </script>
+</body>
+</html>
