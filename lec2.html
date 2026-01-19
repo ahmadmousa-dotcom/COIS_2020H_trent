@@ -318,11 +318,11 @@
       </div>
     </section>
 <section class="slide">
-      <h2>Interactive Warm-up: Sort the Logic</h2>
+      <h2>Sort the Logic</h2>
       <div class="grid-2">
          <div>
             <h3>1. The Pool</h3>
-            <p>Drag items (or click to select) and move them to their correct definition.</p>
+            <p>Drag items and move them to their correct definition.</p>
             
             <div id="drag-pool" class="chips-container" style="min-height: 150px; padding: 20px; border: 2px dashed var(--soft); border-radius: 16px; background: rgba(255,255,255,0.05);">
                <div class="chip draggable" draggable="true" data-type="State" ondragstart="drag(event)" onclick="selectChip(this)">Student Name</div>
@@ -411,7 +411,7 @@
       </div>
     </section>
 <section class="slide">
-      <h2>Interactive Lab: Class or Object?</h2>
+      <h2>Class or Object?</h2>
       <div class="grid-2">
          
          <div>
@@ -419,16 +419,14 @@
             <div class="card" style="margin-bottom:20px;">
                <div class="card-header">It is a Class if...</div>
                <p>It represents a <strong>set</strong> or category. It <em>could</em> have instances.</p>
-               <p class="muted" style="font-size:18px;">e.g., "Film" (General Concept)</p>
             </div>
             <div class="card">
                <div class="card-header">It is an Object if...</div>
                <p>It is clearly a <strong>single member</strong> of the set. A specific entity.</p>
-               <p class="muted" style="font-size:18px;">e.g., "Reel #SW19876" (Specific Item)</p>
             </div>
          </div>
 
-         <div class="card flex-center" style="justify-content:center; background:#0f172a; border-color:var(--accent);">
+         <div class="card flex-center" style="justify-content:center; background:#027428; border-color:var(--accent);">
              
              <div class="mono" style="color:var(--muted); margin-bottom:10px;">IS THIS A CLASS OR OBJECT?</div>
              
@@ -450,7 +448,7 @@
     </section>
 
 <section class="slide">
-      <h2>1. Defining the Class</h2>
+      <h2>Defining the Class</h2>
       <div class="grid-2">
         
         <div class="flex-col">
@@ -494,7 +492,7 @@
     </section>
 
     <section class="slide">
-      <h2>2. Using the Class</h2>
+      <h2>Using the Class</h2>
       <p>Inside the <span class="mono">Main()</span> method, we bring the class to life.</p>
       
       <div class="grid-2" style="margin-top:20px;">
@@ -536,7 +534,7 @@
     </section>
 
     <section class="slide">
-      <h2>3. The Complete Program</h2>
+      <h2>The Complete Program</h2>
       <div class="grid-2">
          
          <div>
@@ -593,57 +591,33 @@
       </div>
     </section>
     <section class="slide">
-      <h2>Class vs. Object</h2>
-      <div class="grid-2">
-        <div class="card">
-          <h3>The Class (Blueprint)</h3>
-          <p>A template definition. It defines the structure but takes no memory (conceptually).</p>
-          <div class="code-block">
+  <h2>Class vs. Object</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>The Class (Blueprint)</h3>
+      <p>A template definition. It defines the structure but takes no memory (conceptually).</p>
+      <div class="code-block">
 <span class="kw">public class</span> Car {
-  <span class="kw">public string</span> Color;
+  <span class="kw">public string</span> Color { <span class="kw">get</span>; <span class="kw">set</span>; }
+  
+  <span class="kw">public void</span> Drive() { 
+    Console.WriteLine(<span class="str">"Driving..."</span>); 
+  }
 }</div>
-        </div>
-        <div class="card">
-          <h3>The Object (Instance)</h3>
-          <p>A concrete realization in memory created from the class.</p>
-          <div class="code-block">
-<span class="kw">var</span> c1 = <span class="kw">new</span> Car();
-c1.Color = <span class="str">"Red"</span>;</div>
-        </div>
-      </div>
-    </section>
+    </div>
+    <div class="card">
+      <h3>The Object (Instance)</h3>
+      <p>A concrete realization in memory created from the class.</p>
+      <div class="code-block">
+<span class="com">// Instantiate</span>
+<span class="kw">var</span> myCar = <span class="kw">new</span> Car();
 
-    <section class="slide">
-      <h2>Anatomy of a Class</h2>
-      <div class="grid-2">
-        <div class="code-block">
-<span class="kw">public class</span> Student
-{
-    <span class="com">// 1. Field (Data)</span>
-    <span class="kw">private string</span> _name;
-
-    <span class="com">// 2. Property (Gatekeeper)</span>
-    <span class="kw">public int</span> ID { <span class="kw">get</span>; <span class="kw">set</span>; }
-
-    <span class="com">// 3. Constructor (Init)</span>
-    <span class="kw">public</span> Student() { ... }
-
-    <span class="com">// 4. Method (Behavior)</span>
-    <span class="kw">public void</span> Study() { ... }
-}</div>
-        <div class="flex-col">
-           <div class="card">
-             <h3>Members</h3>
-             <p>Classes are composed of members. The most common are Fields (state) and Methods (logic).</p>
-           </div>
-           <div class="card">
-             <h3>Terminology</h3>
-             <p><strong>Instantiate:</strong> To create an object.</p>
-             <p><strong>Reference:</strong> The variable pointing to the object.</p>
-           </div>
-        </div>
-      </div>
-    </section>
+<span class="com">// Assign State & Behavior</span>
+myCar.Color = <span class="str">"Red"</span>;
+myCar.Drive();</div>
+    </div>
+  </div>
+</section>
 
     <section class="slide">
       <h2>Constructors: The Builders</h2>
@@ -677,196 +651,6 @@ c1.Color = <span class="str">"Red"</span>;</div>
 <span class="kw">var</span> s = <span class="kw">new</span> Student(<span class="str">"Ali"</span>);</div>
          </div>
 
-      </div>
-    </section>
-
-    <section class="slide">
-      <h2>Destructors: The Cleanup Crew</h2>
-      <div class="grid-2">
-         
-         <div>
-            <h3>The Opposite of Constructors</h3>
-            <p>Destructors describe how to <strong>destroy</strong> an object instance and release resources.</p>
-            
-            <div class="card" style="margin-top:30px; background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3);">
-               <div class="card-header" style="color:#fca5a5;">Important Note</div>
-               <p>In C#, you rarely call these manually. The <strong>Garbage Collector</strong> calls them implicitly when the object is no longer needed.</p>
-            </div>
-         </div>
-
-         <div class="flex-col">
-            <div class="code-block">
-<span class="kw">class</span> Car 
-{
-    <span class="com">// The Tilde (~) marks a Destructor</span>
-    ~Car() 
-    {
-        <span class="com">// Cleanup code here...</span>
-        Console.Write(<span class="str">"Car crushed."</span>);
-    }
-}</div>
-            <div class="card">
-               <h3>Key Characteristics</h3>
-               <ul>
-                  <li><strong>Symbol:</strong> Starts with a Tilde (<span class="mono">~</span>).</li>
-                  <li><strong>Name:</strong> Must match the Class name.</li>
-                  <li><strong>Return Type:</strong> None (Void).</li>
-                  <li><strong>Parameters:</strong> None (Cannot take arguments).</li>
-               </ul>
-            </div>
-         </div>
-
-      </div>
-    </section>
-    <section class="slide">
-      <h2>The <span class="mono">new</span> Keyword</h2>
-      <p>This is the detonator. It triggers memory allocation.</p>
-      <div class="code-block" style="font-size:24px;">
-Student s = <span class="kw">new</span> Student();
-      </div>
-      <div class="grid-3" style="margin-top:30px;">
-        <div class="card">
-           <div class="card-header">Step 1</div>
-           <p>Calculate size of <code>Student</code>.</p>
-        </div>
-        <div class="card">
-           <div class="card-header">Step 2</div>
-           <p>Request memory from the <strong>Heap</strong>.</p>
-        </div>
-        <div class="card">
-           <div class="card-header">Step 3</div>
-           <p>Return address (Reference) to stack variable <code>s</code>.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide">
-      <h2>Memory: Stack vs. Heap</h2>
-      <div class="grid-2">
-        <div class="card">
-          <h3>The Stack</h3>
-          <ul>
-             <li>High speed, small size.</li>
-             <li>Stores <strong>Value Types</strong> (`int`, `bool`).</li>
-             <li>Stores <strong>Variables/References</strong>.</li>
-             <li>Self-cleaning (scope based).</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3>The Heap</h3>
-          <ul>
-             <li>Slower, massive size.</li>
-             <li>Stores <strong>Objects</strong> (Reference Types).</li>
-             <li>Managed by the <strong>Garbage Collector</strong>.</li>
-             <li>Unstructured (Messy).</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-<section class="slide">
-      <h2>Deep Dive: Memory Allocation</h2>
-      <div class="grid-2">
-        
-        <div class="flex-col">
-           <div class="card" style="border-left:4px solid var(--accent);">
-             <div class="card-header">Code Execution</div>
-             <div class="code-block" style="font-size:18px; padding:0; background:none; border:none;">
-<div id="line0" style="padding:4px 8px; border-radius:4px;">int age = 20;</div>
-<div id="line1" style="padding:4px 8px; border-radius:4px;">Student s1 = new Student();</div>
-<div id="line2" style="padding:4px 8px; border-radius:4px;">s1.Name = "Ali";</div>
-<div id="line3" style="padding:4px 8px; border-radius:4px;">Student s2 = s1;</div>
-             </div>
-           </div>
-           
-           <div class="card">
-              <div class="card-header">Control Panel</div>
-              <p id="mem-instruction" class="muted" style="font-size:16px;">Click Next to begin execution.</p>
-              <div class="btn-row">
-                 <button class="btn" onclick="simMemNext()">▶ Next Step</button>
-                 <button class="btn secondary" onclick="simMemReset()">Reset</button>
-              </div>
-           </div>
-        </div>
-
-        <div class="grid-2" style="gap:10px;">
-           <div class="card" style="background:#0f1a2e; border:none; color:#fff; padding:15px;">
-              <div class="card-header" style="color:#94a3b8; border-bottom:1px solid #334155; margin-bottom:10px;">Stack (Fast/Local)</div>
-              <div id="stack-container" class="mem-stack" style="min-height:300px; position:relative;"></div>
-           </div>
-           
-           <div class="card" style="background:#0f1a2e; border:none; color:#fff; padding:15px;">
-              <div class="card-header" style="color:#94a3b8; border-bottom:1px solid #334155; margin-bottom:10px;">Heap (Global/Messy)</div>
-              <div id="heap-container" class="mem-heap" style="min-height:300px; position:relative;"></div>
-           </div>
-        </div>
-
-      </div>
-    </section>
-<section class="slide">
-      <h2>Value vs. Reference Types</h2>
-      <div class="grid-2">
-        
-        <div class="card" style="border-top: 5px solid var(--accent);">
-            <h3>1. Value Types (The Copy)</h3>
-            <p class="muted">Examples: <span class="mono">int</span>, <span class="mono">bool</span>, <span class="mono">double</span>, <span class="mono">struct</span></p>
-            
-            <p><strong>The "Photocopy" Analogy:</strong><br>
-            When you assign a Value Type, you get a completely independent copy. Changing the copy does <em>not</em> affect the original.</p>
-            
-            <ul style="font-size: 18px; margin: 15px 0;">
-                <li>Stored directly on the <strong>Stack</strong>.</li>
-                <li>The variable contains the <strong>actual data</strong>.</li>
-            </ul>
-
-            <div class="code-block" style="font-size:18px;">
-int a = 10;
-int b = a;  <span class="com">// Make a photocopy</span>
-
-b = 99;     <span class="com">// Change the copy</span>
-
-<span class="com">// Result: 'a' is still 10.</span></div>
-        </div>
-
-        <div class="card" style="border-top: 5px solid #3b82f6;">
-            <h3>2. Reference Types (The Link)</h3>
-            <p class="muted">Examples: <span class="mono">class</span>, <span class="mono">string</span>, <span class="mono">array</span></p>
-
-            <p><strong>The "Web Link" Analogy:</strong><br>
-            The variable is just an address (URL). Assigning it just shares the link. Both variables point to the <strong>same object</strong>.</p>
-
-            <ul style="font-size: 18px; margin: 15px 0;">
-                <li>Stored on the <strong>Heap</strong>.</li>
-                <li>The variable contains a <strong>pointer</strong>.</li>
-            </ul>
-
-            <div class="code-block" style="font-size:18px;">
-Car x = <span class="kw">new</span> Car();
-Car y = x;  <span class="com">// Copy the link</span>
-
-y.Color = <span class="str">"Red"</span>; <span class="com">// Change the object</span>
-
-<span class="com">// Result: x.Color is "Red" too!</span></div>
-        </div>
-
-      </div>
-    </section>
-
-    <section class="slide">
-      <h2>Reference Experiment</h2>
-      <div class="sim-box">
-         <span class="sim-title">Object Sharing Simulator</span>
-         <div class="grid-2">
-            <div style="text-align:center;">
-               <div style="margin-bottom:10px;">Variable A</div>
-               <input id="refInputA" class="sim-input" style="width:100px;" value="Generic">
-               <button class="btn" onclick="updateRefObj('A')" style="margin-top:10px;">Update A.Name</button>
-            </div>
-            <div style="text-align:center;">
-               <div style="margin-bottom:10px;">Variable B ( = A)</div>
-               <div id="refDisplayB" style="padding:10px; background:#1e293b; border-radius:6px; margin-top:5px; border:1px solid #333;">Generic</div>
-               <p class="muted" style="font-size:14px; margin-top:5px; color:#94a3b8;">B points to same object</p>
-            </div>
-         </div>
       </div>
     </section>
 
@@ -946,27 +730,67 @@ y.Color = <span class="str">"Red"</span>; <span class="com">// Change the object
       </div>
     </section>
 
-    <section class="slide">
-      <h2>Object Initializers</h2>
-      <p>Syntactic sugar to set properties immediately. Cleaner than multiple lines.</p>
-      <div class="grid-2">
-         <div class="card">
-            <div class="card-header">Old Way</div>
-            <div class="code-block" style="font-size:14px; background:none; border:none; padding:0;">
+<section class="slide">
+  <h2>Object Initializers</h2>
+  <p>Syntactic sugar to set properties immediately. Cleaner than multiple lines.</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">Old Way</div>
+      <div class="code-block" style="font-size:14px; background:none; border:none; padding:0; color: darkgreen;">
 var s = new Student();
 s.Name = "Ali";
 s.Age = 22;</div>
-         </div>
-         <div class="card">
-            <div class="card-header">Initializer</div>
-            <div class="code-block" style="font-size:14px; background:none; border:none; padding:0;">
+    </div>
+    <div class="card">
+      <div class="card-header">Initializer</div>
+      <div class="code-block" style="font-size:14px; background:none; border:none; padding:0; color: darkgreen;">
 var s = new Student {
    Name = "Ali",
    Age = 22
 };</div>
+    </div>
+  </div>
+</section>
+    <section class="slide">
+      <h2>Destructors: The Cleanup Crew</h2>
+      <div class="grid-2">
+         
+         <div>
+            <h3>The Opposite of Constructors</h3>
+            <p>Destructors describe how to <strong>destroy</strong> an object instance and release resources.</p>
+            
+            <div class="card" style="margin-top:30px; background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3);">
+               <div class="card-header" style="color:#fca5a5;">Important Note</div>
+               <p>In C#, you rarely call these manually. The <strong>Garbage Collector</strong> calls them implicitly when the object is no longer needed.</p>
+            </div>
          </div>
+
+         <div class="flex-col">
+            <div class="code-block">
+<span class="kw">class</span> Car 
+{
+    <span class="com">// The Tilde (~) marks a Destructor</span>
+    ~Car() 
+    {
+        <span class="com">// Cleanup code here...</span>
+        Console.Write(<span class="str">"Car crushed."</span>);
+    }
+}</div>
+            <div class="card">
+               <h3>Key Characteristics</h3>
+               <ul>
+                  <li><strong>Symbol:</strong> Starts with a Tilde (<span class="mono">~</span>).</li>
+                  <li><strong>Name:</strong> Must match the Class name.</li>
+                  <li><strong>Return Type:</strong> None (Void).</li>
+                  <li><strong>Parameters:</strong> None (Cannot take arguments).</li>
+               </ul>
+            </div>
+         </div>
+
       </div>
     </section>
+
+    
 <section class="slide">
       <h2>Garbage Collection (GC)</h2>
       <p>C# is a <strong>managed language</strong>. It has a built-in janitor that cleans memory for you.</p>
@@ -1025,6 +849,142 @@ var s = new Student {
 
       </div>
     </section>
+
+<section class="slide">
+  <h2>The <span class="mono">new</span> Keyword</h2>
+  <p>This is the detonator. It triggers memory allocation.</p>
+  
+  <div class="code-block" style="font-size:24px; color: darkblue;">
+    Student s = <span class="kw" style="color: #00008B; font-weight: bold;">new</span> Student();
+  </div>
+
+  <div class="grid-3" style="margin-top:30px;">
+    <div class="card">
+       <div class="card-header">Step 1</div>
+       <p>Calculate size of <code>Student</code>.</p>
+    </div>
+    <div class="card">
+       <div class="card-header">Step 2</div>
+       <p>Request memory from the <strong>Heap</strong>.</p>
+    </div>
+    <div class="card">
+       <div class="card-header">Step 3</div>
+       <p>Return address (Reference) to stack variable <code>s</code>.</p>
+    </div>
+  </div>
+</section>
+    <section class="slide">
+      <h2>Memory: Stack vs. Heap</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>The Stack</h3>
+          <ul>
+             <li>High speed, small size.</li>
+             <li>Stores <strong>Value Types</strong> (`int`, `bool`).</li>
+             <li>Stores <strong>Variables/References</strong>.</li>
+             <li>Self-cleaning (scope based).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>The Heap</h3>
+          <ul>
+             <li>Slower, massive size.</li>
+             <li>Stores <strong>Objects</strong> (Reference Types).</li>
+             <li>Managed by the <strong>Garbage Collector</strong>.</li>
+             <li>Unstructured (Messy).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+<section class="slide">
+      <h2>Memory Allocation</h2>
+      <div class="grid-2">
+        
+        <div class="flex-col">
+           <div class="card" style="border-left:4px solid var(--accent);">
+             <div class="card-header">Code Execution</div>
+             <div class="code-block" style="font-size:18px; padding:0; background:none; border:none;">
+<div id="line0" style="padding:4px 8px; border-radius:4px; color: #001a33;">int age = 20;</div>
+<div id="line1" style="padding:4px 8px; border-radius:4px; color: #001a33;">Student s1 = new Student();</div>
+<div id="line2" style="padding:4px 8px; border-radius:4px; color: #001a33;">s1.Name = "Ali";</div>
+<div id="line3" style="padding:4px 8px; border-radius:4px;">Student s2 = s1;</div>
+             </div>
+           </div>
+           
+           <div class="card">
+              <div class="card-header">Control Panel</div>
+              <p id="mem-instruction" class="muted" style="font-size:16px;">Click Next to begin execution.</p>
+              <div class="btn-row">
+                 <button class="btn" onclick="simMemNext()">▶ Next Step</button>
+                 <button class="btn secondary" onclick="simMemReset()">Reset</button>
+              </div>
+           </div>
+        </div>
+
+        <div class="grid-2" style="gap:10px;">
+           <div class="card" style="background:#0f1a2e; border:none; color:#fff; padding:15px;">
+              <div class="card-header" style="color:#94a3b8; border-bottom:1px solid #334155; margin-bottom:10px;">Stack (Fast/Local)</div>
+              <div id="stack-container" class="mem-stack" style="min-height:300px; position:relative;"></div>
+           </div>
+           
+           <div class="card" style="background:#0f1a2e; border:none; color:#fff; padding:15px;">
+              <div class="card-header" style="color:#94a3b8; border-bottom:1px solid #334155; margin-bottom:10px;">Heap (Global/Messy)</div>
+              <div id="heap-container" class="mem-heap" style="min-height:300px; position:relative;"></div>
+           </div>
+        </div>
+
+      </div>
+    </section>
+<section class="slide">
+      <h2>Value vs. Reference Types</h2>
+      <div class="grid-2">
+        
+        <div class="card" style="border-top: 5px solid var(--accent);">
+            <h3>1. Value Types (The Copy)</h3>
+            <p class="muted">Examples: <span class="mono">int</span>, <span class="mono">bool</span>, <span class="mono">double</span>, <span class="mono">struct</span></p>
+            
+            <p><strong>The "Photocopy" Analogy:</strong><br>
+            When you assign a Value Type, you get a completely independent copy. Changing the copy does <em>not</em> affect the original.</p>
+            
+            <ul style="font-size: 18px; margin: 15px 0;">
+                <li>Stored directly on the <strong>Stack</strong>.</li>
+                <li>The variable contains the <strong>actual data</strong>.</li>
+            </ul>
+
+            <div class="code-block" style="font-size:18px;">
+int a = 10;
+int b = a;  <span class="com">// Make a photocopy</span>
+
+b = 99;     <span class="com">// Change the copy</span>
+
+<span class="com">// Result: 'a' is still 10.</span></div>
+        </div>
+
+        <div class="card" style="border-top: 5px solid #3b82f6;">
+            <h3>2. Reference Types (The Link)</h3>
+            <p class="muted">Examples: <span class="mono">class</span>, <span class="mono">string</span>, <span class="mono">array</span></p>
+
+            <p><strong>The "Web Link" Analogy:</strong><br>
+            The variable is just an address (URL). Assigning it just shares the link. Both variables point to the <strong>same object</strong>.</p>
+
+            <ul style="font-size: 18px; margin: 15px 0;">
+                <li>Stored on the <strong>Heap</strong>.</li>
+                <li>The variable contains a <strong>pointer</strong>.</li>
+            </ul>
+
+            <div class="code-block" style="font-size:18px;">
+Car x = <span class="kw">new</span> Car();
+Car y = x;  <span class="com">// Copy the link</span>
+
+y.Color = <span class="str">"Red"</span>; <span class="com">// Change the object</span>
+
+<span class="com">// Result: x.Color is "Red" too!</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    
 
     <section class="slide">
       <h2>The 4 Pillars of OOP</h2>
@@ -1569,7 +1529,175 @@ class Car
       </div>
       <p class="muted" style="margin-top:20px;">C# supports Single Class Inheritance (only one dad).</p>
     </section>
+<section class="slide" id="inheritance-demo">
+  <h2>Types of Inheritance in C#</h2>
+  
+  <div class="tabs">
+    <button class="tab-btn active" data-target="single">Single</button>
+    <button class="tab-btn" data-target="multi-lvl">Multilevel</button>
+    <button class="tab-btn" data-target="hierarchy">Hierarchical</button>
+    <button class="tab-btn" data-target="multiple">Multiple (Interfaces)</button>
+  </div>
 
+  <div class="tab-content-container">
+    
+    <div id="single" class="tab-pane active">
+      <div class="split-view">
+        <div class="diagram-box">
+          <div class="class-box base">Animal</div>
+          <div class="arrow">↓</div>
+          <div class="class-box derived">Dog</div>
+        </div>
+        <div class="code-box">
+          <pre><span class="k">class</span> Animal { }
+
+<span class="c">// One Base, One Derived</span>
+<span class="k">class</span> Dog : Animal 
+{
+    <span class="k">public void</span> Bark() { }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="multi-lvl" class="tab-pane">
+      <div class="split-view">
+        <div class="diagram-box">
+          <div class="class-box base">Animal</div>
+          <div class="arrow">↓</div>
+          <div class="class-box derived">Dog</div>
+          <div class="arrow">↓</div>
+          <div class="class-box sub-derived">Puppy</div>
+        </div>
+        <div class="code-box">
+          <pre><span class="k">class</span> Animal { }
+<span class="k">class</span> Dog : Animal { }
+
+<span class="c">// Inherits from Derived class</span>
+<span class="k">class</span> Puppy : Dog 
+{
+    <span class="k">public void</span> Weep() { }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="hierarchy" class="tab-pane">
+      <div class="split-view">
+        <div class="diagram-box">
+          <div class="class-box base">Animal</div>
+          <div class="arrow-split">
+             <span>↙</span><span>↘</span>
+          </div>
+          <div class="row">
+            <div class="class-box derived">Dog</div>
+            <div class="class-box derived" style="margin-left:20px;">Cat</div>
+          </div>
+        </div>
+        <div class="code-box">
+          <pre><span class="k">class</span> Animal { }
+
+<span class="c">// Multiple classes, same parent</span>
+<span class="k">class</span> Dog : Animal { }
+
+<span class="k">class</span> Cat : Animal { }</pre>
+        </div>
+      </div>
+    </div>
+
+    <div id="multiple" class="tab-pane">
+      <div class="split-view">
+        <div class="diagram-box">
+          <div class="row">
+            <div class="class-box interface">IFly</div>
+            <div class="class-box interface" style="margin-left:20px;">ISwim</div>
+          </div>
+          <div class="arrow-merge">
+             <span>↘</span><span>↙</span>
+          </div>
+          <div class="class-box derived">Duck</div>
+          <p class="note">C# uses Interfaces for multiple sources.</p>
+        </div>
+        <div class="code-box">
+          <pre><span class="k">interface</span> IFly { }
+<span class="k">interface</span> ISwim { }
+
+<span class="c">// Implements multiple interfaces</span>
+<span class="k">class</span> Duck : IFly, ISwim 
+{ 
+    <span class="c">// ... implementation</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <style>
+    /* Tab Styling */
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+    .tab-btn { background: #222; color: #888; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; border-radius: 4px; transition: all 0.3s; font-weight: bold; }
+    .tab-btn:hover { background: #333; color: #fff; }
+    .tab-btn.active { background: var(--accent, #e1ad01); color: #000; }
+
+    /* Layout */
+    .tab-pane { display: none; animation: fadeIn 0.4s; }
+    .tab-pane.active { display: block; }
+    .split-view { display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; align-items: center; }
+
+    /* Diagrams */
+    .diagram-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 10px; min-height: 300px; }
+    .class-box { padding: 10px 20px; border-radius: 6px; font-weight: bold; width: 100px; text-align: center; border: 2px solid #fff; color: #fff; background: #333; }
+    
+    .base { border-color: #e1ad01; color: #e1ad01; }
+    .derived { border-color: #3b82f6; color: #3b82f6; }
+    .sub-derived { border-color: #22c55e; color: #22c55e; }
+    .interface { border-color: #d946ef; color: #d946ef; border-style: dashed; }
+    
+    .arrow { font-size: 24px; color: #666; margin: 5px 0; }
+    .arrow-split, .arrow-merge { display: flex; gap: 60px; font-size: 24px; color: #666; }
+    .row { display: flex; }
+    .note { font-size: 14px; color: #888; margin-top: 15px; text-align: center; font-style: italic; }
+
+    /* UPDATED CODE BOX STYLING (High Contrast Light Theme) */
+    .code-box { 
+        background: #ffffff; /* White background */
+        color: #222222;      /* Dark text */
+        padding: 20px; 
+        border-radius: 8px; 
+        border-left: 5px solid var(--accent, #e1ad01); 
+        font-family: 'Consolas', 'Monaco', monospace; 
+        font-size: 18px; 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    /* UPDATED SYNTAX HIGHLIGHTING */
+    .k { color: #0056b3; font-weight: bold; } /* Dark Blue Keywords */
+    .c { color: #008000; font-style: italic; } /* Green Comments */
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+
+  <script>
+    (function() {
+        const slide = document.getElementById('inheritance-demo');
+        const buttons = slide.querySelectorAll('.tab-btn');
+        const panes = slide.querySelectorAll('.tab-pane');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                buttons.forEach(b => b.classList.remove('active'));
+                panes.forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                const targetPane = slide.querySelector('#' + targetId);
+                if (targetPane) targetPane.classList.add('active');
+            });
+        });
+    })();
+  </script>
+</section>
+    
     <section class="slide">
       <h2>The <span class="mono">protected</span> Modifier</h2>
       <p>The middle ground between Private and Public.</p>
@@ -1886,7 +2014,7 @@ zoo.Add(<span class="kw">new</span> Cat());
 </section>
 
 <section class="slide">
-  <h2>Code Implementation: Shape Hierarchy</h2>
+  <h2>Shape Hierarchy</h2>
   <div class="grid-2">
     
     <div class="flex-col">
