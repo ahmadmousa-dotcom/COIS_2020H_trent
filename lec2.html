@@ -704,31 +704,6 @@ myCar.Drive();</div>
       </div>
     </section>
 
-    <section class="slide">
-      <h2>The <span class="mono">this</span> Keyword</h2>
-      <p>Refers to the <strong>current instance</strong>. Used to resolve naming conflicts.</p>
-      <div class="grid-2">
-         <div class="code-block">
-<span class="kw">public class</span> Hero {
-  <span class="kw">string</span> name;
-
-  <span class="kw">public</span> Hero(<span class="kw">string</span> name) {
-     <span class="com">// Ambiguous!</span>
-     name = name; 
-     
-     <span class="com">// Correct:</span>
-     <span class="kw">this</span>.name = name;
-  }
-}</div>
-         <div class="card">
-            <h3>Other Uses</h3>
-            <ul>
-               <li>Pass current object to another method: <code>Save(this);</code></li>
-               <li>Call another constructor: <code>: this()</code></li>
-            </ul>
-         </div>
-      </div>
-    </section>
 
 <section class="slide">
   <h2>Object Initializers</h2>
@@ -847,6 +822,32 @@ var s = new Student {
              </div>
          </div>
 
+      </div>
+    </section>
+    
+    <section class="slide">
+      <h2>The <span class="mono">this</span> Keyword</h2>
+      <p>Refers to the <strong>current instance</strong>. Used to resolve naming conflicts.</p>
+      <div class="grid-2">
+         <div class="code-block">
+<span class="kw">public class</span> Hero {
+  <span class="kw">string</span> name;
+
+  <span class="kw">public</span> Hero(<span class="kw">string</span> name) {
+     <span class="com">// Ambiguous!</span>
+     name = name; 
+     
+     <span class="com">// Correct:</span>
+     <span class="kw">this</span>.name = name;
+  }
+}</div>
+         <div class="card">
+            <h3>Other Uses</h3>
+            <ul>
+               <li>Pass current object to another method: <code>Save(this);</code></li>
+               <li>Call another constructor: <code>: this()</code></li>
+            </ul>
+         </div>
       </div>
     </section>
 
