@@ -2367,312 +2367,201 @@
     </div>
     <span class="pill">Doubling Strategy</span>
   </div>
-  
+
   <h2>Grow: The Hidden Cost</h2>
   
-  <div class="grid-2" style="grid-template-columns: 1fr 1.2fr; gap:30px; height:65%; margin-top:10px;">
+  <div class="grid-layout">
+    <div class="text-col">
+      <p>To avoid resizing constantly, we usually <strong>double</strong> capacity when full. This creates a temporary but massive memory spike.</p>
       
-      <div style="display:flex; flex-direction:column; gap:20px; justify-content:center;">
-          <div>
-              <p>To minimize expensive copies, a common strategy is to <strong>double</strong> the capacity when full.</p>
-              <div class="callout" style="font-size:14px; margin-top:10px;">
-                  <strong>The Algorithm:</strong><br>
-                  1. Allocate New Array (2x size)<br>
-                  2. Copy items from Old to New<br>
-                  3. Delete Old Array
-              </div>
-          </div>
-
-          <div class="card" style="border-left:4px solid #ef4444; background:#ef6e18; color:#cbd5e1;">
-              <h3>⚠️ The Problem</h3>
-              <p>This runs into trouble with <strong>Large Arrays</strong>.</p>
-              <p><strong>Why?</strong> Run the simulation to see the "Memory Spike".</p>
-          </div>
+      <div class="algorithm-box">
+        <strong>The Algorithm:</strong>
+        <ol>
+          <li>Allocate New Array (2x size)</li>
+          <li>Copy items Old ➔ New</li>
+          <li>Delete Old Array</li>
+        </ol>
       </div>
 
-      <div class="card" style="background:#1e293b; border:1px solid #334155; display:flex; flex-direction:column; padding:20px; position:relative; overflow:hidden;">
-          
-          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px;">
-              <div style="font-size:11px; font-weight:bold; color:#94a3b8;">SYSTEM RAM USAGE</div>
-              <div id="ram-text" style="font-family:var(--mono); font-size:12px; color:#22c55e;">Used: 20%</div>
-          </div>
-
-          <div style="height:30px; background:#0f172a; border-radius:6px; overflow:hidden; display:flex; margin-bottom:20px; border:1px solid #334155; position:relative;">
-              <div id="bar-current" style="width:20%; background:#3b82f6; transition:width 0.5s;"></div>
-              <div id="bar-new" style="width:0%; background:#ef4444; transition:width 0.5s; opacity:0.7;"></div>
-              
-              <div style="position:absolute; right:0; top:0; bottom:0; width:2px; background:#ef4444; z-index:10;"></div>
-          </div>
-
-          <div style="flex-grow:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;">
-              <div id="array-graphic" style="width:60px; height:60px; background:#3b82f6; border-radius:8px; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-family:var(--mono); transition:all 0.5s;">
-                  20MB
-              </div>
-              <div id="status-msg" style="font-size:12px; color:#cbd5e1; text-align:center;">Array is Full. Need to Grow.</div>
-          </div>
-
-          <button id="btn-grow-ram" onclick="growRamSim()" style="margin-top:auto; width:100%; background:#22c55e; color:white; border:none; padding:12px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:14px; transition:all 0.2s;">
-              🚀 DOUBLE SIZE
-          </button>
-
-          <div id="oom-overlay" style="position:absolute; inset:0; background:rgba(15, 23, 42, 0.95); display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
-              <div style="font-size:40px; margin-bottom:10px;">💀</div>
-              <div style="color:#ef4444; font-weight:bold; font-size:20px; margin-bottom:10px;">OutOfMemoryException</div>
-              <p style="color:#cbd5e1; font-size:14px; line-height:1.5;">
-                  <strong>The Crash Explained:</strong><br>
-                  To grow from 40MB to 80MB, you briefly need <strong>120MB</strong> (40 Old + 80 New).<br>
-                  System only has 100MB.
-              </p>
-              <button onclick="resetRamSim()" style="margin-top:15px; background:transparent; border:1px solid #ef4444; color:#ef4444; padding:5px 15px; border-radius:4px; cursor:pointer;">Try Again</button>
-          </div>
-
+      <div class="alert-box">
+        <h3>⚠️ The Crash Scenario</h3>
+        <p>If you have <strong>600MB</strong> used and want to grow to <strong>1.2GB</strong>, you briefly need <strong>1.8GB</strong> total RAM (600 Old + 1200 New).</p>
       </div>
+    </div>
+
+    <div class="vis-col">
+      <div class="ram-container">
+        <div class="ram-header">
+          <span>SYSTEM RAM (Max 100MB)</span>
+          <span id="ram-usage-text">Used: 30MB</span>
+        </div>
+        
+        <div class="ram-track">
+          <div id="block-old" class="ram-block old" style="width:30%">
+            <span class="label">OLD</span>
+          </div>
+          <div id="block-new" class="ram-block new" style="width:0%">
+            <span class="label">NEW</span>
+          </div>
+          <div class="ram-free">FREE SPACE</div>
+        </div>
+
+        <div id="status-indicator" class="status-indicator">
+          Status: Stable
+        </div>
+      </div>
+
+      <div class="control-row">
+        <button id="btn-grow" class="btn primary" onclick="growMemory()">
+          🚀 Double Size
+        </button>
+        <button id="btn-reset-ram" class="btn secondary" onclick="resetMemory()">
+          ⟲ Reset
+        </button>
+      </div>
+
+      <div id="crash-overlay" class="overlay">
+        <div class="crash-icon">💥</div>
+        <h2>OutOfMemoryException</h2>
+        <p>System RAM Exceeded!</p>
+        <div class="crash-stats">
+          Required: <span class="danger">180MB</span> / Available: 100MB
+        </div>
+        <button class="btn outline" onclick="resetMemory()">Reboot System</button>
+      </div>
+    </div>
   </div>
-  
+
   <div class="slide-footer">
     <div class="muted">Doubling requires 3x current memory available (1x Old + 2x New)</div>
-    <div class="slide-no" data-slide-no></div>
-  </div>
-
-  <script>
-    let currentSize = 20; // Starts at 20%
-    let step = 0;
-
-    function growRamSim() {
-        const barCurrent = document.getElementById('bar-current');
-        const barNew = document.getElementById('bar-new');
-        const text = document.getElementById('ram-text');
-        const msg = document.getElementById('status-msg');
-        const graphic = document.getElementById('array-graphic');
-        const btn = document.getElementById('btn-grow-ram');
-
-        if (step === 0) {
-            // Grow 20 -> 40
-            // Need 20 + 40 = 60% total. Safe.
-            msg.innerText = "Allocating new array (40MB)...";
-            barNew.style.width = "40%";
-            
-            // Text Update
-            text.innerText = "Peak Usage: 60% (Copying...)";
-            text.style.color = "#f59e0b";
-
-            setTimeout(() => {
-                // Copy Complete
-                barCurrent.style.width = "40%";
-                barNew.style.width = "0%";
-                text.innerText = "Used: 40%";
-                text.style.color = "#22c55e";
-                graphic.style.width = "100px";
-                graphic.style.height = "100px";
-                graphic.innerText = "40MB";
-                msg.innerText = "Growth Successful. Array Full.";
-                currentSize = 40;
-                step++;
-            }, 1000);
-        } 
-        else if (step === 1) {
-            // Grow 40 -> 80
-            // Need 40 + 80 = 120% total. CRASH.
-            msg.innerText = "Allocating new array (80MB)...";
-            barNew.style.width = "60%"; // Visual cap at 100 but logically it fails
-            
-            text.innerText = "Peak Usage: 120% (OVERFLOW)";
-            text.style.color = "#ef4444";
-            
-            setTimeout(() => {
-                document.getElementById('oom-overlay').style.display = 'flex';
-            }, 600);
-        }
-    }
-
-    function resetRamSim() {
-        currentSize = 20;
-        step = 0;
-        document.getElementById('oom-overlay').style.display = 'none';
-        document.getElementById('bar-current').style.width = "20%";
-        document.getElementById('bar-new').style.width = "0%";
-        document.getElementById('array-graphic').style.width = "60px";
-        document.getElementById('array-graphic').style.height = "60px";
-        document.getElementById('array-graphic').innerText = "20MB";
-        document.getElementById('ram-text').innerText = "Used: 20%";
-        document.getElementById('status-msg').innerText = "Array is Full. Need to Grow.";
-        document.getElementById('ram-text').style.color = "#22c55e";
-    }
-  </script>
-</section>
-<section class="slide">
-  <div class="slide-top">
-    <div class="meta">
-      <div class="course">Concepts</div>
-      <div class="sub">Distinction</div>
-    </div>
-    <span class="pill">Visual Comparison</span>
-  </div>
-  
-  <h2>Insert One vs. Add One</h2>
-  <p>Is there a difference? <strong>Yes.</strong> It depends on whether order matters.</p>
-  
-  <div class="grid-2" style="grid-template-columns: 1fr 1.2fr; gap:30px; height:60%; margin-top:10px;">
-      
-      <div style="display:flex; flex-direction:column; gap:20px; justify-content:center;">
-          
-          <div class="card" style="border-left:4px solid #3b82f6;">
-              <h3>1. Add (Append)</h3>
-              <p>Simply putting the item at the end.</p>
-              <div style="font-size:12px; color:#94a3b8; margin-top:5px;">
-                  Result: <span style="font-family:var(--mono); color:#cbd5e1;">{ a, b, c, f, g, h, <strong style="color:#3b82f6">d</strong> }</span>
-              </div>
-              <div style="font-size:11px; color:#ef4444; margin-top:5px;">⚠️ BREAKS SORTED ORDER</div>
-          </div>
-
-          <div class="card" style="border-left:4px solid var(--accent);">
-              <h3>2. Insert (Shift)</h3>
-              <p>Opening a spot between existing values.</p>
-              <div style="font-size:12px; color:#94a3b8; margin-top:5px;">
-                  Result: <span style="font-family:var(--mono); color:#cbd5e1;">{ a, b, c, <strong style="color:var(--accent)">d</strong>, f, g, h }</span>
-              </div>
-              <div style="font-size:11px; color:var(--accent); margin-top:5px;">✔ MAINTAINS ORDER</div>
-          </div>
-          
-      </div>
-
-      <div class="card" style="background:#1e293b; border:1px solid #334155; display:flex; flex-direction:column; position:relative; overflow:hidden; padding:0;">
-          
-          <div style="background:#0f172a; padding:10px; border-bottom:1px solid #334155; display:flex; justify-content:center; gap:15px;">
-              <button onclick="runAdd()" class="action-btn blue">
-                  ADD 'D' (Append)
-              </button>
-              <button onclick="runInsert()" class="action-btn green">
-                  INSERT 'D' (Sorted)
-              </button>
-              <button onclick="resetInsertSim()" class="action-btn reset" title="Reset">
-                  ↺
-              </button>
-          </div>
-
-          <div style="flex-grow:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;">
-              
-              <div id="insert-stage" style="display:flex; gap:8px;">
-                  </div>
-
-              <div id="insert-msg" style="font-family:var(--mono); font-size:12px; color:#94a3b8; height:20px;">
-                  Array is Sorted: { a, b, c, f, g, h }
-              </div>
-
-          </div>
-      </div>
-  </div>
-  
-  <div class="slide-footer">
-    <div class="muted">Inserting requires shifting elements to make space</div>
-    <div class="slide-no" data-slide-no></div>
+    <div class="slide-no"></div>
   </div>
 
   <style>
-    .letter-box {
-        width: 45px; height: 50px; background: #0f172a; border: 2px solid #334155; border-radius: 6px;
-        display: flex; align-items: center; justify-content: center; font-family: var(--mono); 
-        color: #fff; font-size: 18px; font-weight:bold; position: relative; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-    }
+    /* LAYOUT */
+    .grid-layout { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; margin-top: 20px; height: 350px; }
     
-    .letter-box.new-blue { background: #1e3a8a; border-color: #3b82f6; color: #60a5fa; animation: dropIn 0.3s; }
-    .letter-box.new-green { background: #064e3b; border-color: var(--accent); color: #86efac; animation: dropIn 0.3s; }
+    .algorithm-box { background: #e7e9ed; padding: 15px; border-radius: 8px; font-size: 0.85rem; margin: 15px 0; border: 1px solid #334155; }
+    .algorithm-box ol { padding-left: 20px; margin: 5px 0 0 0; color: #94a3b8; }
     
-    .spacer { width: 0px; transition: all 0.4s; }
-    .spacer.open { width: 53px; } /* Width of box + gap */
+    .alert-box { border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 0 8px 8px 0; }
+    .alert-box h3 { color: #ef4444; margin: 0 0 5px 0; font-size: 0.9rem; }
+    .alert-box p { margin: 0; font-size: 0.85rem; color: #f91909; }
 
-    .action-btn {
-        border: none; padding: 6px 15px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; color: white; transition: transform 0.1s;
-    }
-    .action-btn:active { transform: translateY(1px); }
-    .action-btn.blue { background: #3b82f6; }
-    .action-btn.blue:hover { background: #2563eb; }
-    .action-btn.green { background: var(--accent); }
-    .action-btn.green:hover { background: #15803d; }
-    .action-btn.reset { background: #334155; width:30px; padding:0; display:grid; place-items:center; font-size:14px; }
-    .action-btn.reset:hover { background: #475569; }
+    /* VISUALIZATION */
+    .vis-col { background: #0f172a; border-radius: 12px; border: 1px solid #334155; padding: 20px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
 
-    @keyframes dropIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .ram-header { display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; font-weight: bold; margin-bottom: 10px; font-family: monospace; }
+    
+    .ram-track { height: 60px; background: #1e293b; border-radius: 8px; overflow: hidden; display: flex; border: 2px solid #334155; position: relative; }
+    
+    .ram-block { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; color: white; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    .ram-block.old { background: #3b82f6; }
+    .ram-block.new { background: #f59e0b; opacity: 0; }
+    .ram-block.new.visible { opacity: 1; }
+    
+    .ram-free { flex-grow: 1; display: flex; align-items: center; justify-content: center; color: #475569; font-size: 0.7rem; letter-spacing: 1px; background: repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #25334a 10px, #25334a 20px); }
+
+    .status-indicator { text-align: center; color: #94a3b8; font-family: monospace; font-size: 0.85rem; margin-top: 15px; }
+
+    /* BUTTONS */
+    .control-row { display: flex; gap: 10px; margin-top: 20px; }
+    .btn { border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: transform 0.1s; flex: 1; }
+    .btn:active { transform: scale(0.96); }
+    .btn.primary { background: #22c55e; color: #022c22; }
+    .btn.secondary { background: #334155; color: white; }
+    .btn.outline { background: transparent; border: 2px solid #ef4444; color: #ef4444; margin-top: 15px; }
+    .btn.outline:hover { background: #ef4444; color: white; }
+
+    /* OVERLAY */
+    .overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.98); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10; animation: fadeIn 0.3s; }
+    .crash-icon { font-size: 3rem; margin-bottom: 10px; }
+    .crash-stats { font-family: monospace; color: #cbd5e1; margin-bottom: 20px; font-size: 0.9rem; }
+    .danger { color: #ef4444; font-weight: bold; }
+    
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 
   <script>
-    const startArr = ['A', 'B', 'C', 'F', 'G', 'H'];
-    const stageDiv = document.getElementById('insert-stage');
-    const msgDiv = document.getElementById('insert-msg');
-    let isReset = true;
+    (function() {
+      let size = 30; // Initial %
+      let stage = 1; // 1 = can grow safely, 2 = will crash
 
-    // Init
-    renderStart();
+      window.growMemory = function() {
+        const oldBlock = document.getElementById('block-old');
+        const newBlock = document.getElementById('block-new');
+        const status = document.getElementById('status-indicator');
+        const ramText = document.getElementById('ram-usage-text');
+        const btnGrow = document.getElementById('btn-grow');
 
-    function renderStart() {
-        stageDiv.innerHTML = '';
-        startArr.forEach(char => {
-            const div = document.createElement('div');
-            div.className = 'letter-box';
-            div.innerText = char;
-            stageDiv.appendChild(div);
-        });
-        isReset = true;
-        msgDiv.innerText = "Array is Sorted: { a, b, c, f, g, h }";
-        msgDiv.style.color = "#94a3b8";
-    }
+        if(stage === 1) {
+          // SAFE GROWTH: 30 -> 60
+          // 1. Visualize Allocation
+          btnGrow.disabled = true;
+          status.innerText = "Allocating 60MB block...";
+          status.style.color = "#f59e0b";
+          
+          newBlock.style.width = "60%";
+          newBlock.classList.add('visible');
+          ramText.innerText = "Peak: 90MB (Copying...)";
 
-    function runAdd() {
-        if(!isReset) return;
-        isReset = false;
+          // 2. Visualize Copy & Swap (after delay)
+          setTimeout(() => {
+            // Swap visuals
+            oldBlock.style.width = "60%";
+            newBlock.style.width = "0%"; 
+            newBlock.classList.remove('visible');
+            
+            status.innerText = "Copy Complete. Old memory freed.";
+            status.style.color = "#22c55e";
+            ramText.innerText = "Used: 60MB";
+            
+            size = 60;
+            stage = 2; // Next click will crash
+            btnGrow.disabled = false;
+          }, 1500);
+        } 
+        else if (stage === 2) {
+          // CRASH GROWTH: 60 -> 120
+          status.innerText = "Attempting to allocate 120MB...";
+          status.style.color = "#ef4444";
+          
+          // Try to grow new block beyond container
+          newBlock.style.width = "100%"; // Visual max
+          newBlock.classList.add('visible');
+          ramText.innerText = "Request: 180MB total";
 
-        const div = document.createElement('div');
-        div.className = 'letter-box new-blue';
-        div.innerText = 'D';
-        stageDiv.appendChild(div);
+          setTimeout(() => {
+            document.getElementById('crash-overlay').style.display = 'flex';
+          }, 800);
+        }
+      };
 
-        msgDiv.innerHTML = "Appended 'D' to end. <span style='color:#ef4444'>Order is Broken!</span>";
-        msgDiv.style.color = "#cbd5e1";
-    }
-
-    async function runInsert() {
-        if(!isReset) return;
-        isReset = false;
-
-        // 1. Identify insertion point (After C, index 3)
-        // We need to visually shift F, G, H
-        const boxes = stageDiv.children;
-        const targetIdx = 3; 
-
-        msgDiv.innerHTML = "Shifting elements to make space...";
-        msgDiv.style.color = "var(--accent)";
-
-        // Create a spacer at index 3
-        const spacer = document.createElement('div');
-        spacer.className = 'spacer';
-        stageDiv.insertBefore(spacer, boxes[targetIdx]);
-
-        // Trigger CSS transition
-        requestAnimationFrame(() => {
-            spacer.classList.add('open');
-        });
-
-        // Wait for shift
-        await new Promise(r => setTimeout(r, 450));
-
-        // Insert new element
-        const div = document.createElement('div');
-        div.className = 'letter-box new-green';
-        div.innerText = 'D';
-        div.style.position = 'absolute'; // Temp float
-        div.style.left = spacer.offsetLeft + 'px';
+      window.resetMemory = function() {
+        size = 30;
+        stage = 1;
         
-        stageDiv.replaceChild(div, spacer);
-        div.style.position = 'static'; // Snap in
+        const oldBlock = document.getElementById('block-old');
+        const newBlock = document.getElementById('block-new');
+        const status = document.getElementById('status-indicator');
+        const ramText = document.getElementById('ram-usage-text');
+        
+        document.getElementById('crash-overlay').style.display = 'none';
+        document.getElementById('btn-grow').disabled = false;
 
-        msgDiv.innerHTML = "Inserted 'D'. <span style='color:#22c55e'>Order Preserved!</span>";
-    }
-
-    function resetInsertSim() {
-        renderStart();
-    }
+        oldBlock.style.width = "30%";
+        newBlock.style.width = "0%";
+        newBlock.classList.remove('visible');
+        
+        status.innerText = "Status: Stable";
+        status.style.color = "#94a3b8";
+        ramText.innerText = "Used: 30MB";
+      };
+    })();
   </script>
 </section>
+
+
 <section class="slide">
   <div class="slide-top">
     <div class="meta">
@@ -3450,147 +3339,331 @@
     </div>
     <span class="pill">Shrinking Strategy</span>
   </div>
-  
-  <h2>Shrink the Array?</h2>
-  <p>If an array is mostly empty, we <em>can</em> shrink it. But should we?</p>
-  
-  <div class="grid-2" style="grid-template-columns: 1fr 1.2fr; gap:30px; height:60%; margin-top:10px;">
-      
-      <div style="display:flex; flex-direction:column; gap:20px; justify-content:center;">
-          
-          <div class="card" style="border-left:4px solid var(--accent);">
-              <h3>The Theory</h3>
-              <p>If <code>Count &lt; Capacity / 2</code>, we can halve the array size to free up memory.</p>
-              <code style="font-size:12px; background:#0f172a; padding:5px; border-radius:4px; display:block; margin-top:5px; color:#d4d4d4;">Array.Resize(ref arr, current / 2);</code>
-          </div>
 
-          <div class="card" style="background:#f8fafc; border:1px solid #cbd5e1;">
-              <h3>In Practice?</h3>
-              <ul style="font-size:14px; margin-top:5px; padding-left:20px;">
-                  <li><strong>Usually No:</strong> Memory is cheap; Copying (O(N)) is expensive.</li>
-                  <li><strong>Maybe:</strong> Useful for mobile/embedded devices where RAM is scarce.</li>
-              </ul>
-          </div>
-          
+  <h2>To Shrink or Not to Shrink?</h2>
+  <p class="desc-text">Dynamic arrays grow automatically, but they don't always shrink. We must decide when the cost of resizing is worth the memory savings.</p>
+
+  <div class="layout-grid">
+    
+    <div class="theory-col">
+      <div class="glass-card accent-border">
+        <h3>The Rule of Thumb</h3>
+        <p>If the array is mostly empty, we can release memory back to the OS.</p>
+        <div class="code-block">
+          <span class="kwd">if</span> (count < capacity / <span class="num">2</span>) {<br>
+          &nbsp;&nbsp;Resize(<span class="kwd">ref</span> arr, capacity / <span class="num">2</span>);<br>
+          }
+        </div>
       </div>
 
-      <div class="card" style="background:#1e293b; border:1px solid #334155; display:flex; flex-direction:column; padding:0; overflow:hidden;">
-          
-          <div style="background:#0f172a; padding:10px; border-bottom:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
-              <span id="shrink-stats" style="font-family:var(--mono); font-size:11px; color:#94a3b8;">CAPACITY: 10 | USED: 3</span>
-              <div id="waste-badge" style="font-size:10px; font-weight:bold; background:#7f1d1d; color:#fca5a5; padding:2px 6px; border-radius:4px;">
-                  70% WASTED
-              </div>
-          </div>
-
-          <div style="flex-grow:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:20px;">
-              
-              <div style="width:100%; height:40px; background:#334155; border-radius:6px; overflow:hidden; display:flex; position:relative; border:1px solid #475569;">
-                  <div id="bar-used" style="width:30%; background:#3b82f6; border-right:2px solid #1e293b; display:grid; place-items:center; color:white; font-size:10px; font-weight:bold;">DATA</div>
-                  <div id="bar-waste" style="width:70%; background:repeating-linear-gradient(45deg, #475569, #475569 10px, #334155 10px, #334155 20px); display:grid; place-items:center; color:#94a3b8; font-size:10px;">EMPTY SPACE</div>
-              </div>
-
-              <div style="display:flex; flex-direction:column; gap:10px; width:100%; align-items:center;">
-                  
-                  <div id="shrink-msg" style="height:20px; font-size:12px; color:#ef4444; font-weight:bold;">
-                      ⚠️ Array is too large for its content!
-                  </div>
-
-                  <div style="display:flex; gap:10px;">
-                      <button onclick="removeItem()" class="s-btn red">
-                          - Remove Item
-                      </button>
-                      <button onclick="addItem()" class="s-btn blue">
-                          + Add Item
-                      </button>
-                      <button onclick="runShrink()" id="btn-shrink" class="s-btn green animate-pulse">
-                          ♻ SHRINK NOW
-                      </button>
-                  </div>
-              </div>
-
-          </div>
+      <div class="glass-card">
+        <h3>Trade-offs</h3>
+        <ul class="pros-cons">
+          <li class="bad"><strong>Costly:</strong> Resizing is O(N). It requires allocating new memory and copying elements.</li>
+          <li class="good"><strong>Necessary:</strong> On mobile/embedded devices, holding unused RAM causes crashes.</li>
+        </ul>
       </div>
+    </div>
+
+    <div class="demo-col">
+      <div class="vis-container">
+        
+        <div class="vis-header">
+          <div class="stat-group">
+            <span class="label">CAPACITY</span>
+            <span class="value" id="val-cap">16</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-group">
+            <span class="label">USED</span>
+            <span class="value" id="val-count">4</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-group">
+            <span class="label">WASTE</span>
+            <span class="value" id="val-waste">75%</span>
+          </div>
+        </div>
+
+        <div class="memory-stage-wrapper">
+          <div id="memory-stage" class="memory-stage">
+            </div>
+        </div>
+
+        <div id="feedback-msg" class="feedback-msg">
+          Memory usage is inefficient.
+        </div>
+
+        <div class="controls-bar">
+          <button id="btn-remove" class="c-btn red">
+            <span>−</span> Remove
+          </button>
+          
+          <button id="btn-add" class="c-btn blue">
+            <span>+</span> Add
+          </button>
+
+          <div class="sep"></div>
+
+          <button id="btn-shrink" class="c-btn green-action" disabled>
+            <span class="icon">♻</span> SHRINK MEMORY
+          </button>
+          
+          <button id="btn-reset" class="c-btn ghost" title="Reset Simulation">
+            ⟲
+          </button>
+        </div>
+
+      </div>
+    </div>
   </div>
-  
+
   <div class="slide-footer">
-    <div class="muted">Shrinking prevents "Memory Leaks" in long-running applications</div>
-    <div class="slide-no" data-slide-no></div>
+    <div class="muted">Hysteresis: Usually we shrink at 25% load to prevent "thrashing"</div>
+    <div class="slide-no"></div>
   </div>
 
   <style>
-    .s-btn { border: none; padding: 8px 15px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; color: white; transition: all 0.2s; }
-    .s-btn:active { transform: scale(0.95); }
-    .s-btn:disabled { opacity: 0.3; cursor: not-allowed; animation: none; }
-    
-    .s-btn.red { background: #ef4444; }
-    .s-btn.blue { background: #3b82f6; }
-    .s-btn.green { background: var(--accent); box-shadow: 0 4px 15px rgba(22,163,74,0.4); }
+    /* LAYOUT & UTILS */
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --border: #334155;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warn: #eab308;
+    }
 
-    .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+    .desc-text { color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem; }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 20px;
+      height: 400px;
+    }
+
+    /* CARDS */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .accent-border { border-left: 3px solid var(--accent); }
+    
+    h3 { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .code-block {
+      background: #020617;
+      border-radius: 4px;
+      padding: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .kwd { color: #c084fc; } .num { color: #fca5a5; }
+
+    .pros-cons { padding-left: 20px; margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+    .pros-cons li { margin-bottom: 6px; }
+    .pros-cons li.bad::marker { color: var(--danger); }
+    .pros-cons li.good::marker { color: var(--success); }
+
+    /* VIS CONTAINER */
+    .vis-container {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex; flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .vis-header {
+      background: rgba(30, 41, 59, 0.5);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex; justify-content: space-around;
+      align-items: center;
+    }
+
+    .stat-group { display: flex; flex-direction: column; align-items: center; }
+    .stat-group .label { font-size: 0.6rem; color: var(--text-muted); letter-spacing: 1px; font-weight: 700; }
+    .stat-group .value { font-size: 1.1rem; font-weight: 700; color: white; font-family: monospace; }
+    .stat-divider { width: 1px; height: 20px; background: var(--border); }
+
+    /* MEMORY STAGE */
+    .memory-stage-wrapper {
+      flex-grow: 1;
+      display: flex; align-items: center; justify-content: center;
+      background: repeating-linear-gradient(45deg, #0f172a, #0f172a 10px, #131c31 10px, #131c31 20px);
+      overflow-x: auto;
+      padding: 20px;
+    }
+
+    .memory-stage {
+      display: flex;
+      gap: 4px;
+      padding: 10px;
+      background: rgba(51, 65, 85, 0.5);
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .slot {
+      width: 24px; height: 40px;
+      border-radius: 3px;
+      transition: all 0.3s;
+    }
+    
+    .slot.filled { background: var(--accent); box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); border: 1px solid #60a5fa; }
+    .slot.empty { background: rgba(255,255,255,0.05); border: 1px dashed #475569; }
+
+    /* FEEDBACK & CONTROLS */
+    .feedback-msg {
+      text-align: center; font-size: 0.8rem; font-weight: 600; height: 24px;
+      transition: opacity 0.3s; margin-top: 5px;
+    }
+    .vis-container.wasteful .feedback-msg { color: var(--danger); }
+    .vis-container.optimized .feedback-msg { color: var(--success); }
+
+    .controls-bar {
+      padding: 15px;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      display: flex; gap: 10px; justify-content: center; align-items: center;
+    }
+
+    .sep { width: 1px; height: 20px; background: var(--border); margin: 0 5px; }
+
+    .c-btn {
+      border: none; padding: 8px 16px; border-radius: 6px;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.2s; color: white;
+    }
+    .c-btn:hover:not(:disabled) { transform: translateY(-2px); }
+    .c-btn:active:not(:disabled) { transform: translateY(0); }
+    .c-btn:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
+
+    .c-btn.blue { background: #3b82f6; }
+    .c-btn.blue:hover { background: #2563eb; }
+    
+    .c-btn.red { background: #ef4444; }
+    .c-btn.red:hover { background: #dc2626; }
+
+    .c-btn.green-action {
+      background: #22c55e;
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    }
+    .c-btn.green-action:not(:disabled) {
+      animation: pulse 2s infinite;
+    }
+
+    .c-btn.ghost { background: transparent; color: var(--text-muted); font-size: 1.2rem; padding: 4px 10px; }
+    .c-btn.ghost:hover { background: rgba(255,255,255,0.1); color: white; }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
   </style>
 
   <script>
-    let cap = 10;
-    let count = 3;
+    (function(){
+      // State
+      let capacity = 16;
+      let count = 4;
+      
+      // DOM Elements
+      const stage = document.getElementById('memory-stage');
+      const valCap = document.getElementById('val-cap');
+      const valCount = document.getElementById('val-count');
+      const valWaste = document.getElementById('val-waste');
+      const container = document.querySelector('.vis-container');
+      const msg = document.getElementById('feedback-msg');
+      
+      const btnAdd = document.getElementById('btn-add');
+      const btnRemove = document.getElementById('btn-remove');
+      const btnShrink = document.getElementById('btn-shrink');
+      const btnReset = document.getElementById('btn-reset');
 
-    function updateVisuals() {
-        const usedPct = (count / cap) * 100;
-        const wastePct = 100 - usedPct;
+      function render() {
+        // 1. Update DOM Stats
+        valCap.innerText = capacity;
+        valCount.innerText = count;
         
-        document.getElementById('bar-used').style.width = `${usedPct}%`;
-        document.getElementById('bar-waste').style.width = `${wastePct}%`;
+        const wastePct = Math.round(((capacity - count) / capacity) * 100);
+        valWaste.innerText = wastePct + '%';
         
-        document.getElementById('shrink-stats').innerText = `CAPACITY: ${cap} | USED: ${count}`;
-        document.getElementById('waste-badge').innerText = `${Math.round(wastePct)}% WASTED`;
-        document.getElementById('waste-badge').style.background = wastePct > 50 ? "#7f1d1d" : "#064e3b";
-        document.getElementById('waste-badge').style.color = wastePct > 50 ? "#fca5a5" : "#6ee7b7";
+        // 2. Logic Check
+        const canShrink = (count <= capacity / 2) && (capacity > 4);
+        const isWasteful = wastePct >= 50;
 
-        const btnShrink = document.getElementById('btn-shrink');
-        const msg = document.getElementById('shrink-msg');
+        // 3. UI Feedback
+        btnShrink.disabled = !canShrink;
+        btnAdd.disabled = count >= capacity;
+        btnRemove.disabled = count <= 0;
 
-        // Threshold: Less than half
-        if(count < cap / 2 && cap > 4) {
-            btnShrink.disabled = false;
-            msg.style.opacity = 1;
-            msg.innerText = "⚠️ Array is too large! Suggest Shrink.";
-            msg.style.color = "#ef4444";
+        if (canShrink) {
+          container.classList.add('wasteful');
+          container.classList.remove('optimized');
+          msg.innerHTML = "⚠️ Capacity > 2x Count. Shrink recommended!";
+          valWaste.style.color = "#ef4444";
         } else {
-            btnShrink.disabled = true;
-            if(usedPct > 80) {
-                 msg.innerText = "Memory utilized efficiently.";
-                 msg.style.color = "#22c55e";
-            } else {
-                 msg.style.opacity = 0;
-            }
+          container.classList.remove('wasteful');
+          container.classList.add('optimized');
+          msg.innerHTML = "Memory usage is acceptable.";
+          valWaste.style.color = "#22c55e";
         }
-    }
 
-    function removeItem() {
+        // 4. Draw Slots
+        stage.innerHTML = '';
+        for(let i=0; i<capacity; i++) {
+          const slot = document.createElement('div');
+          slot.className = i < count ? 'slot filled' : 'slot empty';
+          // Visual grouping: add gap every 4 slots for readability
+          if(i > 0 && i % 4 === 0) slot.style.marginLeft = '6px';
+          stage.appendChild(slot);
+        }
+      }
+
+      // Actions
+      btnAdd.addEventListener('click', () => {
+        if(count < capacity) count++;
+        render();
+      });
+
+      btnRemove.addEventListener('click', () => {
         if(count > 0) count--;
-        updateVisuals();
-    }
+        render();
+      });
 
-    function addItem() {
-        if(count < cap) count++;
-        updateVisuals();
-    }
-
-    function runShrink() {
-        const oldCap = cap;
-        cap = Math.max(4, Math.floor(cap / 2)); // Halve it
-        
-        const msg = document.getElementById('shrink-msg');
-        msg.innerText = `♻ Resized: ${oldCap} -> ${cap}. Memory Saved!`;
+      btnShrink.addEventListener('click', () => {
+        capacity = Math.max(4, Math.floor(capacity / 2));
+        render();
+        // Trigger a temporary success message
+        msg.innerHTML = "✅ Array Resized. Memory Freed!";
         msg.style.color = "#22c55e";
-        msg.style.opacity = 1;
-        
-        updateVisuals();
-    }
-    
-    // Init
-    updateVisuals();
+      });
+
+      btnReset.addEventListener('click', () => {
+        capacity = 16;
+        count = 4;
+        render();
+      });
+
+      // Init
+      render();
+    })();
   </script>
 </section>
 
@@ -4731,7 +4804,7 @@
 <section class="slide">
   <div style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
       
-      <div style="font-family:var(--mono); color:var(--accent); font-weight:bold; letter-spacing:2px; margin-bottom:20px; text-transform:uppercase;">
+      <div style="font-family:var(--mono); color:var(--accent); font-weight:bold; letter-spacing:2px; margin-bottom:10px; text-transform:uppercase;">
           System.Collections
       </div>
 
@@ -4740,13 +4813,95 @@
           <span style="color:#3b82f6;">ArrayList</span>
       </h1>
 
-      <div style="width:100px; height:4px; background:var(--gradient); margin:30px 0;"></div>
+      <div style="width:100px; height:4px; background:var(--gradient, linear-gradient(to right, #3b82f6, #8b5cf6)); margin:20px 0;"></div>
 
-      <p style="font-size:24px; color:#64748b; max-width:600px; line-height:1.5;">
+      <p style="font-size:22px; color:#64748b; max-width:700px; line-height:1.4; margin-bottom: 40px;">
           ".NET provides a built-in data structure called the <strong style="color:var(--ink);">ArrayList</strong>, a list that uses an array."
       </p>
 
+      <div class="info-row">
+        
+        <div class="info-item">
+          <div class="icon">⚙️</div>
+          <h3>The Wrapper</h3>
+          <p>Acts as an <strong>"Automatic Transmission"</strong>. It handles the resizing logic (Doubling) so you don't have to.</p>
+        </div>
+
+        <div class="info-item">
+          <div class="icon">🧬</div>
+          <h3>The DNA</h3>
+          <p>It is <strong>still an array</strong> internally. Fast to read <code>[i]</code>, but slow to Insert/Remove due to shifting.</p>
+        </div>
+
+        <div class="info-item warning">
+          <div class="icon">📦</div>
+          <h3>The Catch</h3>
+          <p>It stores everything as <code>object</code>. This causes <strong>"Boxing"</strong> (performance penalty) and lacks Type Safety.</p>
+        </div>
+
+      </div>
+
   </div>
+
+  <style>
+    /* ADDED STYLES FOR THE ROW */
+    .info-row {
+      display: flex;
+      gap: 30px;
+      max-width: 900px;
+      width: 100%;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .info-item {
+      flex: 1;
+      background: rgba(255,255,255,0.5);
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: left;
+      transition: transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Hover effect for interactivity */
+    .info-item:hover {
+      transform: translateY(-5px);
+      background: white;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      border-color: #94a3b8;
+    }
+
+    .info-item.warning {
+      border-bottom: 3px solid #f97316;
+    }
+
+    .icon { font-size: 24px; margin-bottom: 10px; }
+
+    .info-item h3 {
+      font-size: 18px;
+      margin: 0 0 8px 0;
+      color: #1e293b;
+      font-weight: bold;
+    }
+
+    .info-item p {
+      font-size: 14px;
+      color: #64748b;
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    code {
+      font-family: monospace;
+      background: #eff6ff;
+      color: #3b82f6;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
 </section>
 
 <section class="slide">
