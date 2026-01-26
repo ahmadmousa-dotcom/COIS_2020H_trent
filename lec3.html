@@ -918,268 +918,350 @@
 <section class="slide">
   <div class="slide-top">
     <div class="meta">
-      <div class="course">Variations</div>
-      <div class="sub">Properties</div>
+      <div class="course">Data Structures</div>
+      <div class="sub">Fundamentals</div>
     </div>
-    <span class="pill">Interactive Taxonomy</span>
-  </div>
-  
-  <h2>Lists can be...</h2>
-  <p>Lists come in various configurations depending on requirements. <strong>Click options to visualize.</strong></p>
-  
-  <div class="dashboard-grid">
-      
-      <div class="control-panel">
-          <h3>1. Ordering</h3>
-          <div class="option-group">
-              <div class="option-btn active" onclick="window.updateListMode('order', 'ordered', this)">
-                  <div class="radio"></div>
-                  <strong>Ordered List</strong>
-              </div>
-              <div class="option-btn" onclick="window.updateListMode('order', 'unordered', this)">
-                  <div class="radio"></div>
-                  <strong>Unordered List</strong>
-              </div>
-          </div>
-      </div>
-
-      <div class="control-panel">
-          <h3>2. Sizing</h3>
-          <div class="option-group">
-              <div class="option-btn active" onclick="window.updateListMode('size', 'fixed', this)">
-                  <div class="radio"></div>
-                  <div><strong>Fixed Size</strong> <span class="sub-text">(Static)</span></div>
-              </div>
-              <div class="option-btn" onclick="window.updateListMode('size', 'dynamic', this)">
-                  <div class="radio"></div>
-                  <div><strong>Dynamic Size</strong> <span class="sub-text">(Growable)</span></div>
-              </div>
-          </div>
-      </div>
-
-      <div class="control-panel">
-          <h3>3. Complexity</h3>
-          <div class="option-group">
-              <div class="option-btn active" onclick="window.updateListMode('complex', 'meta', this)">
-                  <div class="radio"></div>
-                  <div><strong>Metadata</strong> <span class="sub-text block">(Rich Objects)</span></div>
-              </div>
-              <div class="option-btn" onclick="window.updateListMode('complex', 'nested', this)">
-                  <div class="radio"></div>
-                  <div><strong>Nested Lists</strong> <span class="sub-text block">(2D Arrays)</span></div>
-              </div>
-          </div>
-      </div>
-
+    <span class="pill">Interactive Demo</span>
   </div>
 
-  <div class="vis-container">
-      <div class="vis-header">
-        <span>LIVE PREVIEW</span>
-        <div class="capacity-indicator" id="cap-indicator">Capacity: FIXED (4 slots)</div>
-      </div>
-      
-      <div id="vis-stage" class="vis-stage ordered fixed meta">
-          </div>
+  <h2>List Configurations</h2>
+  <p class="desc-text">Data structures adapt to constraints. Toggle the parameters below to observe how the list's memory and layout behavior changes.</p>
 
-      <div id="vis-desc" class="vis-desc">
-          Visualizing: Ordered Array of Photos with Metadata
+  <div class="config-dashboard">
+    
+    <div class="control-card">
+      <div class="card-header">
+        <span class="icon">⑱</span> Structure
       </div>
+      <div class="toggle-group" id="ctrl-order">
+        <button class="t-btn active" data-val="ordered">
+          <span class="lbl">Ordered</span>
+          <span class="hint">Linear [0,1,2]</span>
+        </button>
+        <button class="t-btn" data-val="unordered">
+          <span class="lbl">Unordered</span>
+          <span class="hint">Collection {Set}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="control-card">
+      <div class="card-header">
+        <span class="icon">⤢</span> Allocation
+      </div>
+      <div class="toggle-group" id="ctrl-size">
+        <button class="t-btn active" data-val="fixed">
+          <span class="lbl">Fixed</span>
+          <span class="hint">Static Array</span>
+        </button>
+        <button class="t-btn" data-val="dynamic">
+          <span class="lbl">Dynamic</span>
+          <span class="hint">Linked / Vector</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="control-card">
+      <div class="card-header">
+        <span class="icon">{}</span> Data Complexity
+      </div>
+      <div class="toggle-group" id="ctrl-complex">
+        <button class="t-btn active" data-val="simple">
+          <span class="lbl">Primitives</span>
+          <span class="hint">Integers / Strings</span>
+        </button>
+        <button class="t-btn" data-val="complex">
+          <span class="lbl">Objects</span>
+          <span class="hint">Nested JSON</span>
+        </button>
+      </div>
+    </div>
   </div>
-  
+
+  <div class="vis-wrapper">
+    <div class="vis-status-bar">
+      <span id="status-text" class="mono">MODE: ORDERED // STATIC ALLOCATION</span>
+      <span id="capacity-badge" class="badge">MAX: 4</span>
+    </div>
+    
+    <div class="vis-canvas">
+      <div id="memory-container" class="mem-container ordered fixed">
+        </div>
+    </div>
+  </div>
+
   <div class="slide-footer">
-    <div class="muted">Structure follows function</div>
-    <div class="slide-no" data-slide-no></div>
+    <div class="muted">Visualizing Logic</div>
+    <div class="slide-no"></div>
   </div>
 
   <style>
-    /* LAYOUT */
-    .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px; }
-
-    .control-panel {
-        background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px;
-        display: flex; flex-direction: column; gap: 8px; transition:all 0.2s;
-    }
-    .control-panel:hover { border-color:#3b82f6; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
-    
-    h3 { font-size: 13px; margin: 0 0 5px; color: #64748b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; }
-    
-    .option-btn {
-        display: flex; align-items: flex-start; gap: 8px; padding: 6px; border-radius: 6px;
-        cursor: pointer; transition: all 0.2s; border: 1px solid transparent; font-size: 13px;
-    }
-    .option-btn:hover { background: #e2e8f0; }
-    .option-btn.active { background: #fff; border-color: #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .option-btn.active .radio { border-color: #3b82f6; background: #3b82f6; box-shadow: inset 0 0 0 3px white; }
-
-    .radio { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #94a3b8; background: transparent; margin-top: 2px; flex-shrink: 0; transition: all 0.2s; }
-    .sub-text { font-size: 11px; color: #94a3b8; font-family: monospace; }
-    .sub-text.block { display: block; }
-
-    /* VISUALIZER CONTAINER */
-    .vis-container {
-        margin-top: 15px; background: #0f172a; border-radius: 12px; border: 1px solid #334155;
-        height: 380px; display: flex; flex-direction: column; overflow: hidden; position: relative;
+    /* VARIABLES & RESET */
+    :root {
+      --accent: #3b82f6;
+      --accent-bg: #eff6ff;
+      --border: #cbd5e1;
+      --dark: #0f172a;
+      --card-bg: #ffffff;
     }
     
-    .vis-header {
-        background: #1e293b; color: #94a3b8; font-size: 10px; font-weight: bold; letter-spacing: 1px;
-        padding: 8px 15px; border-bottom: 1px solid #334155; display:flex; justify-content:space-between;
-    }
-    .capacity-indicator { font-family: monospace; color: #e2e8f0; }
+    .desc-text { margin-bottom: 20px; color: #64748b; font-size: 0.9em; }
 
-    /* THE STAGE */
-    .vis-stage {
-        flex-grow: 1; padding: 20px; display: flex; align-items: center; gap: 15px; 
-        transition: all 0.3s;
-        scrollbar-width: thin; scrollbar-color: #475569 #1e293b;
+    /* DASHBOARD GRID */
+    .config-dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .control-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+
+    .card-header {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .card-header .icon { font-size: 1.1em; color: var(--accent); }
+
+    /* TOGGLE BUTTONS */
+    .toggle-group { display: flex; flex-direction: column; gap: 6px; }
+    
+    .t-btn {
+      border: 1px solid transparent;
+      background: #f1f5f9;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex; justify-content: space-between; align-items: center;
     }
     
-    /* MODES */
-    .vis-stage.ordered { 
-        justify-content: flex-start; overflow-x: auto; overflow-y: hidden; white-space: nowrap;
-    }
-    .vis-stage.unordered { 
-        justify-content: center; flex-wrap: wrap; align-content: center; overflow-y: auto;
+    .t-btn:hover { background: #e2e8f0; }
+    
+    .t-btn.active {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
     }
     
-    .vis-stage.fixed { border-right: 5px solid #ef4444; } 
-    .vis-stage.dynamic { border-right: 5px dashed #22c55e; } 
+    .t-btn .lbl { font-size: 0.9rem; font-weight: 600; color: #334155; }
+    .t-btn.active .lbl { color: var(--accent); }
+    
+    .t-btn .hint { font-size: 0.7rem; font-family: monospace; color: #94a3b8; }
+    .t-btn.active .hint { color: #60a5fa; }
 
-    /* ITEMS */
-    .v-item {
-        background: white; border-radius: 8px; padding: 10px; 
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3); animation: popIn 0.3s ease; border: 2px solid #cbd5e1;
-        flex-shrink: 0; position: relative; transition: transform 0.3s;
+    /* VISUALIZATION CONTAINER */
+    .vis-wrapper {
+      background: var(--dark);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      height: 320px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .vis-status-bar {
+      background: rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 8px 15px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.7rem; color: #94a3b8;
+    }
+    .vis-status-bar .mono { font-family: 'Courier New', monospace; letter-spacing: 1px; }
+    .badge { background: #334155; padding: 2px 6px; border-radius: 4px; color: #f8fafc; }
+
+    .vis-canvas {
+      flex: 1;
+      position: relative;
+      padding: 20px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+
+    /* MEMORY CONTAINER (THE BOX) */
+    .mem-container {
+      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    /* -- STATE: FIXED vs DYNAMIC -- */
+    .mem-container.fixed {
+      border: 2px solid #475569;
+      background: rgba(30, 41, 59, 0.5);
+      border-radius: 8px;
+      min-width: 400px; /* Rigid size */
+      justify-content: flex-start;
+    }
+
+    .mem-container.dynamic {
+      border: 2px dashed #22c55e;
+      background: transparent;
+      border-radius: 8px;
+      min-width: auto;
+      border-right: none; /* Open ended */
+      mask-image: linear-gradient(to right, black 80%, transparent 100%);
+    }
+
+    /* -- STATE: ORDERED vs UNORDERED -- */
+    .mem-container.ordered {
+      flex-direction: row;
+      flex-wrap: nowrap;
+    }
+
+    .mem-container.unordered {
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      width: 80%;
+      border-color: rgba(255,255,255,0.1); /* Looser boundary */
+    }
+
+    /* DATA ITEMS */
+    .data-item {
+      width: 70px; height: 70px;
+      background: white;
+      border-radius: 6px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      position: relative;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.3s;
     }
     
-    .ordered .v-item { width: 160px; height: 100px; display:flex; flex-direction:column; justify-content:center; }
-    .unordered .v-item { width: 100px; height: 100px; transform: rotate(var(--rot)); display:flex; flex-direction:column; justify-content:center; }
-    .unordered .v-item:hover { transform: scale(1.1) rotate(0deg); z-index:10; }
+    .data-item:hover { transform: translateY(-5px); z-index: 10; }
 
-    .idx-badge { 
-        position: absolute; top: -8px; left: -8px; background: #3b82f6; color: white; 
-        font-family: monospace; font-size: 10px; padding: 2px 6px; border-radius: 4px; 
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    /* Index Badge (Only for ordered) */
+    .idx {
+      position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: white;
+      font-size: 0.6rem; padding: 1px 5px; border-radius: 4px;
+      font-family: monospace;
+      opacity: 0; transition: opacity 0.3s;
     }
+    .ordered .idx { opacity: 1; }
 
-    .meta-content { display:flex; flex-direction:column; gap:6px; }
-    .meta-row { display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:bold; color:#334155; }
-    .tag { background:#fef3c7; color:#d97706; padding:2px 5px; border-radius:3px; font-size:9px; }
+    /* CONTENT STYLES */
+    .content-simple { font-size: 1.5rem; font-weight: 800; color: #475569; }
+    
+    .content-complex { 
+      width: 100%; height: 100%; padding: 6px;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .c-row { height: 6px; background: #e2e8f0; border-radius: 3px; width: 100%; }
+    .c-row.short { width: 60%; }
+    .c-row.blue { background: #bfdbfe; }
+    
+    @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
 
-    .nested-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 5px; background:#eff6ff; padding:5px; border-radius:4px; border:1px dashed #93c5fd; }
-    .n-dot { width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; margin:auto; }
-
-    .vis-desc { background: rgba(15, 23, 42, 0.95); color: #22c55e; padding: 10px; font-family: monospace; font-size: 12px; text-align: center; border-top: 1px solid #334155; }
-
-    @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 
   <script>
-    // 1. Setup Global State
-    window.visConfig = {
+    (function() {
+      // State
+      const state = {
         order: 'ordered',
         size: 'fixed',
-        complex: 'meta'
-    };
+        complex: 'simple'
+      };
 
-    // 2. Define Function to Update Mode
-    window.updateListMode = function(category, value, element) {
-        // Update State
-        window.visConfig[category] = value;
+      // Elements
+      const container = document.getElementById('memory-container');
+      const statusText = document.getElementById('status-text');
+      const capBadge = document.getElementById('capacity-badge');
 
-        // Update Button Visuals
-        const group = element.closest('.option-group');
-        const buttons = group.querySelectorAll('.option-btn');
+      // Init Buttons
+      document.querySelectorAll('.t-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const clicked = e.currentTarget;
+          const parent = clicked.parentElement;
+          const val = clicked.dataset.val;
+          
+          // UI Toggle
+          parent.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
+          clicked.classList.add('active');
+
+          // Update State
+          if(parent.id === 'ctrl-order') state.order = val;
+          if(parent.id === 'ctrl-size') state.size = val;
+          if(parent.id === 'ctrl-complex') state.complex = val;
+
+          render();
+        });
+      });
+
+      function render() {
+        // 1. Reset Container Classes
+        container.className = `mem-container ${state.order} ${state.size}`;
+
+        // 2. Determine Item Count
+        // Fixed = always 4 items. Dynamic = 8 items to show growth.
+        const count = state.size === 'fixed' ? 4 : 8;
         
-        // Remove active class from all in this group
-        for(let i=0; i<buttons.length; i++) {
-            buttons[i].classList.remove('active');
-        }
-        // Add active class to clicked
-        element.classList.add('active');
-
-        // Re-render
-        window.drawVisualization();
-    };
-
-    // 3. Define Main Render Function
-    window.drawVisualization = function() {
-        const stage = document.getElementById('vis-stage');
-        const desc = document.getElementById('vis-desc');
-        const indicator = document.getElementById('cap-indicator');
-        
-        if(!stage) return; 
-
-        // Apply Classes to Stage
-        stage.className = 'vis-stage ' + window.visConfig.order + ' ' + window.visConfig.size + ' ' + window.visConfig.complex;
-
-        // Determine capacity text
-        if (window.visConfig.size === 'fixed') {
-            indicator.innerText = "Capacity: FIXED (Max 4)";
-            indicator.style.color = '#f87171';
+        // 3. Update Text
+        statusText.innerText = `MODE: ${state.order.toUpperCase()} // ${state.size.toUpperCase()}`;
+        if(state.size === 'fixed') {
+          capBadge.innerText = "MAX: 4";
+          capBadge.style.color = "#f87171";
         } else {
-            indicator.innerText = "Capacity: DYNAMIC (Growable)";
-            indicator.style.color = '#4ade80';
+          capBadge.innerText = "GROWABLE";
+          capBadge.style.color = "#4ade80";
         }
 
-        // Generate Items HTML
-        let html = '';
-        const count = window.visConfig.size === 'fixed' ? 4 : 8; 
-
-        for(let i=0; i<count; i++) {
-            let content = '';
-            
-            // Build Content based on Complexity
-            if(window.visConfig.complex === 'meta') {
-                content = 
-                '<div class="meta-content">' +
-                    '<div class="meta-row">' +
-                        '<span>User_'+ (i+10) +'</span>' +
-                        '<span class="tag">ID:'+i+'</span>' +
-                    '</div>' +
-                    '<div style="height:4px; background:#e2e8f0; width:100%; border-radius:2px;">' +
-                        '<div style="height:100%; background:#3b82f6; width:'+ (Math.random()*100) +'%;"></div>' +
-                    '</div>' +
-                    '<div style="font-size:9px; color:#64748b;">Active Session</div>' +
-                '</div>';
-            } else {
-                content = 
-                '<div class="meta-content">' +
-                    '<div style="font-size:10px; font-weight:bold; color:#1e293b;">SubList ['+i+']</div>' +
-                    '<div class="nested-grid">' +
-                        '<div class="n-dot"></div><div class="n-dot"></div><div class="n-dot"></div>' +
-                        '<div class="n-dot"></div><div class="n-dot"></div><div class="n-dot"></div>' +
-                    '</div>' +
-                '</div>';
-            }
-
-            // Build Style based on Order
-            let style = '';
-            let idxHTML = '';
-            
-            if (window.visConfig.order === 'unordered') {
-                const rot = (Math.random() * 16) - 8;
-                style = 'transform: rotate('+ rot +'deg);';
-            } else {
-                idxHTML = '<div class="idx-badge">Index '+i+'</div>';
-            }
-
-            html += '<div class="v-item" style="'+style+'">' + idxHTML + content + '</div>';
-        }
-
-        stage.innerHTML = html;
+        // 4. Generate Content
+        container.innerHTML = '';
         
-        // Update Description text
-        desc.innerText = "> Visualizing: " + window.visConfig.order + " " + window.visConfig.size + " list with " + window.visConfig.complex;
-    };
+        for(let i=0; i<count; i++) {
+          const item = document.createElement('div');
+          item.className = 'data-item';
+          
+          // Add Index Badge
+          item.innerHTML = `<div class="idx">${i}</div>`;
 
-    // 4. Run once on load
-    setTimeout(function() {
-        window.drawVisualization();
-    }, 100);
+          // Add Inner Content
+          if(state.complex === 'simple') {
+            const val = Math.floor(Math.random() * 99);
+            item.innerHTML += `<div class="content-simple">${val}</div>`;
+          } else {
+            item.innerHTML += `
+              <div class="content-complex">
+                <div style="font-size:7px; font-weight:bold; color:#64748b; margin-bottom:2px;">OBJ_ID:${i}</div>
+                <div class="c-row blue"></div>
+                <div class="c-row"></div>
+                <div class="c-row short"></div>
+              </div>
+            `;
+          }
+
+          // Random rotation for unordered look
+          if(state.order === 'unordered') {
+            const rot = (Math.random() * 20) - 10;
+            item.style.transform = `rotate(${rot}deg)`;
+          }
+
+          container.appendChild(item);
+        }
+      }
+
+      // Initial Draw
+      render();
+    })();
   </script>
 </section>
+
 
 <section class="slide">
   <div class="slide-top">
