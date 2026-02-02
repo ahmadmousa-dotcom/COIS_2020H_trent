@@ -2267,6 +2267,245 @@
   </script>
 </section>
 
+
+<section class="slide" id="efficiency-slide">
+  <style>
+    #efficiency-slide {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #fff;
+      padding: 40px;
+      color: #1e293b;
+    }
+
+    /* Header */
+    .eff-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; }
+    .eff-title h2 { font-size: 2.2rem; font-weight: 800; color: #0f172a; margin: 0; }
+    .eff-subtitle { font-size: 0.9rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+    .eff-badge { background: #fef3c7; color: #b45309; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: 1px solid #fcd34d; }
+
+    /* Layout */
+    .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: 75%; }
+    
+    .panel { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+    .panel-head { border-top: 4px solid #22c55e; } /* Green for Fast */
+    .panel-tail { border-top: 4px solid #ef4444; } /* Red for Slow */
+    
+    .panel h3 { margin: 0 0 10px 0; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+    .time-tag { font-family: monospace; font-size: 0.9rem; padding: 4px 8px; border-radius: 6px; }
+    .tag-fast { background: #dcfce7; color: #15803d; }
+    .tag-slow { background: #fee2e2; color: #b91c1c; }
+
+    .desc { font-size: 0.9rem; color: #475569; margin-bottom: 20px; min-height: 40px; }
+
+    /* SVG Containers */
+    .viz-stage { flex-grow: 1; border: 1px dashed #cbd5e1; border-radius: 8px; background: #fff; display: flex; justify-content: center; align-items: center; position: relative; }
+
+    /* Controls */
+    .action-btn { margin-top: 15px; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .action-btn:active { transform: scale(0.98); }
+    .btn-fast { background: #22c55e; color: white; box-shadow: 0 4px 10px -2px rgba(34, 197, 94, 0.3); }
+    .btn-slow { background: #ef4444; color: white; box-shadow: 0 4px 10px -2px rgba(239, 68, 68, 0.3); }
+
+    /* Icons */
+    .icon { width: 18px; height: 18px; stroke-width: 2.5; }
+
+  </style>
+
+  <div class="eff-header">
+    <div class="eff-title">
+      <div class="eff-subtitle">Asymmetry</div>
+      <h2>Delete Head vs. Delete Tail</h2>
+    </div>
+    <div class="eff-badge">Singly Linked List</div>
+  </div>
+
+  <div class="comparison-grid">
+    
+    <div class="panel panel-head">
+      <h3>
+        Delete Head
+        <span class="time-tag tag-fast">O(1)</span>
+      </h3>
+      <div class="desc">
+        We just move the Head pointer forward once. <br><strong>No traversal required.</strong>
+      </div>
+      
+      <div class="viz-stage" id="stage-head">
+        <svg width="200" height="120" viewBox="0 0 200 120" style="overflow:visible">
+          <defs>
+            <marker id="arrow-sm" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b" /></marker>
+          </defs>
+          
+          <g id="h-nodes"></g>
+          
+          <g id="h-ptr" style="transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+             <text x="0" y="0" text-anchor="middle" font-weight="bold" fill="#15803d" font-size="12">HEAD</text>
+             <line x1="0" y1="5" x2="0" y2="25" stroke="#15803d" stroke-width="3" marker-end="url(#arrow-sm)" />
+          </g>
+        </svg>
+      </div>
+
+      <button class="action-btn btn-fast" onclick="effDemo.deleteHead()">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        Delete Head (Instant)
+      </button>
+    </div>
+
+    <div class="panel panel-tail">
+      <h3>
+        Delete Tail
+        <span class="time-tag tag-slow">O(n)</span>
+      </h3>
+      <div class="desc">
+        We can't go back from Tail. We must scan from Head to find the <strong>new</strong> tail.
+      </div>
+      
+      <div class="viz-stage" id="stage-tail">
+        <svg width="200" height="120" viewBox="0 0 200 120" style="overflow:visible">
+           <g id="t-nodes"></g>
+
+           <g id="t-ptr" style="transition: transform 0.5s ease;">
+             <text x="0" y="0" text-anchor="middle" font-weight="bold" fill="#b91c1c" font-size="12">TAIL</text>
+             <line x1="0" y1="5" x2="0" y2="25" stroke="#b91c1c" stroke-width="3" marker-end="url(#arrow-sm)" />
+           </g>
+           
+           <circle id="t-scan" r="6" fill="#f59e0b" opacity="0" />
+        </svg>
+      </div>
+
+      <button class="action-btn btn-slow" onclick="effDemo.deleteTail()">
+         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+         Delete Tail (Wait for it...)
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const effDemo = {
+      headIdx: 0,
+      tailCount: 4,
+      isAnimating: false,
+
+      init: function() {
+        this.renderHeadList();
+        this.renderTailList();
+      },
+
+      /* --- HEAD LOGIC --- */
+      renderHeadList: function() {
+        const grp = document.getElementById('h-nodes');
+        grp.innerHTML = '';
+        // Draw 3 nodes, starting at index `headIdx`
+        for(let i = 0; i < 3; i++) {
+           this.drawNode(grp, i * 70 + 40, 60, i + this.headIdx, i < 2);
+        }
+        // Reset Pointer
+        document.getElementById('h-ptr').setAttribute('transform', `translate(40, 30)`);
+      },
+
+      deleteHead: async function() {
+        if(this.isAnimating) return;
+        this.isAnimating = true;
+
+        // 1. Visual Move Pointer
+        const ptr = document.getElementById('h-ptr');
+        ptr.style.transform = `translate(110px, 30px)`; // Move to next node x=110
+
+        // 2. Old Head Fades
+        const nodes = document.getElementById('h-nodes').children;
+        if(nodes[0]) nodes[0].style.opacity = '0.2';
+        
+        await this.wait(300); // Fast!
+        
+        // Reset Logic
+        this.headIdx++;
+        this.renderHeadList();
+        this.isAnimating = false;
+      },
+
+      /* --- TAIL LOGIC --- */
+      renderTailList: function() {
+        const grp = document.getElementById('t-nodes');
+        grp.innerHTML = '';
+        // Draw 4 nodes always
+        for(let i = 0; i < 4; i++) {
+           this.drawNode(grp, i * 50 + 25, 60, i, i < 3);
+        }
+        // Place Tail at end (3 * 50 + 25 = 175)
+        document.getElementById('t-ptr').setAttribute('transform', `translate(175, 30)`);
+      },
+
+      deleteTail: async function() {
+        if(this.isAnimating) return;
+        this.isAnimating = true;
+        const scan = document.getElementById('t-scan');
+        
+        // 1. Start Scan from Head
+        scan.style.opacity = '1';
+        
+        // Traversal Animation loop
+        for(let i=0; i<3; i++) {
+           const x = i * 50 + 25;
+           scan.setAttribute('cx', x);
+           scan.setAttribute('cy', 60);
+           await this.wait(500); // Slow step!
+        }
+        
+        // 2. Arrived at 2nd to last (Node 2)
+        // Update Tail Ptr
+        const tailPtr = document.getElementById('t-ptr');
+        tailPtr.style.transform = `translate(125px, 30px)`; // Node 2 x
+        
+        // Fade out last node
+        const nodes = document.getElementById('t-nodes').children;
+        // The last node group is the 4th child (index 3)
+        // Note: my drawNode appends a <g>, so children are the nodes.
+        if(nodes[3]) nodes[3].style.opacity = '0.2';
+        
+        await this.wait(800);
+        
+        // Reset
+        scan.style.opacity = '0';
+        this.renderTailList();
+        this.isAnimating = false;
+      },
+
+      /* --- HELPERS --- */
+      drawNode: function(parent, x, y, label, hasArrow) {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.style.transition = "opacity 0.3s";
+        
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute('x', x - 20); rect.setAttribute('y', y - 15);
+        rect.setAttribute('width', 40); rect.setAttribute('height', 30);
+        rect.setAttribute('rx', 4); rect.setAttribute('fill', '#fff');
+        rect.setAttribute('stroke', '#334155'); rect.setAttribute('stroke-width', 2);
+        
+        const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        txt.setAttribute('x', x); txt.setAttribute('y', y + 5);
+        txt.setAttribute('text-anchor', 'middle');
+        txt.textContent = label;
+        
+        g.appendChild(rect); g.appendChild(txt);
+        
+        if(hasArrow) {
+           const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+           l.setAttribute('x1', x + 20); l.setAttribute('y1', y);
+           l.setAttribute('x2', x + 30); l.setAttribute('y2', y); // Short link
+           l.setAttribute('stroke', '#94a3b8');
+           l.setAttribute('marker-end', 'url(#arrow-sm)');
+           g.appendChild(l);
+        }
+        parent.appendChild(g);
+      },
+      
+      wait: function(ms) { return new Promise(r => setTimeout(r, ms)); }
+    };
+    
+    setTimeout(() => effDemo.init(), 100);
+  </script>
+</section>
+
 <section class="slide">
   <div class="slide-top">
     <div class="meta">
@@ -3529,183 +3768,296 @@
     setTimeout(() => tailDemo.reset(), 500);
   </script>
 </section>
+<section class="slide" id="tail-deletion-slide">
+  <style>
+    /* Base Layout & Typography */
+    #tail-deletion-slide {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #ffffff;
+      color: #1e293b;
+      padding: 40px;
+      box-sizing: border-box;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    /* Header */
+    .slide-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; border-bottom: 3px solid #f1f5f9; padding-bottom: 15px; }
+    .header-left h2 { font-size: 2.2rem; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.1; }
+    .header-left .topic { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 1.2px; margin-bottom: 5px; }
+    .badge { background: #fee2e2; color: #991b1b; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: 1px solid #fecaca; }
 
-<section class="slide">
-  <div class="slide-top">
-    <div class="meta">
-      <div class="course">Algorithms</div>
-      <div class="sub">Edge Cases</div>
+    /* Main Grid */
+    .content-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 40px; height: 80%; }
+
+    /* Left Column: Theory */
+    .theory-box { display: flex; flex-direction: column; gap: 20px; }
+    
+    .concept-card { background: #f8fafc; border-left: 5px solid #3b82f6; padding: 15px 20px; border-radius: 0 8px 8px 0; }
+    .concept-title { font-weight: 700; color: #1e40af; display: block; margin-bottom: 6px; font-size: 1.1rem;}
+    .concept-text { font-size: 0.95rem; line-height: 1.5; color: #334155; margin: 0; }
+    
+    .problem-card { background: #fff1f2; border: 1px solid #fda4af; padding: 15px; border-radius: 8px; }
+    .problem-header { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #be123c; margin-bottom: 8px; }
+    .problem-text { font-size: 0.9rem; line-height: 1.4; color: #881337; }
+
+    /* Code Block */
+    .code-container { background: #1e293b; border-radius: 10px; padding: 15px; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+    .code-line { padding: 3px 8px; border-radius: 4px; border-left: 3px solid transparent; white-space: pre; transition: all 0.2s; }
+    .code-line.active { background: #334155; border-left-color: #38bdf8; color: #fff; font-weight: bold; }
+    .kwd { color: #c084fc; } .prop { color: #38bdf8; } .val { color: #fb7185; } .com { color: #94a3b8; font-style: italic; }
+
+    /* Right Column: Visualization */
+    .viz-container { background: #ffffff; border: 2px solid #e2e8f0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+    
+    .status-bar { text-align: center; font-family: monospace; font-weight: 600; color: #475569; background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; min-height: 20px; }
+    
+    .controls { display: flex; gap: 10px; justify-content: center; margin-top: auto; }
+    .btn { padding: 10px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: transform 0.1s; }
+    .btn:active { transform: scale(0.95); }
+    .btn-reset { background: #e2e8f0; color: #475569; }
+    .btn-run { background: #2563eb; color: white; box-shadow: 0 4px 10px -2px rgba(37, 99, 235, 0.3); }
+
+  </style>
+
+  <div class="slide-header">
+    <div class="header-left">
+      <div class="topic">Linked Lists / Edge Cases</div>
+      <h2>Deleting the Tail</h2>
     </div>
-    <span class="pill">Delete Last w/ Tail</span>
+    <span class="badge">Time Complexity: O(n)</span>
   </div>
 
-  <h2>The "Tail" Trap</h2>
-  
-  <div class="grid-2">
-    <div style="display:flex; flex-direction:column; gap:20px;">
-      <div class="info-card" style="border-left-color: #ef4444;">
-        <h3 style="margin:0 0 10px; color:#b91c1c;">Why can't we just set last = null?</h3>
-        <p style="margin:0; font-size:16px;">
-          <strong>Misconception:</strong> Since we have a pointer to the last node, deleting it should be O(1).
+  <div class="content-grid">
+    
+    <div class="theory-box">
+      
+      <div class="concept-card">
+        <span class="concept-title">The "Holding Hands" Problem</span>
+        <p class="concept-text">
+          Imagine students holding hands. If the last person leaves, the person before them is still <strong>holding their hand out</strong>.
           <br><br>
-          <strong>Reality:</strong> The node <em>before</em> the last one still points to the old tail. We can't access that previous node directly in a Singly Linked List.
+          We need to find that <em>second-to-last</em> person and tell them to put their hand down (point to null).
         </p>
       </div>
 
-      <div class="code-block" style="font-size:13px; padding:15px;">
-        <div class="line" style="color:#94a3b8;">// Must still traverse to find (N-1)</div>
-        <div id="tdel-line-1" class="line">while (current.next.next != null) {</div>
-        <div id="tdel-line-2" class="line">&nbsp;&nbsp;current = current.next;</div>
-        <div id="tdel-line-3" class="line">}</div>
-        <div class="line" style="color:#94a3b8; margin-top:5px;">// current is now 2nd to last</div>
-        <div id="tdel-line-4" class="line">current.next = null; // Remove Link</div>
-        <div id="tdel-line-5" class="line" style="color:#ef4444;">last = current; // CRITICAL!</div>
+      <div class="problem-card">
+        <div class="problem-header">
+           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+           No Looking Back
+        </div>
+        <div class="problem-text">
+          We can't ask the Tail "Who is holding your hand?" because links only go one way. We must walk from the <strong>Start</strong> (Head) to find them.
+        </div>
+      </div>
+
+      <div class="code-container">
+        <div class="code-line com">// 1. "Is your neighbor the end?"</div>
+        <div id="ln-1" class="code-line"><span class="kwd">while</span> (current.next.next != <span class="val">null</span>) {</div>
+        <div id="ln-2" class="code-line">  current = current.<span class="prop">next</span>;</div>
+        <div id="ln-3" class="code-line">}</div>
+        <div class="code-line com">// 2. "Put your hand down"</div>
+        <div id="ln-4" class="code-line">current.<span class="prop">next</span> = <span class="val">null</span>;</div>
+        <div class="code-line com">// 3. Update the Tail label</div>
+        <div id="ln-5" class="code-line">tail = current;</div>
       </div>
     </div>
 
-    <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; height:450px;">
+    <div class="viz-container">
+      <div class="status-bar" id="anim-status">Waiting to start...</div>
       
-      <svg id="tail-del-stage" width="100%" height="220" viewBox="0 0 500 220" style="overflow:visible;">
+      <svg id="demo-svg" width="100%" height="300" viewBox="0 0 500 300" style="overflow:visible;">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8" /></marker>
+          <marker id="ptr-arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b" /></marker>
+        </defs>
+
+        <g id="nodes-group"></g>
         
-        <g id="td-list-grp"></g>
-        
-        <g id="td-last-ptr" style="transition: transform 0.5s ease;">
-            <text x="0" y="0" text-anchor="middle" font-weight="bold" fill="#22c55e" font-size="12">LAST</text>
-            <line x1="0" y1="5" x2="0" y2="25" stroke="#22c55e" stroke-width="2" marker-end="url(#arrow-tail-ptr)"/>
+        <g id="tail-ptr-viz" style="transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+           <text x="0" y="0" text-anchor="middle" font-weight="bold" fill="#2563eb" font-size="14">TAIL</text>
+           <line x1="0" y1="5" x2="0" y2="35" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)" />
         </g>
-        
-        <g id="td-curr-ptr" style="opacity:0; transition: transform 0.3s ease;">
-             <text x="0" y="80" text-anchor="middle" font-weight="bold" fill="#ea580c" font-size="12">current</text>
-             <line x1="0" y1="70" x2="0" y2="55" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow-tail)"/>
+
+        <g id="curr-ptr-viz" style="opacity:0; transition: transform 0.3s ease;">
+           <text x="0" y="100" text-anchor="middle" font-weight="bold" fill="#f59e0b" font-size="14">current</text>
+           <line x1="0" y1="85" x2="0" y2="55" stroke="#f59e0b" stroke-width="3" marker-end="url(#ptr-arrow)" />
+        </g>
+
+        <g id="no-entry-sign" style="opacity:0; transition: opacity 0.3s;">
+           <circle cx="0" cy="0" r="12" fill="#fff" stroke="#ef4444" stroke-width="3"/>
+           <line x1="-8" y1="0" x2="8" y2="0" stroke="#ef4444" stroke-width="3" />
+           <text x="0" y="25" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="bold">NO PREV</text>
         </g>
       </svg>
 
-      <div style="background:#f8fafc; padding:15px; border-radius:12px; border:1px solid #e2e8f0; text-align:center;">
-         <div id="td-msg" style="font-family:monospace; color:#0f172a; font-weight:bold; margin-bottom:10px;">Ready.</div>
-         <div style="display:flex; gap:10px; justify-content:center;">
-             <button class="btn btn-secondary" onclick="tailDelDemo.reset()">Reset</button>
-             <button class="btn btn-danger" onclick="tailDelDemo.run()">Delete Last (Correctly)</button>
-         </div>
+      <div class="controls">
+        <button class="btn btn-reset" onclick="listDemo.reset()">Reset</button>
+        <button class="btn btn-run" onclick="listDemo.run()">Delete Tail</button>
       </div>
     </div>
   </div>
 
-  <div class="slide-footer"><div class="muted">Lecture 4 - Delete Last</div><div class="slide-no"></div></div>
-
   <script>
-    const tailDelDemo = {
-        init: function() {
-             this.reset();
-        },
+    const listDemo = {
+      isRunning: false,
+      
+      init: function() { this.reset(); },
+      
+      reset: function() {
+        this.isRunning = false;
+        const grp = document.getElementById('nodes-group');
+        grp.innerHTML = '';
+        document.getElementById('anim-status').textContent = "Waiting to start...";
+        document.getElementById('anim-status').style.color = "#475569";
         
-        reset: function() {
-            document.getElementById('td-list-grp').innerHTML = '';
-            document.getElementById('td-msg').textContent = "Ready.";
-            document.getElementById('td-curr-ptr').style.opacity = '0';
-            
-            // Create 4 nodes
-            for(let i=0; i<4; i++) {
-                this.drawNode(i);
-            }
-            
-            // Set Tail Ptr
-            const lastX = 20 + (3 * 90) + 25;
-            document.getElementById('td-last-ptr').setAttribute('transform', `translate(${lastX}, 10)`);
-            document.querySelectorAll('.line').forEach(l => l.classList.remove('active-line'));
-        },
+        document.getElementById('curr-ptr-viz').style.opacity = 0;
+        document.getElementById('no-entry-sign').style.opacity = 0;
         
-        run: async function() {
-            const ptr = document.getElementById('td-curr-ptr');
-            const msg = document.getElementById('td-msg');
-            
-            // 1. Start Traversal
-            this.highlight('tdel-line-1');
-            msg.textContent = "We must find the 2nd to last node.";
-            ptr.style.opacity = '1';
-            
-            for(let i=0; i<3; i++) {
-                const x = 20 + (i * 90) + 25;
-                ptr.setAttribute('transform', `translate(${x}, 0)`);
-                this.highlight('tdel-line-1');
-                await this.wait(600);
-                
-                if (i < 2) { // 0, 1 moves. 2 stops.
-                    this.highlight('tdel-line-2');
-                    msg.textContent = "next.next is not null. Advance.";
-                    await this.wait(600);
-                } else {
-                    msg.textContent = "next.next IS null. Stop here.";
-                }
-            }
-            
-            // 2. Delete Link
-            this.highlight('tdel-line-4');
-            msg.textContent = "current.next = null (Sever the link)";
-            
-            const lastNodeGroup = document.getElementById('td-node-3');
-            const lastArrow = document.getElementById('td-arrow-2');
-            
-            if(lastArrow) lastArrow.style.opacity = '0.2';
-            if(lastNodeGroup) lastNodeGroup.style.opacity = '0.3';
-            
-            await this.wait(1000);
-            
-            // 3. Update Tail
-            this.highlight('tdel-line-5');
-            msg.textContent = "Update LAST pointer to current.";
-            
-            const newTailX = 20 + (2 * 90) + 25;
-            document.getElementById('td-last-ptr').style.transform = `translate(${newTailX}px, 10px)`;
-            
-            // Final Cleanup visuals
-            if(lastArrow) lastArrow.remove();
-            if(lastNodeGroup) lastNodeGroup.remove();
-            
-            ptr.style.opacity = '0';
-            msg.textContent = "Done. 'Last' is safe.";
-        },
+        // Render 4 nodes
+        for(let i=0; i<4; i++) this.renderNode(i);
         
-        drawNode: function(idx) {
-            const grp = document.getElementById('td-list-grp');
-            const x = 20 + (idx * 90);
-            
-            const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            g.setAttribute('transform', `translate(${x}, 40)`);
-            g.setAttribute('id', `td-node-${idx}`);
-            g.style.transition = "opacity 0.5s";
-            
-            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            rect.setAttribute('width', 50); rect.setAttribute('height', 40);
-            rect.setAttribute('rx', 4); rect.setAttribute('fill', '#fff');
-            rect.setAttribute('stroke', '#0f172a'); rect.setAttribute('stroke-width', 2);
-            
-            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            text.setAttribute('x', 25); text.setAttribute('y', 25);
-            text.setAttribute('text-anchor', 'middle'); text.textContent = idx;
-            
-            g.appendChild(rect); g.appendChild(text);
-            grp.appendChild(g);
-            
-            if(idx > 0) {
-                 const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                 l.setAttribute('x1', 20+((idx-1)*90)+50); l.setAttribute('y1', 60);
-                 l.setAttribute('x2', x); l.setAttribute('y2', 60);
-                 l.setAttribute('id', `td-arrow-${idx-1}`);
-                 l.setAttribute('stroke', '#64748b'); l.setAttribute('marker-end', 'url(#arrow-tail)');
-                 grp.appendChild(l);
-            }
-        },
+        // Position Tail at last node (index 3)
+        // x = 30 + (3 * 110) + 30 (half width) = 390
+        document.getElementById('tail-ptr-viz').setAttribute('transform', `translate(390, 20)`);
         
-        highlight: function(id) {
-            document.querySelectorAll('.line').forEach(l => l.classList.remove('active-line'));
-            document.getElementById(id).classList.add('active-line');
-        },
-        wait: function(ms) { return new Promise(r => setTimeout(r, ms)); }
+        this.highlight(null);
+      },
+      
+      run: async function() {
+        if(this.isRunning) return;
+        this.isRunning = true;
+        const status = document.getElementById('anim-status');
+        const currPtr = document.getElementById('curr-ptr-viz');
+        
+        // Step 0: Show why we can't go back
+        status.textContent = "We want Node 3 to leave...";
+        status.style.color = "#ef4444";
+        await this.wait(1000);
+        
+        status.textContent = "But Node 2 is still holding its hand!";
+        const noEntry = document.getElementById('no-entry-sign');
+        noEntry.setAttribute('transform', 'translate(330, 60)'); // Between 2 and 3
+        noEntry.style.opacity = 1;
+        await this.wait(1500);
+        noEntry.style.opacity = 0;
+        status.style.color = "#475569";
+        
+        // Step 1: Traverse
+        status.textContent = "We must walk from Start to find Node 2.";
+        this.highlight('ln-1');
+        currPtr.style.opacity = 1;
+        
+        // Loop 0 -> 1 -> 2
+        for(let i=0; i<3; i++) {
+          const x = 30 + (i * 110) + 30;
+          currPtr.setAttribute('transform', `translate(${x}, 0)`);
+          
+          if(i < 2) {
+             status.textContent = `Asking Node ${i}: Is your neighbor the end? No.`;
+             await this.wait(600);
+             this.highlight('ln-2');
+             status.textContent = "Move to next student...";
+             await this.wait(600);
+             this.highlight('ln-1');
+          } else {
+             status.textContent = `Asking Node ${i}: Is your neighbor the end? YES!`;
+             status.style.color = "#2563eb";
+             await this.wait(1000);
+          }
+        }
+        
+        // Step 2: Delete
+        status.textContent = "We found the 2nd to last student!";
+        this.highlight('ln-4');
+        await this.wait(800);
+        
+        // Break the link visually
+        const lastLink = document.getElementById('link-2');
+        const lastNode = document.getElementById('node-3');
+        if(lastLink) {
+            lastLink.setAttribute('stroke', '#ef4444');
+            lastLink.setAttribute('stroke-dasharray', '4');
+            status.textContent = "Node 2 puts their hand down (next = null).";
+            await this.wait(800);
+            lastLink.style.opacity = 0;
+        }
+        
+        if(lastNode) {
+            lastNode.style.opacity = 0.3;
+            lastNode.style.transform = "translate(0, 20px)"; // Drop slightly
+        }
+        
+        // Step 3: Update Tail
+        this.highlight('ln-5');
+        status.textContent = "Teacher updates the 'TAIL' label.";
+        const newTailX = 30 + (2 * 110) + 30; // Node 2
+        document.getElementById('tail-ptr-viz').style.transform = `translate(${newTailX}px, 20px)`;
+        
+        await this.wait(1000);
+        if(lastNode) lastNode.remove();
+        currPtr.style.opacity = 0;
+        this.highlight(null);
+        status.textContent = "Done. Node 2 is the new Tail.";
+        status.style.color = "#059669";
+        
+        this.isRunning = false;
+      },
+      
+      renderNode: function(i) {
+        const grp = document.getElementById('nodes-group');
+        const x = 30 + (i * 110);
+        const y = 50;
+        
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute('id', `node-${i}`);
+        g.setAttribute('transform', `translate(${x}, ${y})`);
+        g.style.transition = "all 0.5s ease";
+        
+        // Box
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute('width', 60); rect.setAttribute('height', 40);
+        rect.setAttribute('rx', 6);
+        rect.setAttribute('fill', '#fff');
+        rect.setAttribute('stroke', '#334155');
+        rect.setAttribute('stroke-width', 2);
+        
+        // Text
+        const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        txt.setAttribute('x', 30); txt.setAttribute('y', 25);
+        txt.setAttribute('text-anchor', 'middle');
+        txt.setAttribute('font-weight', 'bold');
+        txt.textContent = i;
+        
+        g.appendChild(rect); g.appendChild(txt);
+        grp.appendChild(g);
+        
+        // Arrow
+        if(i < 3) {
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute('id', `link-${i}`);
+            line.setAttribute('x1', x + 60); line.setAttribute('y1', y + 20);
+            line.setAttribute('x2', x + 110); line.setAttribute('y2', y + 20); // Connects to next
+            line.setAttribute('stroke', '#94a3b8');
+            line.setAttribute('stroke-width', 2);
+            line.setAttribute('marker-end', 'url(#arrow)');
+            line.style.transition = "opacity 0.5s";
+            grp.appendChild(line);
+        }
+      },
+      
+      highlight: function(id) {
+        document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active'));
+        if(id) document.getElementById(id).classList.add('active');
+      },
+      
+      wait: function(ms) { return new Promise(r => setTimeout(r, ms)); }
     };
     
-    setTimeout(() => tailDelDemo.init(), 500);
+    setTimeout(() => listDemo.init(), 100);
   </script>
 </section>
+
 <section class="slide">
   <div class="slide-top">
     <div class="meta">
