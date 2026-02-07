@@ -1557,24 +1557,28 @@
   <div class="grid-2">
     <div style="display:flex; flex-direction:column; gap:20px;">
       <div class="info-card" style="border-left-color: #f59e0b;">
-        <h3 style="margin:0 0 10px; color:#b45309; font-size:18px;">The "Golden Rule" of Insertion</h3>
-        <p style="margin:0; font-size:16px;">
-          Always connect your <strong>New Node</strong> to the rest of the list <em>before</em> you break the chain from the <strong>Current Node</strong>.
-        </p>
-      </div>
+       <h3 style="margin:0 0 10px; color:#b45309; font-size:18px;">The "Golden Rule" of Insertion</h3>
+<p style="margin:0; font-size:16px;">
+  Always connect your <strong>New Node</strong> to the rest of the list <em>before</em> you break the chain from the <strong>Current Node</strong>.
+</p>
+</div>
 
-      <div class="code-block" style="font-size:14px; padding:15px;">
-        <div id="ins-line-1" class="line">// 1. Find the spot (after 'current')</div>
-        <div id="ins-line-2" class="line">Node current = head;</div>
-        <div id="ins-line-3" class="line">while (current.data != target) {</div>
-        <div id="ins-line-4" class="line">&nbsp;&nbsp;current = current.next;</div>
-        <div id="ins-line-5" class="line">}</div>
-        <div id="ins-line-6" class="line" style="margin-top:10px;">// 2. The Rewire (Careful!)</div>
-        <div id="ins-line-7" class="line">toAdd.next = current.next;</div>
-        <div id="ins-line-8" class="line">current.next = toAdd;</div>
-      </div>
-    </div>
-
+<div class="code-block" style="font-size:14px; padding:15px;">
+  <div id="ins-line-1" class="line">// 1. Find the spot (Insert After)</div>
+  <div id="ins-line-2" class="line" style="color: #666; font-style: italic;">// Note: To insert BEFORE, we would check 'current.next'</div>
+  <div id="ins-line-3" class="line">Node current = head;</div>
+  
+  <div id="ins-line-4" class="line">while (current != null && current.data != target) {</div>
+  <div id="ins-line-5" class="line">&nbsp;&nbsp;current = current.next;</div>
+  <div id="ins-line-6" class="line">}</div>
+  
+  <div id="ins-line-7" class="line" style="margin-top:10px;">// 2. The Rewire (Only if found)</div>
+  <div id="ins-line-8" class="line">if (current != null) {</div>
+  <div id="ins-line-9" class="line">&nbsp;&nbsp;toAdd.next = current.next;</div>
+  <div id="ins-line-10" class="line">&nbsp;&nbsp;current.next = toAdd;</div>
+  <div id="ins-line-11" class="line">}</div>
+</div>
+</div>
     <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; height:400px;">
       
       <svg id="insert-stage" width="100%" height="220" viewBox="0 0 500 220" style="overflow:visible;">
