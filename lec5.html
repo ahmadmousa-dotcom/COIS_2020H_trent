@@ -348,6 +348,8 @@ and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
             <div class="slide-footer"><div class="muted">Lecture 5 Stack, Queues
 and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
         </section>
+
+
 <section class="slide">
   <style>
     .code-block {
@@ -395,17 +397,18 @@ and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
         <span class="code-line" id="ln-2"><span class="keyword">int</span> top = -1;</span>
         <br>
         <span class="code-line" id="ln-3"><span class="keyword">void</span> <span class="method">Push</span>(<span class="keyword">int</span> val) {</span>
-        <span class="code-line" id="ln-4">  <span class="keyword">if</span> (top == 4) <span class="keyword">return</span>; <span class="comment">// Full</span></span>
+        <span class="code-line" id="ln-4">  <span class="keyword">if</span> (top == 4) <span class="keyword">return</span>;</span>
         <span class="code-line" id="ln-5">  top++;</span>
         <span class="code-line" id="ln-6">  stack[top] = val;</span>
         <span class="code-line" id="ln-7">}</span>
         <br>
         <span class="code-line" id="ln-8"><span class="keyword">int</span> <span class="method">Pop</span>() {</span>
-        <span class="code-line" id="ln-9">  <span class="keyword">if</span> (top == -1) <span class="keyword">return</span> -1; <span class="comment">// Empty</span></span>
+        <span class="code-line" id="ln-9">  <span class="keyword">if</span> (top == -1) <span class="keyword">return</span> -1;</span>
         <span class="code-line" id="ln-10">  <span class="keyword">int</span> item = stack[top];</span>
-        <span class="code-line" id="ln-11">  top--;</span>
-        <span class="code-line" id="ln-12">  <span class="keyword">return</span> item;</span>
-        <span class="code-line" id="ln-13">}</span>
+        <span class="code-line" id="ln-11">  stack[top] = 0; <span class="comment">// Clean up</span></span>
+        <span class="code-line" id="ln-12">  top--;</span>
+        <span class="code-line" id="ln-13">  <span class="keyword">return</span> item;</span>
+        <span class="code-line" id="ln-14">}</span>
       </div>
 
       <div class="callout" style="padding:15px; display:flex; gap:12px; align-items:center; background:#f0f9ff; border-color:#3b82f6;">
@@ -431,7 +434,7 @@ and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
 
       <div style="margin-top:15px; font-size:16px; color:var(--muted); line-height:1.4;">
         <strong>Visual Guide:</strong><br>
-        The <span style="color:#ef4444; font-weight:bold;">TOP</span> pointer tracks the current height. When we <code>Pop</code>, we simply move the pointer down; the data often remains in memory (ghost data) until overwritten.
+        The <span style="color:#ef4444; font-weight:bold;">TOP</span> pointer tracks the stack height. When we <code>Pop</code>, we save the item, <span style="text-decoration: underline;">set the memory slot to 0</span> (clear it), and then move the pointer down.
       </div>
     </div>
   </div>
@@ -472,7 +475,7 @@ and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
         if(txt) statusDisplay.innerText = txt;
       }
 
-      // Expose functions globally for the buttons to work
+      // Expose functions globally
       window.execPush = function() {
         if(isRunning) return;
         if(topIndex >= 4) { alert("Stack Overflow!"); return; }
@@ -511,30 +514,42 @@ and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
 
         setTimeout(() => { highlight('ln-9', 'Checking if empty...'); }, 800);
 
-        setTimeout(() => { highlight('ln-10', `Reading stack[${topIndex}]...`); }, 1600);
+        setTimeout(() => { 
+           // Read item
+           const val = internalStack[topIndex];
+           highlight('ln-10', `Read item: ${val}`); 
+        }, 1600);
+
+        setTimeout(() => {
+           // Clear memory
+           internalStack[topIndex] = 0; 
+           render();
+           highlight('ln-11', `stack[${topIndex}] = 0 (Clear)`); 
+        }, 2400);
 
         setTimeout(() => { 
           topIndex--; 
           render(); 
-          highlight('ln-11', 'top-- (Decrement Index)'); 
-        }, 2400);
+          highlight('ln-12', 'top-- (Decrement Index)'); 
+        }, 3200);
 
         setTimeout(() => { 
-          highlight('ln-12', 'Return Item'); 
-        }, 3200);
+          highlight('ln-13', `Returned Item`); 
+        }, 4000);
 
         setTimeout(() => { 
           highlight(null, 'Ready'); 
           isRunning = false; 
-        }, 4000);
+        }, 4800);
       };
 
       // Init
       render();
     })();
   </script>
-
 </section>
+
+
 <section class="slide">
   <style>
     .bad-array-container {
@@ -1098,68 +1113,62 @@ and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
 </section>
 <section class="slide">
   <style>
-    .feature-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      margin-top: 20px;
+    :root {
+      --glass: rgba(255, 255, 255, 0.9);
+      --glass-border: rgba(255, 255, 255, 0.5);
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
     }
 
+    .feature-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px;
+    }
+
+    /* Card Base Styles */
     .feature-card {
-      background: white;
-      border: 1px solid var(--soft);
-      border-radius: 12px;
+      background: var(--glass);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
       padding: 20px;
       position: relative;
       overflow: hidden;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-sm);
+    }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: #cbd5e1; }
+
+    /* Specific Card Themes */
+    .card-core { border-left: 4px solid #22c55e; background: linear-gradient(145deg, #f0fdf4, #ffffff); }
+    .card-search { border-left: 4px solid #3b82f6; }
+    .card-clear  { border-left: 4px solid #ef4444; }
+    .card-print  { border-left: 4px solid #a855f7; }
+
+    .icon-box {
+      width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center;
+      font-size: 18px; margin-bottom: 10px;
     }
 
-    .feature-card.core {
-      border-color: var(--accent);
-      background: #f0fdf4; /* Green tint */
-      box-shadow: 0 10px 30px -10px rgba(22, 163, 74, 0.2);
+    /* Mini Visualizations */
+    .mini-stack-row {
+      display: flex; gap: 4px; margin: 15px 0; height: 24px; align-items: flex-end;
     }
-
-    .feature-card.extra {
-      border-color: var(--soft);
-      background: #f8fafc; /* Grey tint */
-      opacity: 0.85;
-    }
-    .feature-card.extra:hover { opacity: 1; transform: translateY(-2px); }
-
-    .icon-badge {
-      width: 40px; height: 40px;
-      border-radius: 8px;
-      display: grid; place-items: center;
-      font-size: 20px;
-      margin-bottom: 12px;
+    .stack-item {
+      flex: 1; background: #cbd5e1; border-radius: 4px; transition: all 0.3s;
+      height: 100%; position: relative;
     }
     
-    .status-tag {
-      position: absolute;
-      top: 20px; right: 20px;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 4px 8px;
-      border-radius: 99px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+    /* Search Animation Classes */
+    .scanning .stack-item { animation: pulseScan 0.5s infinite; }
+    .stack-item.found { background: #3b82f6 !important; transform: scale(1.1); }
+    @keyframes pulseScan { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-    /* Animation for the 'Scanner' (Search) */
-    .scan-line {
-      position: absolute;
-      left: 0; width: 100%; height: 2px;
-      background: #3b82f6;
-      box-shadow: 0 0 4px #3b82f6;
-      top: 0;
-      animation: scanDown 2s infinite linear;
-      display: none;
-    }
-    .searching .scan-line { display: block; }
-    
-    @keyframes scanDown { 0%{top:0} 100%{top:100%} }
+    /* Clear Animation */
+    .cleared .stack-item { height: 0 !important; margin-top: 24px; opacity: 0; }
+
+    /* Typewriter Cursor */
+    .cursor { display: inline-block; width: 6px; height: 14px; background: #a855f7; animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
   </style>
 
   <div class="slide-top">
@@ -1169,61 +1178,73 @@ and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
 
   <h2>Beyond Push & Pop</h2>
 
-  <div class="grid-2">
-    <div>
-      <p>A Stack is just a wrapper around an Array or Linked List. You <em>can</em> add other features, but they are secondary.</p>
-      
-      <div style="margin-top:25px;">
-        <h3 style="font-size:20px; color:var(--ink);">Common Utilities:</h3>
-        <ul style="line-height:1.8;">
-          <li><strong>Print All:</strong> Useful for debugging, but violates the "Encapsulation" principle of a pure stack.</li>
-          <li><strong>Search (Contains):</strong> Check if an item exists without popping everything off.</li>
-          <li><strong>Clear (Delete All):</strong> Reset the stack pointer to -1 (or null).</li>
-        </ul>
-      </div>
+  <div class="feature-grid">
+    <div style="padding-right: 10px;">
+      <p style="font-size: 1.1em; color: var(--ink); margin-bottom: 20px;">
+        A pure stack is strict. However, in practice, we often add "quality of life" features.
+      </p>
 
-      <div class="callout" style="border-left-color:#f59e0b; background:#fffbeb;">
-        <strong>Note:</strong> In a strict mathematical stack, you can <em>only</em> see the top element. In practical programming (C#, Java), we often allow iteration/searching for convenience.
-      </div>
-    </div>
-
-    <div>
-      
-      <div class="feature-card core" style="margin-bottom:15px;">
-        <div class="status-tag" style="background:#dcfce7; color:#166534;">Defining Feature</div>
-        <div class="icon-badge" style="background:#dcfce7; color:#166534;">⚡</div>
-        <h4 style="margin:0 0 5px 0; font-size:18px;">Push / Pop</h4>
-        <p style="margin:0; font-size:14px; color:var(--muted);">
-          The soul of the data structure. Without LIFO behavior, it is not a stack.
+      <div class="feature-card card-core" style="margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:start;">
+          <div>
+            <div class="icon-box" style="background:#dcfce7; color:#15803d;">⚡</div>
+            <h4 style="margin:0; font-size:16px; color:#15803d;">The Core: Push / Pop</h4>
+          </div>
+          <span style="font-size:10px; font-weight:800; text-transform:uppercase; color:#15803d; background:#dcfce7; padding:4px 8px; border-radius:12px;">Required</span>
+        </div>
+        <p style="margin:10px 0 0 0; font-size:13px; color:#64748b;">
+          The only operations strictly required by the mathematical definition.
         </p>
       </div>
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+      <div class="callout" style="background:#fffbeb; border-left-color:#f59e0b; font-size:14px;">
+        <strong>Trade-off:</strong> Adding search or iteration functionality breaks the principle of <em>Encapsulation</em> (hiding the internal data), but makes debugging easier.
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; align-content: start;">
+      
+      <div class="feature-card card-search" id="card-search">
+        <div class="icon-box" style="background:#dbeafe; color:#1d4ed8;">🔍</div>
+        <h4 style="margin:0; font-size:15px;">Contains(x)</h4>
         
-        <div class="feature-card extra" id="search-card">
-          <div class="scan-line"></div>
-          <div class="status-tag" style="background:#e2e8f0; color:#475569;">Utility</div>
-          <div class="icon-badge" style="background:#e0f2fe; color:#0369a1;">🔍</div>
-          <h4 style="margin:0 0 5px 0; font-size:16px;">Search()</h4>
-          <button class="mini-btn" onclick="demoSearch()" style="width:100%; margin-top:10px;">Simulate Scan</button>
+        <div class="mini-stack-row" id="search-viz">
+          <div class="stack-item" style="height:40%"></div>
+          <div class="stack-item" style="height:70%"></div>
+          <div class="stack-item" style="height:30%"></div>
+          <div class="stack-item" style="height:90%"></div>
+          <div class="stack-item" style="height:60%"></div>
         </div>
 
-        <div class="feature-card extra">
-          <div class="status-tag" style="background:#e2e8f0; color:#475569;">Utility</div>
-          <div class="icon-badge" style="background:#fee2e2; color:#b91c1c;">🗑</div>
-          <h4 style="margin:0 0 5px 0; font-size:16px;">Clear()</h4>
-          <button class="mini-btn" onclick="demoClear(this)" style="width:100%; margin-top:10px; background:#fff; color:#b91c1c; border-color:#b91c1c;">Reset Data</button>
-        </div>
+        <button class="mini-btn" onclick="runSearch()" style="width:100%; font-size:12px;">▶ Scan for Max</button>
+      </div>
+
+      <div class="feature-card card-clear" id="card-clear">
+        <div class="icon-box" style="background:#fee2e2; color:#b91c1c;">🗑</div>
+        <h4 style="margin:0; font-size:15px;">Clear()</h4>
         
-        <div class="feature-card extra" style="grid-column: span 2;">
-          <div class="status-tag" style="background:#e2e8f0; color:#475569;">Debug</div>
-          <div class="icon-badge" style="background:#f3e8ff; color:#7e22ce;">🖨</div>
-          <h4 style="margin:0 0 5px 0; font-size:16px;">PrintAll()</h4>
-          <div style="font-family:var(--mono); font-size:12px; color:var(--muted); background:#f1f5f9; padding:8px; border-radius:6px; margin-top:5px;">
-            [Top] -> 10 -> 45 -> 99 -> [Bottom]
+        <div class="mini-stack-row" id="clear-viz">
+          <div class="stack-item" style="height:80%; background:#fca5a5;"></div>
+          <div class="stack-item" style="height:80%; background:#fca5a5;"></div>
+          <div class="stack-item" style="height:80%; background:#fca5a5;"></div>
+          <div class="stack-item" style="height:80%; background:#fca5a5;"></div>
+        </div>
+
+        <button class="mini-btn" onclick="runClear()" style="width:100%; font-size:12px; border-color:#ef4444; color:#ef4444; background:white;">▶ Nuke Data</button>
+      </div>
+
+      <div class="feature-card card-print" style="grid-column: span 2;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="icon-box" style="background:#f3e8ff; color:#7e22ce; margin:0;">🖨</div>
+            <h4 style="margin:0; font-size:15px;">PrintAll()</h4>
           </div>
+          <button class="mini-btn" onclick="runPrint()" style="font-size:11px; padding:4px 8px;">Run</button>
         </div>
-
+        
+        <div style="font-family:var(--mono); font-size:12px; color:#cbd5e1; background:#1e293b; padding:10px; border-radius:6px; min-height:40px; display:flex; align-items:center;">
+          <span id="console-output" style="color:#a5b4fc;">Waiting...</span><span class="cursor"></span>
+        </div>
       </div>
 
     </div>
@@ -1233,41 +1254,63 @@ and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
 
   <script>
     (function(){
-      // Search Animation Logic
-      window.demoSearch = function() {
-        const card = document.getElementById("search-card");
-        const btn = card.querySelector("button");
+      // 1. Search Animation
+      window.runSearch = function() {
+        const items = document.querySelectorAll("#search-viz .stack-item");
+        const btn = document.querySelector("#card-search button");
         
-        if(card.classList.contains("searching")) return;
-        
-        card.classList.add("searching");
         btn.innerText = "Scanning...";
-        
-        setTimeout(() => {
-          card.classList.remove("searching");
-          btn.innerText = "Found Index [2]";
-          setTimeout(() => btn.innerText = "Simulate Scan", 1500);
-        }, 2000);
+        items.forEach(i => { i.style.background = "#cbd5e1"; i.classList.remove('found'); });
+
+        let i = 0;
+        let interval = setInterval(() => {
+          if(i > 0) items[i-1].style.background = "#cbd5e1"; // Reset prev
+          if(i < items.length) {
+            items[i].style.background = "#3b82f6"; // Highlight current
+            i++;
+          } else {
+            clearInterval(interval);
+            items[3].classList.add('found'); // Pretend index 3 is the target
+            btn.innerText = "Found at [3]";
+            setTimeout(() => btn.innerText = "▶ Scan for Max", 2000);
+          }
+        }, 300);
       };
 
-      // Clear Animation Logic
-      window.demoClear = function(btn) {
-        const originalText = btn.innerText;
-        btn.innerText = "Stack Cleared!";
-        btn.style.background = "#b91c1c";
-        btn.style.color = "white";
+      // 2. Clear Animation
+      window.runClear = function() {
+        const viz = document.getElementById("clear-viz");
+        const btn = document.querySelector("#card-clear button");
         
-        setTimeout(() => {
-          btn.innerText = originalText;
-          btn.style.background = "#fff";
-          btn.style.color = "#b91c1c";
-        }, 1500);
+        if(viz.classList.contains("cleared")) {
+          // Reset
+          viz.classList.remove("cleared");
+          btn.innerText = "▶ Nuke Data";
+        } else {
+          // Destroy
+          viz.classList.add("cleared");
+          btn.innerText = "Restore";
+        }
+      };
+
+      // 3. Typewriter Animation
+      window.runPrint = function() {
+        const target = document.getElementById("console-output");
+        const text = "[TOP] -> 42 -> 15 -> 07 -> [BOT]";
+        target.innerText = "";
+        let i = 0;
+        
+        let type = setInterval(() => {
+          target.innerText += text.charAt(i);
+          i++;
+          if(i >= text.length) clearInterval(type);
+        }, 50);
       };
     })();
   </script>
-                    
-
 </section>
+
+
 <section class="slide">
   <style>
     /* Tab System */
@@ -4337,122 +4380,212 @@ and Hash Tables</div><div class="slide-no" data-slide-no></div></div>
   </script>
 
 </section>
+
 <section class="slide">
   <style>
-    /* Character Mapping Grid */
-    .char-map-grid {
-      display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;
+    :root {
+      --glass: rgba(255, 255, 255, 0.95);
+      --glass-border: rgba(255, 255, 255, 0.5);
+      --primary: #6366f1; /* Indigo */
+      --accent: #f43f5e;  /* Rose */
+    }
+
+    .grid-layout {
+      display: grid; grid-template-columns: 1fr 1.2fr; gap: 30px; margin-top: 20px;
+    }
+
+    /* Card Styles */
+    .glass-card {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+
+    /* Pipeline Visual (Intro) */
+    .pipeline-step {
+      display: flex; align-items: center; gap: 15px; margin-bottom: 15px;
+      font-family: var(--mono); font-size: 14px;
+      opacity: 0.5; transition: opacity 0.3s;
+    }
+    .pipeline-step.active { opacity: 1; font-weight: bold; color: var(--primary); }
+    .step-icon {
+      width: 32px; height: 32px; background: #e0e7ff; color: var(--primary);
+      border-radius: 8px; display: grid; place-items: center;
+    }
+
+    /* Character Grid */
+    .char-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
       margin-bottom: 20px;
     }
-    
-    .char-box {
-      border: 1px solid var(--soft); padding: 5px; text-align: center; font-size: 12px;
-      font-family: var(--mono); background: white; border-radius: 4px;
+    .key-cap {
+      background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px;
+      font-family: var(--mono); font-size: 11px; color: #64748b;
+      height: 30px; display: grid; place-items: center;
+      transition: all 0.2s;
     }
-    .char-box.highlight { background: #fef08a; border-color: #eab308; color: #854d0e; font-weight: bold; }
+    .key-cap.active {
+      background: var(--primary); color: white; border-color: var(--primary);
+      transform: scale(1.1); box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+    }
 
-    /* Calculation Visual */
-    .sum-visual {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      font-size: 24px; font-weight: bold; margin-top: 20px;
-      background: #f1f5f9; padding: 20px; border-radius: 12px;
+    /* Input Area */
+    .input-group {
+      display: flex; gap: 10px; margin-bottom: 15px;
+    }
+    input {
+      flex: 1; padding: 12px; font-size: 18px; border-radius: 8px;
+      border: 2px solid #e2e8f0; outline: none; text-align: center;
+      font-family: var(--mono); letter-spacing: 2px;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--primary); }
+
+    .reset-btn {
+      width: 46px; border: none; background: #fee2e2; color: #ef4444;
+      border-radius: 8px; cursor: pointer; font-size: 18px;
+      transition: all 0.2s; display: grid; place-items: center;
+    }
+    .reset-btn:hover { background: #ef4444; color: white; transform: rotate(90deg); }
+
+    /* Result Display */
+    .result-box {
+      background: #1e293b; color: #f8fafc; padding: 15px; border-radius: 8px;
+      font-family: var(--mono); text-align: center; min-height: 50px;
+      display: flex; align-items: center; justify-content: center;
     }
   </style>
 
   <div class="slide-top">
-    <div class="meta"><div class="course">Example</div><div class="sub">Step 1: Numeric Representation</div></div>
-    <span class="pill">String to Int</span>
+    <div class="meta"><div class="course">Intro to Hashing</div><div class="sub">Step 1: Serialization</div></div>
+    <span class="pill">String &rarr; Int</span>
   </div>
 
-  <h2>Hashing: Simple Example</h2>
+  <h2>Converting Data to Numbers</h2>
 
-  <div class="grid-2">
-    <div>
-      <p>How do we turn a string like "ab" into a number?</p>
+  <div class="grid-layout">
+    
+    <div class="glass-card">
+      <h3 style="margin:0 0 20px 0; font-size:18px;">The Hashing Pipeline</h3>
+      <p style="font-size:14px; margin-bottom:20px; color:var(--muted); line-height:1.5;">
+        Computers can't use words as array indices. We must first convert the text (Key) into a raw integer.
+      </p>
+
+      <div class="pipeline-step active">
+        <div class="step-icon">1</div>
+        <div>
+          <div>Input String</div>
+          <div style="font-size:11px; color:var(--muted);">"cat", "dog"</div>
+        </div>
+      </div>
       
-      <div class="card" style="margin-top:20px;">
-        <h4 style="margin:0 0 10px 0;">Method: Character Sum</h4>
-        <ul style="line-height:1.6; margin:0; padding-left:20px;">
-          <li>Assign values: a=1, b=2, c=3...</li>
-          <li>Sum the characters.</li>
-        </ul>
-        
-        <div style="margin-top:15px; font-family:var(--mono); background:#f8fafc; padding:10px; border-radius:6px; font-size:14px;">
-           "ab" &nbsp;➔ 1 + 2 = <strong>3</strong><br>
-           "cd" &nbsp;➔ 3 + 4 = <strong>7</strong><br>
-           "efg" ➔ 5 + 6 + 7 = <strong>18</strong>
+      <div class="pipeline-step active">
+        <div class="step-icon">2</div>
+        <div>
+          <div><strong>Turn into Number</strong></div>
+          <div style="font-size:11px; color:var(--primary);">Sum of Char Codes</div>
+        </div>
+      </div>
+
+      <div class="pipeline-step">
+        <div class="step-icon" style="background:#f1f5f9; color:#94a3b8;">3</div>
+        <div>
+          <div>Compress to Index</div>
+          <div style="font-size:11px; color:var(--muted);">Modulo % Size</div>
         </div>
       </div>
     </div>
 
-    <div class="card" style="padding:20px;">
-      
-      <div style="font-size:12px; font-weight:bold; color:var(--muted); margin-bottom:10px;">TRY IT YOURSELF</div>
-      
-      <div class="char-map-grid" id="char-grid">
-         </div>
-      
-      <input type="text" id="str-input" maxlength="5" placeholder="Type (e.g. ab)" 
-             style="width:100%; padding:10px; font-size:18px; text-align:center; border:2px solid var(--accent); border-radius:8px; outline:none;"
-             onkeyup="calcSum()">
-      
-      <div class="sum-visual" id="sum-display">
-         0
+    <div class="glass-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <span style="font-size:12px; font-weight:800; color:#94a3b8; text-transform:uppercase;">ASCII Reference Map</span>
       </div>
-      <div style="text-align:center; font-size:12px; color:var(--muted); margin-top:5px;">Numerical Value</div>
 
+      <div class="char-grid" id="keyboard-grid"></div>
+
+      <div class="input-group">
+        <input type="text" id="hash-input" maxlength="6" placeholder="Type here..." onkeyup="calculate()">
+        <button class="reset-btn" onclick="resetDemo()" title="Reset">↻</button>
+      </div>
+
+      <div class="result-box" id="result-display">
+        <span style="color:#64748b">Waiting for input...</span>
+      </div>
     </div>
+
   </div>
   
-  <div class="slide-footer"><div class="muted">Converting Text to Numbers</div><div class="slide-no" data-slide-no></div></div>
+  <div class="slide-footer"><div class="muted">Interactive Hash Calculation</div><div class="slide-no" data-slide-no></div></div>
 
   <script>
     (function(){
-      const grid = document.getElementById('char-grid');
-      const input = document.getElementById('str-input');
-      const display = document.getElementById('sum-display');
+      const grid = document.getElementById('keyboard-grid');
+      const input = document.getElementById('hash-input');
+      const display = document.getElementById('result-display');
+      const chars = "abcdefghijklmnopqrstuvwxyz";
 
-      // Init Grid (a-j)
-      const chars = "abcdefghij";
-      for(let i=0; i<chars.length; i++) {
-          const div = document.createElement('div');
-          div.className = 'char-box';
-          div.id = `char-${chars[i]}`;
-          div.innerText = `${chars[i]} = ${i+1}`;
-          grid.appendChild(div);
-      }
+      // 1. Generate the Visual Grid
+      chars.split('').forEach((char, index) => {
+        const div = document.createElement('div');
+        div.className = 'key-cap';
+        div.id = `key-${char}`;
+        div.innerText = `${char}=${index+1}`; // Simple a=1 mapping
+        grid.appendChild(div);
+      });
 
-      window.calcSum = function() {
-        const val = input.value.toLowerCase();
-        let sum = 0;
-        let formula = "";
+      // 2. Calculation Logic
+      window.calculate = function() {
+        const val = input.value.toLowerCase().replace(/[^a-z]/g, ''); // Filter non-letters
         
-        // Reset highlights
-        document.querySelectorAll('.char-box').forEach(b => b.classList.remove('highlight'));
+        // Reset Visuals
+        document.querySelectorAll('.key-cap').forEach(k => k.classList.remove('active'));
+        
+        if(!val) {
+          display.innerHTML = '<span style="color:#64748b">Waiting for input...</span>';
+          return;
+        }
+
+        let sum = 0;
+        let equationHTML = "";
 
         for(let i=0; i<val.length; i++) {
-            const code = val.charCodeAt(i) - 96; // a=1
-            if(code >= 1 && code <= 26) {
-                sum += code;
-                formula += (i===0 ? "" : " + ") + code;
-                
-                // Highlight logic
-                const char = val[i];
-                const box = document.getElementById(`char-${char}`);
-                if(box) box.classList.add('highlight');
-            }
+          const char = val[i];
+          const num = char.charCodeAt(0) - 96; // a=1
+          
+          sum += num;
+          
+          // Visual Equation
+          if(i > 0) equationHTML += ` <span style="color:#64748b">+</span> `;
+          equationHTML += `<span style="color:#a5b4fc">${num}</span>`;
+
+          // Highlight Grid
+          const key = document.getElementById(`key-${char}`);
+          if(key) {
+            key.classList.add('active');
+            // Little visual pop animation reset
+            key.style.animation = 'none';
+            key.offsetHeight; /* trigger reflow */
+            key.style.animation = null; 
+          }
         }
-        
-        if(val.length > 0) {
-            display.innerHTML = `<span style="font-size:16px; color:#64748b;">${formula} = </span> ${sum}`;
-        } else {
-            display.innerText = "0";
-        }
+
+        display.innerHTML = `${equationHTML} &nbsp;=&nbsp; <strong style="color:#818cf8; font-size:24px;">${sum}</strong>`;
+      };
+
+      // 3. Reset Logic
+      window.resetDemo = function() {
+        input.value = "";
+        calculate(); // Re-run calc to clear visuals
+        input.focus();
       };
     })();
   </script>
-
 </section>
+
 <section class="slide">
   <style>
     /* ASCII Breakdown Visual */
@@ -4828,273 +4961,373 @@ ht.Add(<span class="string">"ID_2"</span>, <span class="string">"Sarah"</span>);
 </section>
 <section class="slide">
   <style>
-    /* Memory Visuals */
-    .mem-block {
-      background: white; border: 1px solid var(--soft);
-      border-radius: 8px; padding: 10px; margin-top: 10px;
-      min-height: 100px;
-      display: flex; flex-direction: column; gap: 5px;
+    :root {
+      --code-bg: #1e293b;
+      --code-active: #334155;
+      --accent: #3b82f6;
     }
-    
-    .mem-row {
+
+    /* Code Block Styling (VS Code Style) */
+    .code-container {
+      background: var(--code-bg); color: #f8fafc;
+      font-family: 'Fira Code', monospace; font-size: 14px;
+      border-radius: 8px; overflow: hidden;
+      border: 1px solid #475569;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+    }
+    .code-line {
+      padding: 4px 12px; border-left: 3px solid transparent;
+      transition: all 0.2s; display: block;
+    }
+    .code-line.active {
+      background: var(--code-active);
+      border-left-color: #60a5fa;
+    }
+    .ln { color: #64748b; margin-right: 10px; user-select: none; font-size:12px; }
+    .kwd { color: #c084fc; } /* violet */
+    .str { color: #a5f3fc; } /* cyan */
+    .cls { color: #fcd34d; } /* yellow */
+    .cmt { color: #94a3b8; font-style: italic; }
+
+    /* Right Side Visuals */
+    .visual-panel {
+      background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+      padding: 20px; height: 100%; display: flex; flex-direction: column;
+    }
+
+    .mem-bucket {
+      border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 8px;
+      padding: 8px; font-family: monospace; font-size: 13px;
       display: flex; justify-content: space-between;
-      background: #f1f5f9; padding: 8px; border-radius: 4px;
-      font-family: var(--mono); font-size: 13px;
-      animation: flashGreen 0.5s;
+      background: #f8fafc; opacity: 0; transform: translateX(-10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    .mem-bucket.show { opacity: 1; transform: translateX(0); }
+    .mem-bucket.highlight { background: #dbeafe; border-color: #3b82f6; }
 
-    /* Console Output */
-    .console-out {
-      background: #1e293b; color: #4ade80;
-      font-family: var(--mono); font-size: 12px;
-      padding: 10px; border-radius: 6px; margin-top: 15px;
-      min-height: 40px; border: 1px solid #334155;
+    .console-box {
+      margin-top: auto; background: #0f172a; color: #4ade80;
+      font-family: monospace; font-size: 12px; padding: 12px;
+      border-radius: 6px; min-height: 60px;
     }
-
-    @keyframes flashGreen { from { background: #dcfce7; } to { background: #f1f5f9; } }
   </style>
 
   <div class="slide-top">
-    <div class="meta"><div class="course">C# Implementation</div><div class="sub">System.Collections</div></div>
-    <span class="pill">Basic Operations</span>
+    <div class="meta"><div class="course">C# Collections</div><div class="sub">Hashtable Implementation</div></div>
+    <span class="pill">Live Debugger</span>
   </div>
 
-  <h2>Hash Tables in Practice</h2>
+  <h2>Hashtable: Step-by-Step</h2>
 
   <div class="grid-2">
     <div>
-      <div class="code-block" style="font-size:14px;">
-<span class="keyword">using</span> System.Collections;
-
-<span class="comment">// 1. Initialize</span>
-Hashtable ht = <span class="keyword">new</span> Hashtable();
-
-<span class="comment">// 2. Add Data</span>
-ht.Add(<span class="string">"txt"</span>, <span class="string">"notepad.exe"</span>);
-ht.Add(<span class="string">"bmp"</span>, <span class="string">"paint.exe"</span>);
-
-<span class="comment">// 3. Check Key</span>
-<span class="keyword">if</span> (ht.ContainsKey(<span class="string">"txt"</span>)) {
-    <span class="comment">// Logic here...</span>
-}
+      <div class="code-container" id="code-viewer">
+        <div class="code-line" id="line-0"><span class="ln">1</span><span class="kwd">using</span> System.Collections;</div>
+        <div class="code-line" id="line-1"><span class="ln">2</span></div>
+        <div class="code-line" id="line-2"><span class="ln">3</span><span class="cmt">// Initialize Table</span></div>
+        <div class="code-line" id="line-3"><span class="ln">4</span><span class="cls">Hashtable</span> ht = <span class="kwd">new</span> <span class="cls">Hashtable</span>();</div>
+        <div class="code-line" id="line-4"><span class="ln">5</span></div>
+        <div class="code-line" id="line-5"><span class="ln">6</span><span class="cmt">// Add Key-Values</span></div>
+        <div class="code-line" id="line-6"><span class="ln">7</span>ht.Add(<span class="str">"txt"</span>, <span class="str">"notepad.exe"</span>);</div>
+        <div class="code-line" id="line-7"><span class="ln">8</span>ht.Add(<span class="str">"bmp"</span>, <span class="str">"paint.exe"</span>);</div>
+        <div class="code-line" id="line-8"><span class="ln">9</span></div>
+        <div class="code-line" id="line-9"><span class="ln">10</span><span class="cmt">// Check Existence</span></div>
+        <div class="code-line" id="line-10"><span class="ln">11</span><span class="kwd">if</span> (ht.ContainsKey(<span class="str">"txt"</span>)) {</div>
+        <div class="code-line" id="line-11"><span class="ln">12</span> &nbsp; Console.WriteLine(<span class="str">"Found!"</span>);</div>
+        <div class="code-line" id="line-12"><span class="ln">13</span>}</div>
       </div>
 
-      <div class="callout" style="display:flex; gap:10px; margin-top:15px;">
-        <button class="mini-btn" onclick="runCsAdd()">▶ Execute .Add()</button>
-        <button class="mini-btn" onclick="runCsCheck()" style="background:#f59e0b; border-color:#f59e0b;">▶ Execute .ContainsKey()</button>
+      <div style="margin-top:20px; display:flex; gap:10px;">
+        <button class="mini-btn" onclick="stepCode()" style="background:#3b82f6; width:140px;">Step Forward ⤵</button>
+        <button class="mini-btn" onclick="resetCode()" style="background:#fff; color:#64748b; border:1px solid #cbd5e1;">↺ Reset</button>
       </div>
     </div>
 
-    <div class="card" style="padding:20px;">
+    <div class="visual-panel">
       
-      <div style="font-weight:bold; color:var(--muted); font-size:12px;">IN-MEMORY OBJECT: 'ht'</div>
+      <h4 style="margin:0 0 15px 0; color:#475569;">Heap Memory (ht)</h4>
       
-      <div class="mem-block" id="ht-mem-view">
-         <div style="text-align:center; color:#94a3b8; font-size:12px; margin-top:30px;" id="ht-empty-lbl">
-             Hashtable is empty.
-         </div>
+      <div id="memory-container" style="flex-grow:1; position:relative;">
+        <div id="empty-state" style="text-align:center; color:#94a3b8; font-size:14px; margin-top:40px;">
+          null
+        </div>
+        
+        <div id="mem-slot-1" class="mem-bucket">
+          <span style="font-weight:bold; color:#ec4899;">"txt"</span>
+          <span style="color:#475569;">"notepad.exe"</span>
+        </div>
+        <div id="mem-slot-2" class="mem-bucket">
+          <span style="font-weight:bold; color:#ec4899;">"bmp"</span>
+          <span style="color:#475569;">"paint.exe"</span>
+        </div>
       </div>
 
-      <div style="font-weight:bold; color:var(--muted); font-size:12px; margin-top:20px;">CONSOLE / OUTPUT</div>
-      <div class="console-out" id="cs-console">
-          > Ready...
+      <div class="console-box" id="console-output">
+        > Debugger attached...
       </div>
-
     </div>
   </div>
   
-  <div class="slide-footer"><div class="muted">Add() and ContainsKey()</div><div class="slide-no" data-slide-no></div></div>
+  <div class="slide-footer"><div class="muted">Code Execution Visualizer</div><div class="slide-no" data-slide-no></div></div>
 
   <script>
     (function(){
-      const view = document.getElementById('ht-mem-view');
-      const consoleOut = document.getElementById('cs-console');
-      const emptyLbl = document.getElementById('ht-empty-lbl');
-      let added = false;
+      let step = 0;
+      const totalSteps = 6;
+      const consoleEl = document.getElementById("console-output");
+      const emptyState = document.getElementById("empty-state");
 
-      window.runCsAdd = function() {
-        if(added) { consoleOut.innerText = "> Items already added."; return; }
-        
-        emptyLbl.style.display = 'none';
-        
-        // Simulating adding 2 items
-        view.innerHTML += `
-          <div class="mem-row">
-            <span>["txt"]</span> <span>"notepad.exe"</span>
-          </div>
-        `;
-        
-        setTimeout(() => {
-             view.innerHTML += `
-              <div class="mem-row">
-                <span>["bmp"]</span> <span>"paint.exe"</span>
-              </div>
-            `;
-        }, 300);
+      // Map steps to Logic
+      const steps = [
+        { line: 'line-3', action: () => { 
+            consoleEl.innerHTML = "> ht initialized in memory (Size: 0)"; 
+            emptyState.innerText = "Hashtable Object (Empty)";
+          } 
+        },
+        { line: 'line-6', action: () => { 
+            document.getElementById('mem-slot-1').classList.add('show');
+            emptyState.style.display = "none";
+            consoleEl.innerHTML += "<br>> Key 'txt' hashed & added.";
+          } 
+        },
+        { line: 'line-7', action: () => { 
+            document.getElementById('mem-slot-2').classList.add('show');
+            consoleEl.innerHTML += "<br>> Key 'bmp' hashed & added.";
+          } 
+        },
+        { line: 'line-10', action: () => { 
+            consoleEl.innerHTML += "<br>> Checking hash for 'txt'...";
+          } 
+        },
+        { line: 'line-11', action: () => { 
+            document.getElementById('mem-slot-1').classList.add('highlight');
+            consoleEl.innerHTML += "<br>> Match found at Index 0.";
+          } 
+        },
+        { line: 'line-12', action: () => { 
+            consoleEl.innerHTML += "<br><span style='color:white;'>> Found!</span>";
+          } 
+        }
+      ];
 
-        consoleOut.innerText = "> Items added to memory.";
-        added = true;
+      window.stepCode = function() {
+        if(step >= steps.length) return;
+
+        // Clear previous highlights
+        document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active'));
+
+        // Highlight new line
+        const currentLogic = steps[step];
+        document.getElementById(currentLogic.line).classList.add('active');
+        
+        // Execute Action
+        currentLogic.action();
+
+        step++;
       };
 
-      window.runCsCheck = function() {
-        if(!added) { 
-            consoleOut.innerText = "> Error: Table is empty!"; 
-            consoleOut.style.color = "#ef4444";
-            return; 
-        }
-        
-        consoleOut.style.color = "#4ade80";
-        consoleOut.innerText = "> Checking 'txt'...\n> Found: True";
+      window.resetCode = function() {
+        step = 0;
+        document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.mem-bucket').forEach(el => {
+            el.classList.remove('show');
+            el.classList.remove('highlight');
+        });
+        emptyState.style.display = "block";
+        emptyState.innerText = "null";
+        consoleEl.innerHTML = "> Debugger attached...";
       };
     })();
   </script>
+</section>
 
 </section>
+
 <section class="slide">
   <style>
-    /* Chaining Visuals */
-    .chain-container {
+    :root {
+      --slot-bg: #1e293b;
+      --slot-text: #94a3b8;
+      --node-bg: #fff;
+      --node-border: #3b82f6;
+    }
+
+    /* Container for the rows */
+    .hash-visual {
       display: flex; flex-direction: column; gap: 15px;
-      margin-top: 20px; font-family: var(--mono);
+      font-family: 'Fira Code', monospace;
+      margin-top: 20px;
     }
-    
+
+    /* A single row (Bucket + Chain) */
     .chain-row {
-      display: flex; align-items: center; min-height: 50px;
-    }
-    
-    /* The Array Slot */
-    .bucket-head {
-      width: 60px; height: 50px;
-      background: white; border: 2px solid var(--ink);
-      display: grid; place-items: center;
-      position: relative; font-weight: bold;
-      z-index: 2;
-    }
-    .bucket-idx {
-      position: absolute; left: -25px; color: var(--muted); font-size: 12px;
-    }
-
-    /* The Linked List Nodes */
-    .chain-node {
       display: flex; align-items: center;
-      margin-left: 30px; /* Space for arrow */
+      height: 50px;
+      transition: background 0.3s;
+      border-radius: 8px;
+      padding-right: 10px;
+    }
+
+    /* The Array Slot (Fixed Index) */
+    .array-slot {
+      width: 60px; height: 100%;
+      background: var(--slot-bg); color: var(--slot-text);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border-radius: 8px; margin-right: 10px; flex-shrink: 0;
+      border: 1px solid #334155;
       position: relative;
-      animation: slideRight 0.4s ease;
+      z-index: 10;
     }
-    
-    .node-box {
-      padding: 8px 12px; background: var(--accent); color: white;
-      border-radius: 6px; font-size: 14px; font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    .slot-idx { font-size: 18px; font-weight: bold; color: #f8fafc; }
+    .slot-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* The Chain Container (Flex) */
+    .chain-list {
+      display: flex; align-items: center; flex-grow: 1;
+      position: relative;
     }
 
-    /* Connecting Arrows */
-    .chain-node::before {
-      content: "➔"; position: absolute; left: -25px;
-      color: var(--muted); font-size: 18px;
+    /* The Node (Data) */
+    .node {
+      background: var(--node-bg); border: 2px solid var(--node-border);
+      color: #1e293b; padding: 6px 12px; border-radius: 6px;
+      font-weight: bold; font-size: 14px;
+      margin-left: 35px; /* Space for arrow */
+      position: relative;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      white-space: nowrap;
     }
-    
-    /* The NULL Pointer */
+
+    /* The Arrow */
+    .node::before {
+      content: ""; position: absolute; left: -35px; top: 50%;
+      width: 33px; height: 2px; background: #cbd5e1;
+      z-index: -1;
+    }
+    .node::after {
+      content: "►"; position: absolute; left: -12px; top: 50%;
+      transform: translateY(-50%); color: #cbd5e1; font-size: 14px;
+    }
+
+    /* The Null Pointer */
     .null-ptr {
-      margin-left: 15px; font-size: 10px; color: var(--muted); font-weight: bold;
-      display: flex; align-items: center; gap: 5px;
+      margin-left: 35px; color: #ef4444; font-size: 12px; font-weight: 800;
+      position: relative; display: flex; align-items: center;
     }
-    .null-ptr::before { content: "•"; font-size: 20px; }
+    .null-ptr::before {
+      content: ""; position: absolute; left: -35px; top: 50%;
+      width: 33px; height: 2px; background: #cbd5e1;
+    }
 
-    @keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+    
+    /* Highlight for collision */
+    .flash { animation: flashBg 0.5s; }
+    @keyframes flashBg { 0% { background: rgba(239, 68, 68, 0.2); } 100% { background: transparent; } }
   </style>
 
   <div class="slide-top">
-    <div class="meta"><div class="course">Theory & Implementation</div><div class="sub">Handling Collisions</div></div>
-    <span class="pill">Separate Chaining</span>
+    <div class="meta"><div class="course">Handling Collisions</div><div class="sub">Chaining Strategy</div></div>
+    <span class="pill">Visualizer</span>
   </div>
 
-  <h2>Hash Table as a Linked List</h2>
+  <h2>Separate Chaining</h2>
 
   <div class="grid-2">
     <div>
-      <p>As a theoretical exercise (and practical solution to collisions), we treat each slot in the Hash Table as the <strong>Head</strong> of a Linked List.</p>
+      <p style="font-size:16px;">When two keys land in the same bucket, we don't panic. We start a <strong>Linked List</strong>.</p>
       
-      <div class="card" style="margin-top:20px;">
-        <h4 style="margin:0 0 10px 0;">Why do this?</h4>
-        <ul style="line-height:1.6; margin:0; padding-left:20px;">
-          <li><strong>Collisions:</strong> What if two keys hash to the same index?</li>
-          <li><strong>Solution:</strong> Don't overwrite. Just <code>Add</code> to the list at that index.</li>
-          <li><strong>Trade-off:</strong> If the list gets too long, access time degrades from O(1) to O(N).</li>
-        </ul>
+      <div class="card" style="margin-top:20px; border-left:4px solid #3b82f6;">
+        <h4 style="margin:0 0 10px 0; color:#3b82f6;">Scenario:</h4>
+        <p style="margin:0; font-size:14px; line-height:1.5;">
+          We want to store names. <br>
+          Assume our Hash Function puts everyone with 4 letters into <strong>Index 1</strong>.
+        </p>
       </div>
 
-      <div style="margin-top:25px;">
-        <div style="font-weight:bold; font-size:12px; color:var(--muted); margin-bottom:5px;">FORCE COLLISION DEMO</div>
+      <div style="margin-top:20px; display:grid; gap:10px;">
         <div style="display:flex; gap:10px;">
-           <button class="mini-btn" onclick="addChain('A', 1)" style="flex:1;">Insert 'A' (Idx 1)</button>
-           <button class="mini-btn" onclick="addChain('B', 1)" style="flex:1; background:#ef4444; border-color:#ef4444;">Insert 'B' (Idx 1)</button>
+            <button class="mini-btn" onclick="insertNode('Lisa', 1)">1. Add 'Lisa' (Idx 1)</button>
+            <button class="mini-btn" onclick="insertNode('John', 1)" style="border-color:#ef4444; color:#ef4444;">2. Add 'John' (Collision!)</button>
         </div>
-        <div style="margin-top:10px; font-size:13px; color:var(--muted);">
-           Click both to see them link up!
-        </div>
+        <button class="mini-btn" onclick="insertRandom()" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1;">+ Add Random Data</button>
+        <button class="mini-btn" onclick="resetTable()" style="margin-top:10px; width:100px;">Reset</button>
       </div>
     </div>
 
-    <div class="card" style="padding:20px; overflow-x:auto;">
+    <div class="card" style="padding:20px; overflow-x:auto; background:#f8fafc;">
+      <div style="font-weight:800; color:#94a3b8; font-size:12px; letter-spacing:1px; margin-bottom:15px;">MEMORY VIEW</div>
       
-      <div style="font-weight:bold; color:var(--muted); font-size:12px; margin-bottom:10px;">ARRAY OF LINKED LISTS</div>
-      
-      <div class="chain-container" id="chain-table">
-         <div class="chain-row" id="row-0">
-            <div class="bucket-head"><span class="bucket-idx">0</span>/</div>
-            <div class="null-ptr">NULL</div>
-         </div>
-         
-         <div class="chain-row" id="row-1">
-             <div class="bucket-head"><span class="bucket-idx">1</span>/</div>
-             <div class="null-ptr">NULL</div>
-         </div>
+      <div class="hash-visual" id="hash-table">
+        <div class="chain-row" id="row-0">
+          <div class="array-slot"><span class="slot-idx">0</span></div>
+          <div class="chain-list"><div class="null-ptr">NULL</div></div>
+        </div>
 
-         <div class="chain-row" id="row-2">
-             <div class="bucket-head"><span class="bucket-idx">2</span>/</div>
-             <div class="null-ptr">NULL</div>
-         </div>
+        <div class="chain-row" id="row-1">
+          <div class="array-slot" style="border-color:#3b82f6; box-shadow:0 0 10px rgba(59,130,246,0.2);"><span class="slot-idx">1</span></div>
+          <div class="chain-list"><div class="null-ptr">NULL</div></div>
+        </div>
+
+        <div class="chain-row" id="row-2">
+          <div class="array-slot"><span class="slot-idx">2</span></div>
+          <div class="chain-list"><div class="null-ptr">NULL</div></div>
+        </div>
       </div>
 
     </div>
   </div>
   
-  <div class="slide-footer"><div class="muted">Visualizing Separate Chaining</div><div class="slide-no" data-slide-no></div></div>
+  <div class="slide-footer"><div class="muted">Linked Lists inside Array Slots</div><div class="slide-no" data-slide-no></div></div>
 
   <script>
     (function(){
-      // Simple structure to track items
-      const chains = { 0:[], 1:[], 2:[] };
+      // Helper to clear table
+      window.resetTable = function() {
+        for(let i=0; i<3; i++) {
+            const list = document.querySelector(`#row-${i} .chain-list`);
+            list.innerHTML = '<div class="null-ptr">NULL</div>';
+        }
+      };
 
-      window.addChain = function(val, idx) {
+      window.insertNode = function(val, idx) {
         const row = document.getElementById(`row-${idx}`);
+        const list = row.querySelector('.chain-list');
         
-        // Remove the visual NULL pointer temporarily
-        const nullPtr = row.querySelector('.null-ptr');
-        if(nullPtr) nullPtr.remove();
+        // 1. Flash the row to show activity
+        row.classList.remove('flash');
+        void row.offsetWidth; // trigger reflow
+        row.classList.add('flash');
 
-        // Create Node
+        // 2. Find and remove the current NULL pointer
+        const oldNull = list.querySelector('.null-ptr');
+        if(oldNull) oldNull.remove();
+
+        // 3. Create the New Node
         const node = document.createElement('div');
-        node.className = 'chain-node';
-        node.innerHTML = `<div class="node-box">${val}</div>`;
-        
-        // Append
-        row.appendChild(node);
-        
-        // Add NULL back
+        node.className = 'node';
+        node.innerText = val;
+
+        // 4. Create a fresh NULL pointer
         const newNull = document.createElement('div');
         newNull.className = 'null-ptr';
         newNull.innerText = 'NULL';
-        row.appendChild(newNull);
-        
-        // Visual Cleanup if duplicate (for simple demo logic)
-        // In real Linked List we traverse. Here we just append DOM.
+
+        // 5. Append
+        list.appendChild(node);
+        list.appendChild(newNull);
+      };
+
+      window.insertRandom = function() {
+        const names = ["Kyle", "Eric", "Stan", "Kenny", "Cartman", "Butters"];
+        const randName = names[Math.floor(Math.random() * names.length)];
+        const randIdx = Math.floor(Math.random() * 3);
+        insertNode(randName, randIdx);
       };
     })();
   </script>
-
 </section>
+
 <section class="slide">
   <style>
     /* List Visualization */
