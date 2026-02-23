@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COIS 2020H Midterm Review</title>
+
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root{
+      --stage-0: #0b1220; --stage-1: #0f1a2e;
+      --slide-bg: #ffffff; --ink: #0f172a; --muted: #475569;
+      --soft: #e2e8f0; --soft2: #f1f5f9;
+      --accent: #16a34a; --accent-2: #22c55e;
+      --radius: 20px; --shadow: 0 25px 60px rgba(0,0,0,.45);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+      --baseW: 1600; --baseH: 900; --scale: 1;
+    }
+    *{ box-sizing:border-box; } html,body{ height:100%; margin:0; }
+    body{ font-family: var(--sans); background: radial-gradient(1400px 800px at 20% 10%, rgba(34,197,94,.15), transparent 60%), radial-gradient(1200px 800px at 85% 20%, rgba(22,163,74,.10), transparent 55%), linear-gradient(180deg, var(--stage-0), var(--stage-1)); color:#e5e7eb; overflow:hidden; }
+    #progress-container{ position:fixed; top:0; left:0; width:100%; height:8px; background: rgba(255,255,255,.10); z-index:9999; backdrop-filter: blur(6px); }
+    #progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .25s ease; }
+    .stage{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding: 18px; }
+    .deck-wrap{ width: calc(var(--baseW) * 1px); height: calc(var(--baseH) * 1px); transform: scale(var(--scale)); transform-origin:center center; position:relative; }
+    .deck{ width:100%; height:100%; position:relative; }
+    .slide{ width:100%; height:100%; background: var(--slide-bg); color: var(--ink); border-radius: var(--radius); box-shadow: var(--shadow); position:absolute; inset:0; display:none; overflow:hidden; padding: 50px 60px; animation: slideIn .28s ease; }
+    .slide.active{ display:block; }
+    @keyframes slideIn{ from{ opacity:0; transform: translateY(14px) scale(.99); } to{ opacity:1; transform: translateY(0) scale(1); } }
+    .slide::before, .slide::after{ content:""; position:absolute; width: 240px; height: 240px; pointer-events:none; opacity:.95; z-index: 0; }
+    .slide::before{ top:-1px; left:-1px; background: radial-gradient(circle at 0% 0%, rgba(34,197,94,.22), transparent 55%), linear-gradient(135deg, rgba(22,163,74,.95), rgba(34,197,94,.55)); clip-path: polygon(0 0, 100% 0, 0 100%); }
+    .slide::after{ bottom:-1px; right:-1px; background: radial-gradient(circle at 100% 100%, rgba(34,197,94,.22), transparent 55%), linear-gradient(315deg, rgba(22,163,74,.95), rgba(34,197,94,.55)); clip-path: polygon(100% 100%, 100% 0, 0 100%); }
+    .slide-top{ position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom: 22px; }
+    .meta{ display:flex; flex-direction:column; gap:4px; line-height:1.15; }
+    .meta .course{ font-weight:800; letter-spacing:.06em; text-transform:uppercase; color: var(--ink); font-size: 16px; }
+    .meta .sub{ font-size: 15px; color: var(--muted); }
+    h1{ font-size: 56px; margin: 8px 0 10px; letter-spacing:-1.1px; line-height:1.06; position:relative; z-index:2; }
+    h2{ font-size: 40px; margin: 6px 0 18px; letter-spacing:-0.8px; position:relative; z-index:2; border-bottom: 3px solid var(--accent); padding-bottom:10px; display:inline-block; }
+    h3{ font-size: 26px; margin: 14px 0 10px; color: #0b2a14; position:relative; z-index:2; }
+    p, li{ font-size: 22px; line-height:1.6; color: var(--ink); position:relative; z-index:2; margin-bottom: 12px; }
+    .muted{ color: var(--muted); }
+    code{ font-family: var(--mono); font-size: .92em; background: #f3f4f6; padding: 2px 6px; border-radius: 8px; border: 1px solid #e5e7eb; }
+    .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items:start; position:relative; z-index:2; }
+    .card{ background: var(--soft2); border: 1px solid var(--soft); border-radius: 18px; padding: 18px; position:relative; z-index:2; }
+    .info-card{ background: #ffffff; border: 1px solid var(--soft); border-left: 6px solid var(--accent); border-radius: 16px; padding: 16px; transition: transform .15s ease, box-shadow .15s ease; cursor: default; }
+    .info-card:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.10); }
+    .pill{ display:inline-block; border:1px solid var(--soft); background: var(--soft2); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--muted); font-family: var(--mono); white-space:nowrap; }
+    .callout{ border-left: 6px solid var(--accent); padding: 18px 22px; background: #f6fffa; border-radius: 16px; margin-top: 14px; position:relative; z-index:2; }
+    .slide-footer{ position:absolute; left: 60px; right: 60px; bottom: 26px; display:flex; align-items:center; justify-content:space-between; color: var(--muted); font-size: 14px; z-index:2; }
+    .slide-no{ font-family: var(--mono); background: var(--soft2); border: 1px solid var(--soft); padding: 6px 12px; border-radius: 999px; color: var(--muted); }
+    .controls{ position:fixed; right: 18px; bottom: 18px; z-index:10000; display:flex; gap: 10px; align-items:center; }
+    .iconbtn{ width: 44px; height: 44px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: rgba(15,23,42,.45); color:#e5e7eb; display:grid; place-items:center; cursor:pointer; backdrop-filter: blur(10px); transition: transform .12s ease; background .12s ease; user-select:none; }
+    .iconbtn:hover{ transform: translateY(-2px); background: rgba(15,23,42,.65); }
+    .iconbtn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+    .iconbtn svg{ width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .correct-answer { font-weight: bold; color: var(--accent-2); background: #f6fffa; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--accent); display: inline-block; }
+    .options-list { list-style-type: none; padding-left: 0; }
+    .options-list li { margin-bottom: 16px; padding: 12px; border: 1px solid transparent; }
+  </style>
+</head>
+
+<body>
+  <div id="progress-container"><div id="progress-bar"></div></div>
+
+  <div class="stage">
+    <div class="deck-wrap" id="deckWrap">
+      <div class="deck" id="deck">
+
+        <section class="slide active">
+          <div class="slide-top">
+            <div class="meta">
+              <div class="course">COIS 2020H: Data Structures & Algorithms</div>
+              <div class="sub">Trent University - Department of Computer Science</div>
+            </div>
+          </div>
+          <div style="margin-top: 100px;">
+            <h1>Midterm Practice Examination Review</h1>
+            <h2 style="margin-top:0; border:none; color:var(--muted);">Full Question Walkthrough</h2>
+          </div>
+          <div class="card" style="margin-top: 40px;">
+            <p style="margin:0;"><strong>Instructor:</strong> Ahmad Mousa</p>
+            <div style="display:flex; gap: 20px; margin-top:16px;">
+              <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">TIME</div><div style="font-weight:900;">90 Minutes</div></div>
+              <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">MARKS</div><div style="font-weight:900;">100 Total</div></div>
+            </div>
+          </div>
+          <div class="slide-footer"><div class="muted">Press Right Arrow or Space to begin</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Multiple Choice</div></div>
+            <span class="pill">40 Marks</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:70%;">
+            <h1>Part A: Multiple Choice</h1>
+            <p>20 Questions (2 marks each)</p>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 1</div></div>
+          </div>
+          <h2>Question 1</h2>
+          <p>Encapsulation primarily helps to:</p>
+          <ul class="options-list">
+            <li>a) Increase memory usage</li>
+            <li class="correct-answer">b) Hide internal implementation details ✅</li>
+            <li>c) Sort data automatically</li>
+            <li>d) Speed up execution</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> Encapsulation is a core OOP concept that bundles data and methods into a single unit (a class) while restricting direct external access to its internal state, thereby hiding the implementation details.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 2</div></div>
+          </div>
+          <h2>Question 2</h2>
+          <p>Which data structure allows efficient insertion at both ends?</p>
+          <ul class="options-list">
+            <li>a) Array</li>
+            <li>b) Stack</li>
+            <li class="correct-answer">c) Doubly Linked List ✅</li>
+            <li>d) Hash Table</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> A Doubly Linked List maintains both a `head` and a `tail` pointer. Because you have direct references to both the front and the back of the list, inserting an element at either end is an $O(1)$ constant-time operation.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 3</div></div>
+          </div>
+          <h2>Question 3</h2>
+          <p>What happens when inserting into the middle of an array?</p>
+          <ul class="options-list">
+            <li>a) Nothing changes</li>
+            <li class="correct-answer">b) Elements must shift ✅</li>
+            <li>c) Head changes</li>
+            <li>d) It becomes circular</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> Arrays allocate contiguous blocks of memory. To insert a new element in the middle, you must physically shift all subsequent elements one index to the right to make space, which is an $O(n)$ operation.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 4</div></div>
+          </div>
+          <h2>Question 4</h2>
+          <p>A node in a Doubly Linked List contains:</p>
+          <ul class="options-list">
+            <li>a) Only data</li>
+            <li>b) Data and one pointer</li>
+            <li class="correct-answer">c) Data and two pointers ✅</li>
+            <li>d) Only references</li>
+          </ul>
+          
+          <div class="callout"><strong>Explanation:</strong> Unlike a singly linked list node which only points forward (`next`), a doubly linked list node contains the data payload plus *two* pointers: one pointing to the `next` node and one pointing to the `previous` node.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 5</div></div>
+          </div>
+          <h2>Question 5</h2>
+          <p>Which structure is best suited for undo operations?</p>
+          <ul class="options-list">
+            <li>a) Queue</li>
+            <li class="correct-answer">b) Stack ✅</li>
+            <li>c) Array</li>
+            <li>d) Linked List</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> Undo features require reverting the *most recent* action first. This perfectly matches the Last-In-First-Out (LIFO) behavior of a Stack data structure.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 6</div></div>
+          </div>
+          <h2>Question 6</h2>
+          <p>FIFO is associated with:</p>
+          <ul class="options-list">
+            <li>a) Stack</li>
+            <li class="correct-answer">b) Queue ✅</li>
+            <li>c) Array</li>
+            <li>d) Tree</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> FIFO stands for First-In-First-Out. This is the defining characteristic of a Queue, similar to people waiting in a line at a grocery store—the first person to arrive is the first to be served.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 7</div></div>
+          </div>
+          <h2>Question 7</h2>
+          <p>In C# a class can contain:</p>
+          <ul class="options-list">
+            <li>a) Only methods</li>
+            <li>b) Only variables</li>
+            <li class="correct-answer">c) Properties and methods ✅</li>
+            <li>d) Only constructors</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> In C#, a class acts as a blueprint that defines both state (variables/properties/fields) and behavior (methods/functions) for the objects instantiated from it.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 8</div></div>
+          </div>
+          <h2>Question 8</h2>
+          <p>If head is null in a linked list, the list is:</p>
+          <ul class="options-list">
+            <li>a) Sorted</li>
+            <li>b) Circular</li>
+            <li class="correct-answer">c) Empty ✅</li>
+            <li>d) Invalid</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> The `head` pointer stores the memory address of the very first node. If `head` evaluates to `null`, it means there are no nodes currently linked, meaning the list is empty.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 9</div></div>
+          </div>
+          <h2>Question 9</h2>
+          <p>A constructor has the same name as:</p>
+          <ul class="options-list">
+            <li>a) The namespace</li>
+            <li class="correct-answer">b) The class ✅</li>
+            <li>c) The method</li>
+            <li>d) The file</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> By rule in C# (and Java/C++), constructor methods are defined by using the exact same identifier (name) as the class itself. They have no return type, not even `void`.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 10</div></div>
+          </div>
+          <h2>Question 10</h2>
+          <p>Removing from the front of a queue is called:</p>
+          <ul class="options-list">
+            <li>a) Push</li>
+            <li>b) Pop</li>
+            <li class="correct-answer">c) Dequeue ✅</li>
+            <li>d) Peek</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> The standard terminology for Queue operations is `Enqueue` (adding to the back) and `Dequeue` (removing from the front). `Push` and `Pop` are strictly Stack terminology.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 11</div></div>
+          </div>
+          <h2>Question 11</h2>
+          <p>Generics improve:</p>
+          <ul class="options-list">
+            <li>a) Runtime speed only</li>
+            <li class="correct-answer">b) Type safety ✅</li>
+            <li>c) Memory allocation only</li>
+            <li>d) File handling</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> Generics (e.g., `List<T>`) allow you to specify the exact data type a collection will hold at compile-time. This prevents accidental casting errors at runtime, ensuring strong type safety.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 12</div></div>
+          </div>
+          <h2>Question 12</h2>
+          <p>Inserting at the head of a singly linked list requires:</p>
+          <ul class="options-list">
+            <li class="correct-answer">a) Updating head pointer ✅</li>
+            <li>b) Traversing entire list</li>
+            <li>c) Updating tail only</li>
+            <li>d) Sorting first</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> To insert at the front, you create a new node, point its `next` reference to the current `head`, and then reassign the `head` pointer to this new node. No traversal is needed.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 13</div></div>
+          </div>
+          <h2>Question 13</h2>
+          <p>A circular linked list is useful for:</p>
+          <ul class="options-list">
+            <li>a) Random memory access</li>
+            <li class="correct-answer">b) Repeating traversal ✅</li>
+            <li>c) Sorting</li>
+            <li>d) Hashing</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> In a circular linked list, the tail node points back to the head node instead of `null`. This forms a loop, making it perfect for applications that need continuous, repeating cycles (like round-robin CPU scheduling).</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 14</div></div>
+          </div>
+          <h2>Question 14</h2>
+          <p>The main disadvantage of arrays compared to linked lists is:</p>
+          <ul class="options-list">
+            <li>a) Cannot store integers</li>
+            <li class="correct-answer">b) Fixed size and shifting cost ✅</li>
+            <li>c) Too many pointers</li>
+            <li>d) No indexing</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> Arrays are fixed in size upon creation, meaning you cannot easily add more capacity without creating a brand new array. Furthermore, inserting/deleting requires shifting elements, which costs CPU time.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 15</div></div>
+          </div>
+          <h2>Question 15</h2>
+          <p>In a stack, <code>Peek()</code>:</p>
+          <ul class="options-list">
+            <li>a) Removes top element</li>
+            <li class="correct-answer">b) Returns top without removing ✅</li>
+            <li>c) Clears stack</li>
+            <li>d) Adds element</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> While `Pop()` removes and returns the top element, `Peek()` is a non-destructive operation. It lets you see what is at the top of the stack without modifying the stack's state.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 16</div></div>
+          </div>
+          <h2>Question 16</h2>
+          <p>A namespace is used to:</p>
+          <ul class="options-list">
+            <li>a) Store data</li>
+            <li class="correct-answer">b) Group related classes ✅</li>
+            <li>c) Replace classes</li>
+            <li>d) Hide constructors</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> Namespaces provide a hierarchical way to organize your C# code. They group related classes, structs, and interfaces together, preventing naming conflicts between different parts of a large application.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 17</div></div>
+          </div>
+          <h2>Question 17</h2>
+          <p>In a Doubly Linked List, tail refers to:</p>
+          <ul class="options-list">
+            <li>a) First node</li>
+            <li>b) Middle node</li>
+            <li class="correct-answer">c) Last node ✅</li>
+            <li>d) Null pointer</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> Just as the `head` is the pointer that holds the address of the first node, the `tail` is the explicit pointer that holds the address of the final node in the sequence.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 18</div></div>
+          </div>
+          <h2>Question 18</h2>
+          <p>Information hiding is achieved using:</p>
+          <ul class="options-list">
+            <li>a) Public variables</li>
+            <li class="correct-answer">b) Access modifiers ✅</li>
+            <li>c) Sorting</li>
+            <li>d) Arrays</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> Access modifiers like `private`, `protected`, and `internal` are the language tools developers use to enforce encapsulation and hide internal data from outside objects.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 19</div></div>
+          </div>
+          <h2>Question 19</h2>
+          <p>Which structure is dynamic in size?</p>
+          <ul class="options-list">
+            <li>a) Fixed array</li>
+            <li class="correct-answer">b) Linked list ✅</li>
+            <li>c) Static array</li>
+            <li>d) None</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> Because linked lists allocate memory dynamically for each node exactly when it is needed, they can grow or shrink indefinitely (until system memory is exhausted), unlike arrays.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part A</div><div class="sub">Question 20</div></div>
+          </div>
+          <h2>Question 20</h2>
+          <p>Deleting a node from a Doubly Linked List requires:</p>
+          <ul class="options-list">
+            <li class="correct-answer">a) Updating adjacent pointers ✅</li>
+            <li>b) Clearing entire list</li>
+            <li>c) Resetting head always</li>
+            <li>d) Sorting after deletion</li>
+          </ul>
+          <div class="callout"><strong>Explanation:</strong> To delete node $N$, you take the node *before* $N$ and point its `next` to the node *after* $N$. You then take the node *after* $N$ and point its `prev` to the node *before* $N$, cleanly bypassing the deleted node.</div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part B</div><div class="sub">Short Answer</div></div>
+            <span class="pill">30 Marks</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:70%;">
+            <h1>Part B: Short Answer</h1>
+            <p>5 Questions (6 marks each)</p>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part B</div><div class="sub">Question 1</div></div>
+          </div>
+          <h2>Dynamic vs Static Data Structures</h2>
+          <p><strong>Question:</strong> Explain why a Linked List is considered dynamic while an Array is not.</p>
+          <div class="card">
+            <h3>Key Points for Full Marks:</h3>
+            <ul>
+                <li><strong>Memory Allocation:</strong> Arrays allocate a fixed, contiguous block of memory at creation time (static). Linked Lists allocate memory node-by-node at runtime (dynamic).</li>
+                <li><strong>Resizing:</strong> To grow an array, you must create a completely new, larger array and copy elements over. A Linked List grows seamlessly by simply attaching a new node via a pointer.</li>
+                <li><strong>Wasted Space:</strong> Arrays may have empty allocated slots if not full, whereas Linked Lists only use memory for the exact number of elements they contain.</li>
+            </ul>
+          </div>
+          <div class="callout" style="margin-top: 20px;">
+              <strong>Explanation:</strong> "Dynamic" means it happens at runtime. Because linked lists grab memory on-the-fly when `new Node()` is called, they adapt instantly to data size changes. Arrays are rigidly defined at compile/instantiation time.
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part B</div><div class="sub">Question 2</div></div>
+          </div>
+          <h2>Implementing a Queue with an Array</h2>
+          <p><strong>Question:</strong> Describe how a Queue can be implemented using an array.</p>
+          <div class="grid-2">
+            <div>
+              <h3>Core Mechanics:</h3>
+              <ul>
+                  <li>Use two integer variables, `front` and `rear`, to track indices.</li>
+                  <li><strong>Enqueue:</strong> Insert at the `rear` index, then increment `rear`.</li>
+                  <li><strong>Dequeue:</strong> Read from the `front` index, then increment `front`.</li>
+              </ul>
+            </div>
+            <div class="callout">
+                <strong>Explanation:</strong> Using modulo math (`% array.Length`) wraps the `rear` index back to $0$ when it hits the array's physical end. This "circular queue" prevents you from running out of space when there are empty slots at the beginning of the array left behind by early dequeues.
+            </div>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part B</div><div class="sub">Question 3</div></div>
+          </div>
+          <h2>Head and Tail in a DLL</h2>
+          <p><strong>Question:</strong> Explain the role of the head and tail in a Doubly Linked List.</p>
+          <div class="card-grid">
+              <div class="info-card">
+                  <h3 style="margin-top:0;">Head Pointer</h3>
+                  <p>Points to the very first node in the list. Essential for forward traversal and $O(1)$ insertions/deletions at the beginning of the list.</p>
+              </div>
+              <div class="info-card">
+                  <h3 style="margin-top:0;">Tail Pointer</h3>
+                  <p>Points to the very last node in the list. Essential for reverse traversal and $O(1)$ insertions/deletions at the end of the list.</p>
+              </div>
+          </div>
+           <div class="callout" style="margin-top: 20px;">
+              <strong>Explanation:</strong> Without a tail pointer, adding an element to the end of a list requires walking through every single node ($O(n)$ time). Storing both head and tail references optimizes boundary operations.
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part B</div><div class="sub">Question 4</div></div>
+          </div>
+          <h2>Information Hiding</h2>
+          <p><strong>Question:</strong> What is Information Hiding and why is it important in software design?</p>
+          <div class="card">
+            <h3>Definition & Importance:</h3>
+            <ul>
+                <li><strong>What it is:</strong> Restricting direct access to some of an object's internal components or states, usually via access modifiers like `private`.</li>
+                <li><strong>Why it matters:</strong>
+                    <ul>
+                        <li>Protects object integrity by preventing external code from corrupting state.</li>
+                        <li>Decouples systems, meaning you can change internal logic without breaking external code.</li>
+                        <li>Reduces complexity by exposing only necessary operations via a public interface.</li>
+                    </ul>
+                </li>
+            </ul>
+          </div>
+          <div class="callout" style="margin-top: 20px;">
+              <strong>Explanation:</strong> Think of it like a car. The steering wheel and pedals are the public interface. The engine timing belts are hidden information. The driver (external code) doesn't need to touch the belts to drive, and hiding them prevents the driver from breaking the engine.
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part B</div><div class="sub">Question 5</div></div>
+          </div>
+          <h2>Stack vs Queue</h2>
+          <p><strong>Question:</strong> Compare Stack and Queue in terms of behavior and applications.</p>
+          
+          <table>
+              <tr>
+                  <th>Data Structure</th>
+                  <th>Behavior</th>
+                  <th>Common Applications</th>
+              </tr>
+              <tr>
+                  <td><strong>Stack</strong></td>
+                  <td>LIFO (Last-In, First-Out)</td>
+                  <td class="muted">Undo mechanisms, Browser Back button, Function call stack tracking.</td>
+              </tr>
+              <tr>
+                  <td><strong>Queue</strong></td>
+                  <td>FIFO (First-In, First-Out)</td>
+                  <td class="muted">Print spooling, task scheduling, serving requests in order.</td>
+              </tr>
+          </table>
+          <div class="callout" style="margin-top: 20px;">
+              <strong>Explanation:</strong> The fundamental difference is the order of resolution. Use a Stack when you need to retrace steps backwards. Use a Queue when fairness and chronological order of arrival matter.
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part C</div><div class="sub">Pseudocode</div></div>
+            <span class="pill">30 Marks</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:70%;">
+            <h1>Part C: Pseudocode</h1>
+            <p>2 Questions (15 marks each)</p>
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part C</div><div class="sub">Question 1</div></div>
+          </div>
+          <h2>Stack Push() via Singly Linked List</h2>
+          <p><strong>Requirement:</strong> Write pseudocode for <code>Push(new Value)</code> in a Stack implemented using a SLL.</p>
+          <div class="card">
+<pre style="margin:0; font-family:var(--mono); font-size:18px;"><code>Function Push(newValue):
+    // 1. Create a new node
+    newNode = Create Node
+    newNode.Data = newValue
+    
+    // 2. Update pointers correctly
+    // Point new node to the current top of the stack
+    newNode.Next = head  
+    
+    // 3. Maintain stack integrity
+    // Make head point to the new top element
+    head = newNode       
+    
+    // Optional: increment size tracker
+    count = count + 1    
+End Function
+</code></pre>
+          </div>
+          <div class="callout" style="margin-top: 20px;">
+              <strong>Explanation:</strong> In a Linked List Stack, the `head` pointer acts as the "top" of the stack. We insert new items at the head because inserting at the front of a SLL is an $O(1)$ operation, avoiding traversal.
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Part C</div><div class="sub">Question 2</div></div>
+          </div>
+          <h2>Array RemoveAt()</h2>
+          <p><strong>Requirement:</strong> Write pseudocode for <code>RemoveAt(index)</code> in an array-based list.</p>
+          <div class="card">
+<pre style="margin:0; font-family:var(--mono); font-size:18px;"><code>Function RemoveAt(index):
+    // 1. Validate index bounds
+    If index < 0 OR index >= count Then
+        Throw out-of-bounds error
+    End If
+    
+    // 2. Shift elements left to overwrite the removed item
+    // Loop from index to the second-to-last item
+    For i from index to count - 2 Do
+        array[i] = array[i + 1]
+    End For
+    
+    // 3. Handle edge cases & Update count
+    array[count - 1] = null // Clear old duplicate reference
+    count = count - 1
+End Function
+</code></pre>
+          </div>
+          <div class="callout" style="margin-top: 20px;">
+              <strong>Explanation:</strong> To delete an item from an array, you overwrite it by copying the next element backward (`array[i] = array[i + 1]`). You continue this cascade until the end of the populated elements, then shrink the total count.
+          </div>
+          <div class="slide-footer"><div class="muted">COIS 2020H Review</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+        <section class="slide">
+            <div class="slide-top">
+              <div class="meta"><div class="course">Review Complete</div><div class="sub">Next Steps</div></div>
+              <span class="pill">End</span>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:60%;">
+                <h1>End of Review</h1>
+                <p>Ensure you practice writing out the pseudocode algorithms by hand before the exam.</p>
+            </div>
+            <div class="slide-footer"><div class="muted">Good luck!</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="controls" aria-label="Presentation controls">
+    <button class="iconbtn" id="prevBtn" onclick="go(-1)" aria-label="Previous slide" title="Previous (←)">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="iconbtn" id="nextBtn" onclick="go(1)" aria-label="Next slide" title="Next (→ / Space)">
+      <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <button class="iconbtn" id="fsBtn" onclick="toggleFullScreen()" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+      <svg viewBox="0 0 24 24">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+        <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
+        <path d="M8 21H5a2 2 0 0 1-2-2v-3"/>
+        <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const progressBar = document.getElementById("progress-bar");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    
+    let current = 0;
+
+    function applyScale(){
+      const pad = 24;
+      const w = window.innerWidth - pad*2;
+      const h = window.innerHeight - pad*2;
+      const s = Math.min(w/1600, h/900);
+      document.documentElement.style.setProperty('--scale', String(Math.max(0.3, Math.min(s, 1.5))));
+    }
+
+    function updateSlideNumbers(){
+      slides.forEach((s, i) => {
+        const holder = s.querySelector("[data-slide-no]");
+        if (holder) holder.textContent = `${i + 1} / ${slides.length}`;
+      });
+    }
+
+    function updateProgress(){
+      progressBar.style.width = ((current + 1) / slides.length) * 100 + "%";
+    }
+
+    function updateUI(){
+      slides.forEach(s => s.classList.remove("active"));
+      slides[current].classList.add("active");
+
+      updateProgress();
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === slides.length - 1;
+
+      if(window.MathJax) MathJax.typesetPromise();
+    }
+
+    function go(dir){
+      const nextIndex = current + dir;
+      if(nextIndex < 0 || nextIndex >= slides.length) return;
+      current = nextIndex;
+      updateUI();
+    }
+
+    function toggleFullScreen(){
+      if(!document.fullscreenElement){
+        document.documentElement.requestFullscreen?.();
+      }else{
+        document.exitFullscreen?.();
+      }
+    }
+    
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "ArrowRight" || e.key === " " || e.key === "Enter"){
+        if (e.key === " ") e.preventDefault();
+        go(1);
+      } else if(e.key === "ArrowLeft"){
+        go(-1);
+      } else if(e.key.toLowerCase() === "f"){
+        toggleFullScreen();
+      }
+    });
+    
+    window.addEventListener("resize", applyScale);
+    applyScale();
+    updateSlideNumbers();
+    updateUI();
+  </script>
+</body>
+</html>
