@@ -1723,59 +1723,6 @@
 
 <section class="slide">
   <div class="slide-top">
-    <div class="meta"><div class="course">Operation 2</div><div class="sub">Traversal</div></div>
-    <span class="pill">O(n) Time</span>
-  </div>
-  
-  <h2>Traversing a Tree (In-Order)</h2>
-  
-  <div class="grid-2">
-    <div class="detail-panel">
-      <h3>📋 In-Order Traversal</h3>
-      <p>Recursively visit the <strong>Left</strong> subtree, then the <strong>Root</strong>, then the <strong>Right</strong> subtree. In a BST, this prints the values in perfectly sorted order!</p>
-      
-      <pre class="code-block"><span class="kw">def</span> <span class="fn">in_order</span>(node):
-  <span class="kw">if</span> node:
-    <span class="cm"># 1. Go Left</span>
-    in_order(node.left)
-    
-    <span class="cm"># 2. Visit Node</span>
-    print(node.val)
-    
-    <span class="cm"># 3. Go Right</span>
-    in_order(node.right)</pre>
-        
-      <div class="btn-container">
-        <button id="btn-traverse" class="btn" onclick="animateTraverse()">▶ Run Traversal</button>
-      </div>
-    </div>
-    
-    <div class="svg-container">
-      <svg id="svg-trav" class="tree-svg" viewBox="0 0 300 200">
-        <line class="sv-edge" x1="150" y1="40" x2="80" y2="100"/>
-        <line class="sv-edge" x1="150" y1="40" x2="220" y2="100"/>
-        <line class="sv-edge" x1="80" y1="100" x2="40" y2="160"/>
-        <line class="sv-edge" x1="80" y1="100" x2="120" y2="160"/>
-        <line class="sv-edge" x1="220" y1="100" x2="180" y2="160"/>
-        <line class="sv-edge" x1="220" y1="100" x2="260" y2="160"/>
-
-        <g id="t-10" class="sv-node"><circle cx="150" cy="40" r="20" /><text id="t-10-txt" class="sv-node-text" x="150" y="45" text-anchor="middle">10</text></g>
-        <g id="t-5" class="sv-node"><circle cx="80" cy="100" r="20" /><text id="t-5-txt" class="sv-node-text" x="80" y="105" text-anchor="middle">5</text></g>
-        <g id="t-15" class="sv-node"><circle cx="220" cy="100" r="20" /><text id="t-15-txt" class="sv-node-text" x="220" y="105" text-anchor="middle">15</text></g>
-        <g id="t-3" class="sv-node"><circle cx="40" cy="160" r="16" /><text id="t-3-txt" class="sv-node-text" x="40" y="165" text-anchor="middle">3</text></g>
-        <g id="t-7" class="sv-node"><circle cx="120" cy="160" r="16" /><text id="t-7-txt" class="sv-node-text" x="120" y="165" text-anchor="middle">7</text></g>
-        <g id="t-12" class="sv-node"><circle cx="180" cy="160" r="16" /><text id="t-12-txt" class="sv-node-text" x="180" y="165" text-anchor="middle">12</text></g>
-        <g id="t-18" class="sv-node"><circle cx="260" cy="160" r="16" /><text id="t-18-txt" class="sv-node-text" x="260" y="165" text-anchor="middle">18</text></g>
-      </svg>
-      <div id="trav-output" style="background: #fff; border: 1px solid #e2e8f0; width: 100%; padding: 12px; margin-top: 16px; border-radius: 8px; font-family: monospace; font-size: 14px; text-align: center;">Result: [ ]</div>
-    </div>
-  </div>
-  <div class="slide-footer"><div class="muted">COIS 2020 · Trees &amp; Heaps</div><div class="slide-no" data-slide-no></div></div>
-</section>
-
-
-<section class="slide">
-  <div class="slide-top">
     <div class="meta"><div class="course">Operation 3</div><div class="sub">Insert</div></div>
     <span class="pill">O(log n) Time</span>
   </div>
@@ -1878,51 +1825,6 @@
 
 <section class="slide">
   <div class="slide-top">
-    <div class="meta"><div class="course">Operation 1</div><div class="sub">Search</div></div>
-    <span class="pill">O(log n) Time</span>
-  </div>
-  
-  <h2>Searching a BST</h2>
-  <div class="grid-2">
-    <div class="detail-panel">
-      <h3>🔍 Search for '12'</h3>
-      <p>Because the tree is ordered, we eliminate half the tree at every step. It runs in $O(\log n)$ time, identical to a Binary Search algorithm.</p>
-      <pre class="code-block"><span class="kw">def</span> <span class="fn">search</span>(node, val):
-  <span class="kw">if not</span> node: <span class="kw">return False</span>
-  <span class="kw">if</span> node.val == val: <span class="kw">return True</span>
-
-  <span class="cm"># 12 > 10, go right!</span>
-  <span class="kw">if</span> val <span class="kw">></span> node.val:
-    <span class="kw">return</span> search(node.right, val)
-  <span class="kw">else</span>:
-    <span class="kw">return</span> search(node.left, val)</pre>
-      <div class="btn-container"><button id="btn-search" class="btn" onclick="animSearch()">▶ Animate Search</button></div>
-    </div>
-    
-    <div class="svg-container">
-      <svg id="svg-search" class="tree-svg" viewBox="0 0 300 240">
-        <line class="sv-edge e-reset" x1="150" y1="40" x2="80" y2="100"/>
-        <line id="s-e1" class="sv-edge e-reset" x1="150" y1="40" x2="220" y2="100"/>
-        <line class="sv-edge e-reset" x1="80" y1="100" x2="40" y2="160"/>
-        <line class="sv-edge e-reset" x1="80" y1="100" x2="120" y2="160"/>
-        <line id="s-e2" class="sv-edge e-reset" x1="220" y1="100" x2="180" y2="160"/>
-        <line class="sv-edge e-reset" x1="220" y1="100" x2="260" y2="160"/>
-
-        <g id="s-n1" class="sv-node n-reset"><circle cx="150" cy="40" r="20" /><text class="sv-node-text" x="150" y="45" text-anchor="middle">10</text></g>
-        <g class="sv-node n-reset"><circle cx="80" cy="100" r="20" /><text class="sv-node-text" x="80" y="105" text-anchor="middle">5</text></g>
-        <g id="s-n2" class="sv-node n-reset"><circle cx="220" cy="100" r="20" /><text class="sv-node-text" x="220" y="105" text-anchor="middle">15</text></g>
-        <g class="sv-node n-reset"><circle cx="40" cy="160" r="16" /><text class="sv-node-text" x="40" y="165" text-anchor="middle">3</text></g>
-        <g class="sv-node n-reset"><circle cx="120" cy="160" r="16" /><text class="sv-node-text" x="120" y="165" text-anchor="middle">7</text></g>
-        <g id="s-n3" class="sv-node n-reset"><circle cx="180" cy="160" r="16" /><text class="sv-node-text" x="180" y="165" text-anchor="middle">12</text></g>
-        <g class="sv-node n-reset"><circle cx="260" cy="160" r="16" /><text class="sv-node-text" x="260" y="165" text-anchor="middle">18</text></g>
-      </svg>
-    </div>
-  </div>
-  <div class="slide-footer"><div class="muted">COIS 2020 · Trees &amp; Heaps</div><div class="slide-no" data-slide-no></div></div>
-</section>
-
-<section class="slide">
-  <div class="slide-top">
     <div class="meta"><div class="course">Operation 2</div><div class="sub">Traversal</div></div>
     <span class="pill">O(n) Time</span>
   </div>
@@ -1963,54 +1865,6 @@
         <g id="t-7" class="sv-node t-node"><circle cx="260" cy="150" r="16" /><text class="sv-node-text" x="260" y="155" text-anchor="middle">18</text></g>
       </svg>
       <div id="trav-out" style="background:#fff; border:1px solid #e2e8f0; width:100%; padding:12px; margin-top:16px; border-radius:8px; font-family:monospace; font-weight:bold; color:#16a34a; text-align:center;">Output: [ ]</div>
-    </div>
-  </div>
-  <div class="slide-footer"><div class="muted">COIS 2020 · Trees &amp; Heaps</div><div class="slide-no" data-slide-no></div></div>
-</section>
-
-<section class="slide">
-  <div class="slide-top">
-    <div class="meta"><div class="course">Operation 3</div><div class="sub">Insert</div></div>
-    <span class="pill">O(log n) Time</span>
-  </div>
-  
-  <h2>Inserting a Node</h2>
-  <div class="grid-2">
-    <div class="detail-panel">
-      <h3>➕ Insert Value '8'</h3>
-      <p>Traverse the tree just like a search. When you hit a <code>Null</code> pointer where the value *should* go, create a new Node and attach it.</p>
-      <pre class="code-block"><span class="kw">def</span> <span class="fn">insert</span>(node, val):
-  <span class="cm"># Found the empty spot!</span>
-  <span class="kw">if not</span> node: 
-    <span class="kw">return</span> Node(val)
-  
-  <span class="cm"># 8 > 7, so attach to the right</span>
-  <span class="kw">if</span> val <span class="kw"><</span> node.val:
-    node.left = insert(node.left, val)
-  <span class="kw">else</span>:
-    node.right = insert(node.right, val)
-    
-  <span class="kw">return</span> node</pre>
-      <div class="btn-container"><button id="btn-ins" class="btn" onclick="animInsert()">▶ Animate Insert</button></div>
-    </div>
-    
-    <div class="svg-container">
-      <svg class="tree-svg" viewBox="0 0 300 240">
-        <line class="sv-edge i-reset" x1="150" y1="40" x2="80" y2="100"/>
-        <line class="sv-edge i-reset" x1="150" y1="40" x2="220" y2="100"/>
-        <line class="sv-edge i-reset" x1="80" y1="100" x2="40" y2="160"/>
-        <line id="i-e1" class="sv-edge i-reset" x1="80" y1="100" x2="120" y2="160"/>
-        
-        <line id="i-e-new" class="sv-edge node-hidden" stroke="#16a34a" stroke-dasharray="4,4" x1="120" y1="160" x2="140" y2="215"/>
-
-        <g id="i-n1" class="sv-node i-node"><circle cx="150" cy="40" r="20" /><text class="sv-node-text" x="150" y="45" text-anchor="middle">10</text></g>
-        <g id="i-n2" class="sv-node i-node"><circle cx="80" cy="100" r="20" /><text class="sv-node-text" x="80" y="105" text-anchor="middle">5</text></g>
-        <g class="sv-node i-node"><circle cx="220" cy="100" r="20" /><text class="sv-node-text" x="220" y="105" text-anchor="middle">15</text></g>
-        <g class="sv-node i-node"><circle cx="40" cy="160" r="16" /><text class="sv-node-text" x="40" y="165" text-anchor="middle">3</text></g>
-        <g id="i-n3" class="sv-node i-node"><circle cx="120" cy="160" r="16" /><text class="sv-node-text" x="120" y="165" text-anchor="middle">7</text></g>
-        
-        <g id="i-n-new" class="sv-node node-hidden"><circle cx="140" cy="215" r="16" /><text class="sv-node-text" x="140" y="220" text-anchor="middle">8</text></g>
-      </svg>
     </div>
   </div>
   <div class="slide-footer"><div class="muted">COIS 2020 · Trees &amp; Heaps</div><div class="slide-no" data-slide-no></div></div>
@@ -2824,12 +2678,12 @@
       <!-- ╔══════════════════════════════════════╗ -->
       <!-- ║  HEAP SLIDE 8 — BUILD HEAP           ║ -->
       <!-- ╚══════════════════════════════════════╝ -->
-      <section class="slide heap-slide">
+<section class="slide heap-slide">
         <div class="slide-top">
-          <div class="meta"><div class="course">Heaps</div><div class="sub">Heapify</div></div>
-          <span class="pill pill-heap">Build Heap</span>
+          <div class="meta"><div class="course">Heaps</div><div class="sub">Building a Heap</div></div>
+          <span class="pill pill-heap">Top-Down Build</span>
         </div>
-        <h2>Build Heap (Heapify)</h2>
+        <h2>Build Heap (Repeated Insertion)</h2>
         <div class="grid-2" style="gap:20px; align-items:start;">
           <div>
             <div class="callout" style="margin-bottom:14px;"><p style="margin:0;">Convert an unsorted array into a heap: insert one element at a time + <strong>reheap up</strong>.</p></div>
@@ -2844,7 +2698,7 @@
             </div>
             <div class="info-card">
               <h3 style="margin-top:0;">⏱️ Complexity</h3>
-              <p style="font-size:15px; margin:0;">Repeated insertion: <strong style="color:#b45309;">O(n log n)</strong><br>Optimised bottom-up: <strong style="color:#166534;">O(n)</strong></p>
+              <p style="font-size:15px; margin:0;">Top-Down Insertion: <strong style="color:#b45309;">O(n log n)</strong><br><span style="color:#666; font-size:13px;">(A faster O(n) "Heapify" method exists)</span></p>
             </div>
           </div>
           <div class="info-card">
@@ -2862,7 +2716,6 @@
         </div>
         <div class="slide-footer"><div class="muted">COIS 2020 · Trees &amp; Heaps</div><div class="slide-no" data-slide-no></div></div>
       </section>
-
       <!-- ╔══════════════════════════════════════╗ -->
       <!-- ║  HEAP SLIDE 9 — HEAP SORT            ║ -->
       <!-- ╚══════════════════════════════════════╝ -->
@@ -2910,25 +2763,7 @@
       <!-- ╔══════════════════════════════════════╗ -->
       <!-- ║  HEAP SLIDE 10 — HEAPSORT ACTIVITY   ║ -->
       <!-- ╚══════════════════════════════════════╝ -->
-      <section class="slide heap-slide">
-        <div class="slide-top">
-          <div class="meta"><div class="course">Heaps</div><div class="sub">🧠 Activity</div></div>
-          <span class="pill pill-heap">🔬 Visualizer</span>
-        </div>
-        <h2>HeapSort Step-by-Step Visualizer</h2>
-        <div class="callout" style="margin-bottom:18px;"><p style="margin:0; font-size:16px;">🔬 Watch each pass on <code>[78, 32, 56, 8, 23, 45]</code>. <span style="color:#2563eb; font-weight:700;">Blue</span> = sorted. Press Next ▶ to step through.</p></div>
-        <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:24px; position:relative; z-index:2;">
-          <div id="hsArr" style="display:flex; justify-content:center; gap:8px; margin-bottom:18px; flex-wrap:wrap;"></div>
-          <div id="hsLabel" style="text-align:center; font-weight:700; color:#166534; font-size:16px; margin-bottom:16px; min-height:24px;">After heap build. Root 78 is max. Press Next ▶</div>
-          <div style="display:flex; gap:12px; justify-content:center; align-items:center;">
-            <button class="step-btn" id="hsPrev" onclick="hsStep(-1)" disabled>◀ Prev</button>
-            <span id="hsInfo" style="font-size:15px; color:var(--muted); font-family:monospace; min-width:80px; text-align:center;">Pass 1 of 9</span>
-            <button class="step-btn" id="hsNext" onclick="hsStep(1)">Next ▶</button>
-          </div>
-        </div>
-        <div class="slide-footer"><div class="muted">COIS 2020 · Trees &amp; Heaps</div><div class="slide-no" data-slide-no></div></div>
-      </section>
-
+      
       <!-- ╔══════════════════════════════════════╗ -->
       <!-- ║  HEAP SLIDE 11 — HEAP QUIZ           ║ -->
       <!-- ╚══════════════════════════════════════╝ -->
