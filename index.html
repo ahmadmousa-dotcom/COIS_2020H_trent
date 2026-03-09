@@ -44,10 +44,50 @@
     background-color: #005f73;
     color: white;
   }
+
+  /* New Dashboard Styles */
+  .dashboard-container {
+    background-color: #f8f9fa;
+    border-left: 5px solid #005f73;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 0 8px 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .dashboard-info h3 {
+    margin: 0 0 10px 0;
+    color: #005f73;
+  }
+  .btn-dashboard {
+    background-color: #94d2bd;
+    color: #001219;
+    padding: 12px 24px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+  }
+  .btn-dashboard:hover {
+    transform: translateY(-2px);
+    background-color: #0a9396;
+    color: white;
+  }
 </style>
 
 <section>
   <h2>Course Schedule & Materials</h2>
+  
+  <div class="dashboard-container">
+    <div class="dashboard-info">
+      <h3>Course Dashboard</h3>
+      <p>Access the centralized hub for grades, attendance, and interactive data visualizations.</p>
+    </div>
+    <a href="COIS2020H_Dashboard.html" class="btn-dashboard">🚀 Open Dashboard</a>
+  </div>
+
   <p>
     Access lecture slides, notes, and code examples below. Please review the assigned materials prior to attending class.
   </p>

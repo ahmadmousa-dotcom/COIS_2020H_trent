@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COIS 2020H — Data Structures & Algorithms</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f5faf6; --white: #ffffff;
+    --g900: #0d3b1e; --g800: #145a2c; --g700: #1a7a3a; --g600: #22994a;
+    --g500: #2ab558; --g400: #4fcc76; --g300: #7edd9a; --g200: #b3ecc6;
+    --g100: #ddf5e5; --g50: #f0faf3;
+    --text: #1a2e1f; --textSec: #3d5c47; --textMute: #7a9983; --textDim: #a3bfab;
+    --border: #d2e5d8; --borderLight: #e5f0e9;
+    --red: #d64545; --amber: #c4a32f;
+    --shadow: 0 1px 3px rgba(13,59,30,0.06), 0 4px 14px rgba(13,59,30,0.04);
+    --shadowLg: 0 4px 20px rgba(13,59,30,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); font-family:'Outfit',sans-serif; color:var(--text); }
+
+  /* NAV */
+  .topnav { background:linear-gradient(135deg, var(--g800), var(--g600) 50%, var(--g400)); padding:28px 40px 22px; position:relative; overflow:hidden; }
+  .topnav::before { content:''; position:absolute; top:-70px; right:-70px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,0.05); }
+  .topnav::after { content:''; position:absolute; bottom:-50px; left:25%; width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,0.03); }
+  .topnav-inner { max-width:1200px; margin:0 auto; position:relative; z-index:1; }
+  .topnav h1 { font-size:24px; font-weight:900; color:#fff; letter-spacing:-0.5px; }
+  .topnav p { font-size:13px; color:rgba(255,255,255,0.65); margin-top:3px; }
+  .topnav-head { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+  .topnav-badge { width:48px; height:48px; border-radius:14px; background:rgba(255,255,255,0.18); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; color:#fff; }
+  .tabs { display:flex; gap:4px; background:rgba(0,0,0,0.15); border-radius:12px; padding:4px; width:fit-content; }
+  .tabs button { padding:9px 20px; border-radius:9px; border:none; cursor:pointer; font-size:13px; font-weight:650; font-family:'Outfit'; transition:all .2s; background:transparent; color:rgba(255,255,255,0.6); }
+  .tabs button.active { background:rgba(255,255,255,0.2); color:#fff; }
+  .tabs button:hover:not(.active) { color:rgba(255,255,255,0.85); }
+
+  /* LAYOUT */
+  .container { max-width:1200px; margin:0 auto; padding:28px 28px 56px; }
+  .card { background:var(--white); border-radius:18px; padding:26px; border:1px solid var(--border); box-shadow:var(--shadow); }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  .grid-4 { display:flex; gap:14px; flex-wrap:wrap; }
+  .grid-4 > .card { flex:1 1 210px; min-width:180px; }
+  .mb-lg { margin-bottom:26px; }
+  .mb-md { margin-bottom:22px; }
+  .hidden { display:none; }
+
+  /* SECTION TITLES */
+  .stitle { font-size:17px; font-weight:750; color:var(--g900); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+  .stitle .icon { font-size:18px; }
+  .ssub { font-size:12px; color:var(--textMute); margin-bottom:16px; font-weight:500; }
+
+  /* KPI */
+  .kpi { position:relative; overflow:hidden; padding:20px 22px; }
+  .kpi::after { content:''; position:absolute; top:-16px; right:-16px; width:60px; height:60px; border-radius:50%; opacity:0.06; }
+  .kpi-label { font-size:10px; font-weight:700; color:var(--textMute); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; }
+  .kpi-val { font-size:26px; font-weight:900; letter-spacing:-0.5px; line-height:1; }
+  .kpi-sub { font-size:11px; color:var(--textDim); margin-top:4px; font-weight:500; }
+
+  /* INFO BANNER */
+  .info-banner { background:var(--g50); border:1px solid var(--g200); border-radius:14px; padding:12px 20px; display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+  .info-banner span { font-size:12px; color:var(--g800); font-weight:600; line-height:1.5; }
+
+  /* RINGS */
+  .rings-row { display:flex; gap:48px; justify-content:center; padding:12px 0 4px; }
+  .ring-wrap { text-align:center; }
+  .ring-label { font-size:12px; font-weight:650; color:var(--textSec); }
+  .ring-sub { font-size:10px; color:var(--textDim); margin-top:2px; }
+  .ring-val { font-size:17px; font-weight:800; font-family:'Outfit'; }
+
+  /* INPUT SECTION */
+  .input-section { background:linear-gradient(160deg, var(--g50), var(--white)); border-radius:24px; padding:34px 32px; border:2px solid var(--g200); box-shadow:var(--shadowLg); position:relative; overflow:hidden; }
+  .input-section::after { content:''; position:absolute; top:-40px; right:-40px; width:140px; height:140px; border-radius:50%; background:var(--g200); opacity:0.3; }
+  .input-section .inner { position:relative; z-index:1; }
+  .privacy-badge { display:inline-flex; align-items:center; gap:8px; background:var(--g100); padding:7px 18px; border-radius:24px; margin-bottom:12px; font-size:12px; font-weight:700; color:var(--g700); }
+  .input-row { display:flex; gap:16px; flex-wrap:wrap; max-width:600px; margin:0 auto 22px; }
+  .input-group { flex:1 1 160px; }
+  .input-group label { display:block; font-size:12px; font-weight:650; color:var(--textSec); margin-bottom:6px; }
+  .input-group label span { color:var(--textMute); font-weight:500; }
+  .input-group input { width:100%; padding:12px 16px; border-radius:12px; border:2px solid var(--border); background:var(--g50); color:var(--text); font-size:16px; font-weight:700; font-family:'Outfit'; outline:none; transition:border-color .2s; }
+  .input-group input:focus { border-color:var(--g500); }
+  .btn-row { display:flex; gap:10px; justify-content:center; }
+  .btn-primary { padding:13px 40px; border-radius:14px; border:none; cursor:pointer; background:linear-gradient(135deg, var(--g700), var(--g500)); color:#fff; font-size:15px; font-weight:750; font-family:'Outfit'; box-shadow:0 4px 16px rgba(42,181,88,0.27); transition:all .25s; }
+  .btn-primary:disabled { background:var(--g200); color:var(--textMute); box-shadow:none; cursor:not-allowed; }
+  .btn-secondary { padding:13px 28px; border-radius:14px; border:2px solid var(--border); background:var(--white); color:var(--textSec); font-size:14px; font-weight:650; cursor:pointer; font-family:'Outfit'; }
+
+  /* RESULTS */
+  .result-card { text-align:center; padding:24px 20px; }
+  .result-big { font-size:42px; font-weight:900; font-family:'Outfit'; line-height:1.1; margin:6px 0; }
+  .result-grade { font-size:52px; }
+  .result-rank { font-size:44px; }
+  .result-note { font-size:12px; font-weight:700; margin-top:6px; }
+  .result-label { font-size:10px; font-weight:700; color:var(--textMute); text-transform:uppercase; letter-spacing:1px; }
+  .result-sub { font-size:13px; color:var(--textSec); font-weight:600; }
+
+  /* METERS */
+  .meter { margin-bottom:18px; }
+  .meter-header { display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:var(--textSec); margin-bottom:6px; flex-wrap:wrap; gap:4px; }
+  .meter-track { position:relative; height:20px; background:var(--g100); border-radius:10px; overflow:visible; }
+  .meter-fill { height:100%; border-radius:10px; transition:width .6s ease; position:relative; z-index:2; }
+  .meter-marker { position:absolute; top:-2px; width:3px; height:24px; background:var(--g900); border-radius:2px; z-index:3; opacity:0.5; }
+  .meter-marker-label { position:absolute; top:-16px; transform:translateX(-50%); font-size:9px; color:var(--textMute); font-weight:700; white-space:nowrap; }
+
+  /* INSIGHTS */
+  .insight-box { padding:20px; border-radius:16px; }
+  .insight-box.strong { background:var(--g50); border:1px solid var(--g200); }
+  .insight-box.focus { background:#fdfaf2; border:1px solid #ede4c8; }
+  .insight-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:6px; }
+  .insight-name { font-size:20px; font-weight:800; margin-bottom:4px; }
+  .insight-detail { font-size:12px; color:var(--textSec); line-height:1.5; }
+
+  /* PERCENTILE */
+  .ptile-track { height:28px; background:var(--g100); border-radius:14px; position:relative; overflow:visible; margin-bottom:24px; }
+  .ptile-fill { height:100%; border-radius:14px; background:linear-gradient(90deg, var(--g300), var(--g600)); transition:width .8s ease; }
+  .ptile-dot { position:absolute; top:-6px; width:18px; height:18px; border-radius:50%; background:var(--g700); border:3px solid var(--white); box-shadow:0 2px 8px rgba(26,122,58,0.27); transition:left .8s ease; }
+  .ptile-labels { display:flex; justify-content:space-between; font-size:10px; color:var(--textDim); margin-bottom:5px; font-weight:600; }
+
+  /* EXAM PAGE */
+  .exam-section { margin-bottom:32px; }
+  .exam-section h3 { font-size:16px; font-weight:800; color:var(--g800); margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid var(--g200); }
+  .exam-q { padding:14px 18px; border-radius:12px; margin-bottom:10px; background:var(--g50); border:1px solid var(--borderLight); }
+  .exam-q .q-num { font-weight:800; color:var(--g700); font-size:14px; }
+  .exam-q .q-text { font-size:13px; color:var(--text); margin-top:4px; line-height:1.6; }
+  .exam-q .options { margin-top:8px; padding-left:20px; }
+  .exam-q .options div { font-size:13px; color:var(--textSec); padding:3px 0; }
+  .exam-q .options .correct { color:var(--g600); font-weight:700; background:var(--g100); margin:-3px -8px; padding:3px 8px; border-radius:6px; }
+  .marks-badge { display:inline-block; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; background:var(--g100); color:var(--g700); margin-left:8px; }
+  .answer-box { background:var(--g50); border:1px solid var(--g200); border-radius:14px; padding:18px 22px; margin-top:8px; }
+  .answer-box h4 { font-size:13px; font-weight:700; color:var(--g700); margin-bottom:8px; }
+  .answer-box p, .answer-box li { font-size:13px; color:var(--textSec); line-height:1.7; }
+  .answer-box ul { padding-left:18px; }
+  .answer-box pre { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:14px 18px; font-size:12px; font-family:'Courier New',monospace; color:var(--g900); overflow-x:auto; line-height:1.6; margin-top:8px; }
+  .version-tabs { display:flex; gap:4px; margin-bottom:20px; }
+  .version-tabs button { padding:8px 20px; border-radius:10px; border:2px solid var(--border); background:var(--white); color:var(--textSec); font-size:13px; font-weight:650; cursor:pointer; font-family:'Outfit'; transition:all .2s; }
+  .version-tabs button.active { background:var(--g600); color:#fff; border-color:var(--g600); }
+
+  /* RUBRIC TABLE */
+  .rubric-table { width:100%; border-collapse:separate; border-spacing:0 6px; font-size:13px; }
+  .rubric-table th { text-align:left; padding:10px 14px; font-size:11px; font-weight:700; color:var(--textMute); text-transform:uppercase; letter-spacing:0.6px; }
+  .rubric-table td { padding:10px 14px; background:var(--white); }
+  .rubric-table tr td:first-child { border-radius:10px 0 0 10px; }
+  .rubric-table tr td:last-child { border-radius:0 10px 10px 0; }
+  .rubric-table .cat { font-weight:700; color:var(--g800); }
+  .rubric-table .marks { font-weight:800; color:var(--g600); }
+
+  /* FOOTER */
+  .footer { padding:22px 28px; border-top:1px solid var(--border); text-align:center; background:var(--white); font-size:11px; color:var(--textDim); }
+
+  /* ANIMATION */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); }}
+  .fade-up { animation: fadeUp 0.5s ease; }
+
+  /* CHART CONTAINERS */
+  .chart-box { position:relative; height:260px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<div class="topnav">
+  <div class="topnav-inner">
+    <div class="topnav-head">
+      <div class="topnav-badge">DSA</div>
+      <div>
+        <h1>COIS 2020H — Data Structures & Algorithms</h1>
+        <p>Trent University · Instructor: Ahmad Mousa </p>
+      </div>
+    </div>
+    <div class="tabs" id="mainTabs">
+      <button class="active" onclick="showPage('dashboard')">📊 Dashboard</button>
+      <button onclick="showPage('exam')">📝 Exam & Answers</button>
+      <button onclick="showPage('rubric')">📋 Rubric</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--                    DASHBOARD PAGE                   -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="page-dashboard" class="container">
+
+  <!-- INFO BANNER -->
+  <div class="info-banner">
+    <span style="font-size:16px">ℹ️</span>
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid-4 mb-lg" id="kpiRow"></div>
+
+  <!-- CHARTS ROW -->
+  <div class="grid-2 mb-lg">
+    <div class="card">
+      <div class="stitle"><span class="icon">📋</span> Grade Distribution</div>
+      <div class="chart-box"><canvas id="gradeChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="stitle"><span class="icon">📊</span> Score Spread</div>
+      <div class="chart-box"><canvas id="spreadChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- CATEGORY RINGS -->
+  <div class="card mb-lg">
+    <div class="stitle"><span class="icon">🎯</span> Class Category Averages</div>
+    <div class="rings-row" id="ringsRow"></div>
+  </div>
+
+  <!-- INPUT SECTION -->
+  <div class="input-section mb-md">
+    <div class="inner" style="text-align:center">
+      <h2 style="font-size:24px;font-weight:900;color:var(--g900)">Enter Your Marks</h2>
+      <p style="font-size:13px;color:var(--textMute);margin:6px auto 0;max-width:460px">Input your three scores to see your grade, rank, percentile, and comparison against students who submitted work</p>
+      <div class="input-row" style="margin-top:22px">
+        <div class="input-group">
+          <label>📝 Assignment <span>(max 12.5)</span></label>
+          <input type="number" id="inAsg" min="0" max="12.5" step="0.25" placeholder="0 – 12.5">
+        </div>
+        <div class="input-group">
+          <label>💬 Activity <span>(max 10)</span></label>
+          <input type="number" id="inAct" min="0" max="10" step="0.5" placeholder="0 – 10">
+        </div>
+        <div class="input-group">
+          <label>📄 Midterm <span>(max 15)</span></label>
+          <input type="number" id="inMid" min="0" max="15" step="0.25" placeholder="0 – 15">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="btnCompare" onclick="compare()" disabled>Compare My Performance →</button>
+        <button class="btn-secondary hidden" id="btnReset" onclick="resetCompare()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS (hidden until submitted) -->
+  <div id="resultsSection" class="hidden fade-up"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--                    EXAM PAGE                        -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="page-exam" class="container hidden">
+
+  <div class="version-tabs" id="versionTabs">
+    <button class="active" onclick="showVersion('A')">Version A</button>
+    <button onclick="showVersion('B')">Version B</button>
+    <button onclick="showVersion('activity')">Activity Exercise</button>
+    <button onclick="showVersion('assignment')">Assignment 1</button>
+  </div>
+
+  <!-- VERSION A -->
+  <div id="ver-A">
+    <div class="card mb-lg">
+      <div style="text-align:center;margin-bottom:20px">
+        <h2 style="font-size:20px;font-weight:900;color:var(--g900)">Midterm Examination — Version A</h2>
+        <p style="font-size:13px;color:var(--textMute)">Date: 2nd March 2026 · Time: 90 Minutes · Total: 100 Marks · Closed Book</p>
+      </div>
+
+      <!-- PART A -->
+      <div class="exam-section">
+        <h3>Part A — Multiple Choice <span class="marks-badge">40 Marks (20 × 2)</span></h3>
+        <div id="mcqA"></div>
+      </div>
+
+      <!-- PART B -->
+      <div class="exam-section">
+        <h3>Part B — Short Answer <span class="marks-badge">30 Marks (5 × 6)</span></h3>
+        <div id="shortA"></div>
+      </div>
+
+      <!-- PART C -->
+      <div class="exam-section">
+        <h3>Part C — Pseudocode <span class="marks-badge">30 Marks (2 × 15)</span></h3>
+        <div id="pseudoA"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERSION B -->
+  <div id="ver-B" class="hidden">
+    <div class="card mb-lg">
+      <div style="text-align:center;margin-bottom:20px">
+        <h2 style="font-size:20px;font-weight:900;color:var(--g900)">Midterm Examination — Version B</h2>
+        <p style="font-size:13px;color:var(--textMute)">Date: 2nd March 2026 · Time: 90 Minutes · Total: 100 Marks · Closed Book</p>
+      </div>
+      <div class="exam-section">
+        <h3>Part A — Multiple Choice <span class="marks-badge">40 Marks (20 × 2)</span></h3>
+        <div id="mcqB"></div>
+      </div>
+      <div class="exam-section">
+        <h3>Part B — Short Answer <span class="marks-badge">30 Marks (5 × 6)</span></h3>
+        <div id="shortB"></div>
+      </div>
+      <div class="exam-section">
+        <h3>Part C — Pseudocode <span class="marks-badge">30 Marks (2 × 15)</span></h3>
+        <div id="pseudoB"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY -->
+  <div id="ver-activity" class="hidden">
+    <div class="card mb-lg">
+      <div style="text-align:center;margin-bottom:20px">
+        <h2 style="font-size:20px;font-weight:900;color:var(--g900)">Activity: Doubly Linked Lists</h2>
+        <p style="font-size:13px;color:var(--textMute)">Date: 23 Feb 2026 · Total: 10 Marks</p>
+      </div>
+      <div id="activityContent"></div>
+    </div>
+  </div>
+
+  <!-- ASSIGNMENT 1 -->
+  <div id="ver-assignment" class="hidden">
+    <div class="card mb-lg">
+      <div style="text-align:center;margin-bottom:20px">
+        <h2 style="font-size:20px;font-weight:900;color:var(--g900)">Assignment 1</h2>
+        <p style="font-size:13px;color:var(--textMute)">Total: 12.5 Marks (scaled) · Dynamic Stack Implementation</p>
+      </div>
+      <div id="assignmentContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--                    RUBRIC PAGE                      -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="page-rubric" class="container hidden">
+  <div class="card mb-lg">
+    <div class="stitle"><span class="icon">📋</span> Course Assessment Rubric</div>
+    <div class="ssub">COIS 2020H — Marking breakdown and weight allocation</div>
+
+    <table class="rubric-table">
+      <thead><tr><th>Assessment</th><th>Raw Marks</th><th>Weight</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="cat">Assignment 1</td><td class="marks">12.5</td><td>12.5 / 37.5</td><td>Dynamic Stack (MyStack&lt;T&gt;), Generics, Encapsulation, LabReport, LimitedStack, ReverseStack, Theory</td></tr>
+        <tr><td class="cat">Activity</td><td class="marks">10</td><td>10 / 37.5</td><td>Doubly Linked Lists — Node structure, InsertAfter, DeleteNode, Efficiency Analysis</td></tr>
+        <tr><td class="cat">Midterm</td><td class="marks">15 (scaled from 100)</td><td>15 / 37.5</td><td>MCQ (40), Short Answer (30), Pseudocode (30) — covers OOP, Linked Lists, Stacks, Queues, Generics</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- MIDTERM RUBRIC -->
+  <div class="card mb-lg">
+    <div class="stitle"><span class="icon">📝</span> Midterm Detailed Rubric</div>
+    <div class="ssub">100 raw marks → scaled to 15 marks in the gradebook</div>
+
+    <div class="exam-section">
+      <h3>Part A — Multiple Choice <span class="marks-badge">40 / 100</span></h3>
+      <div class="answer-box"><p>20 questions × 2 marks each. Tests knowledge of OOP concepts (classes, objects, constructors, access modifiers, namespaces), data structures (arrays, linked lists, stacks, queues), and their operations. Correct answer = 2 marks, incorrect = 0.</p></div>
+    </div>
+
+    <div class="exam-section">
+      <h3>Part B — Short Answer <span class="marks-badge">30 / 100</span></h3>
+      <table class="rubric-table">
+        <thead><tr><th>Question</th><th>Marks</th><th>Criteria</th></tr></thead>
+        <tbody>
+          <tr><td class="cat">Encapsulation & Info Hiding</td><td class="marks">6</td><td>Clear definition (2), explanation of how it hides data (2), concrete example (2)</td></tr>
+          <tr><td class="cat">Class vs Object</td><td class="marks">6</td><td>Definition of class (2), definition of object (2), example demonstrating relationship (2)</td></tr>
+          <tr><td class="cat">Array-Based vs Linked List</td><td class="marks">6</td><td>Access pattern comparison (2), insertion/deletion comparison (2), memory trade-offs (2)</td></tr>
+          <tr><td class="cat">Stack: Array vs Linked List</td><td class="marks">6</td><td>Array-based implementation (3), linked-list implementation (3) — Push/Pop logic for each</td></tr>
+          <tr><td class="cat">Generics in C#</td><td class="marks">6</td><td>Definition (2), type safety benefits (2), practical importance in data structures (2)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="exam-section">
+      <h3>Part C — Pseudocode <span class="marks-badge">30 / 100</span></h3>
+      <table class="rubric-table">
+        <thead><tr><th>Question</th><th>Marks</th><th>Criteria</th></tr></thead>
+        <tbody>
+          <tr><td class="cat">InsertAt(index, newValue)</td><td class="marks">15</td><td>Index validation (3), element shifting loop (4), insertion (3), count update (2), edge cases (3)</td></tr>
+          <tr><td class="cat">DeleteNode(Node N)</td><td class="marks">15</td><td>Pointer updates for prev/next (4), head case (3), tail case (3), single-node case (2), list integrity (3)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ASSIGNMENT RUBRIC -->
+  <div class="card mb-lg">
+    <div class="stitle"><span class="icon">💻</span> Assignment 1 Detailed Rubric</div>
+    <div class="ssub">12.5 marks total</div>
+    <table class="rubric-table">
+      <thead><tr><th>Component</th><th>Marks</th><th>Criteria</th></tr></thead>
+      <tbody>
+        <tr><td class="cat">Primary: MyStack&lt;T&gt;</td><td class="marks">5</td><td>Generic array-based stack with Push, Pop, Peek, PrintStack, private Resize(), constructors, proper encapsulation</td></tr>
+        <tr><td class="cat">Primary: LabReport + Testing</td><td class="marks">—</td><td>LabReport class with properties, private CalculateGrade(), ToString(). Test with int and LabReport stacks</td></tr>
+        <tr><td class="cat">Advanced: LimitedStack&lt;T&gt;</td><td class="marks">2</td><td>Inherits MyStack, enforces max capacity, auto-removes oldest item on overflow (history buffer)</td></tr>
+        <tr><td class="cat">Mini-Challenge: ReverseStack()</td><td class="marks">1</td><td>In-place reversal — no second array/list, swap within internal array</td></tr>
+        <tr><td class="cat">Theory Questions (4)</td><td class="marks">2</td><td>Generics vs object[] (0.5), Resize memory/GC (0.5), Private access modifier (0.5), Static members (0.5)</td></tr>
+        <tr><td class="cat">Documentation & Testing</td><td class="marks">2.5</td><td>Screenshots, explanations, source code appendix, clear comments, ZIP submission</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACTIVITY RUBRIC -->
+  <div class="card mb-lg">
+    <div class="stitle"><span class="icon">💬</span> Activity Detailed Rubric</div>
+    <div class="ssub">10 marks total — Doubly Linked Lists</div>
+    <table class="rubric-table">
+      <thead><tr><th>Question</th><th>Marks</th><th>Criteria</th></tr></thead>
+      <tbody>
+        <tr><td class="cat">Q1: Node Structure Comparison</td><td class="marks">2</td><td>SLL node pseudocode (1), DLL node pseudocode with extra prev pointer (1)</td></tr>
+        <tr><td class="cat">Q2A: InsertAfter pseudocode</td><td class="marks">3</td><td>Traversal to target (1), pointer updates for new node (1), edge case: target is tail (1)</td></tr>
+        <tr><td class="cat">Q2B: DeleteNode pseudocode</td><td class="marks">3</td><td>Prev/next linking (1), head case (1), tail case (1)</td></tr>
+        <tr><td class="cat">Q3: Efficiency Analysis</td><td class="marks">2</td><td>O(1) head insertion explanation (1), O(n) tail insertion explanation with traversal reasoning (1)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">Trent University · COIS 2020H Data Structures & Algorithms · Instructor: Ahmad Mousa </div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!--                    JAVASCRIPT                       -->
+<!-- ═══════════════════════════════════════════════════ -->
+<script>
+/* ─── DATA ─── */
+const RAW = [
+  [12.5,8,11.25],[12.5,10,12.15],[11.25,10,10.2],[0,10,9.45],[12.5,10,0],
+  [10,10,13.5],[0,null,10.5],[11.875,4.5,11.55],[5,10,10.35],[12.5,10,14.1],
+  [11.25,2,12.15],[10,10,13.8],[0,0,2.4],[6.25,7,8.7],[12.5,10,12.15],
+  [12.5,8,8.55],[10,7,13.35],[12.5,7,11.55],[2.5,10,6.9],[12.5,10,5.25],
+  [0,7,12.15],[11.25,9,11.4],[0,6,12.9],[8.125,10,13.95],[12.5,null,7.2],
+  [12.5,9,12.3],[0,8,0],[11.875,7,13.5],[12.5,10,6.3],[12.5,8,12.45],
+  [12.5,9,12.6],[8.75,4.5,6.15],[11.25,10,14.1],[0,null,0],[11.25,10,13.65],
+  [12.5,6,3.3],[12.5,8,14.25],[12.5,8,13.5],[8.125,null,0],[12.5,10,15],
+  [12.5,7,11.4],[11.875,6,14.4],[12.5,7,12.75],[12.5,10,10.05],
+  [11.875,10,13.8],[12.5,10,14.1],[11.25,6,11.4],[12.5,10,14.25]
+];
+const MAXES = {asg:12.5, act:10, mid:15, total:37.5};
+
+const students = RAW.map(r => {
+  const asg=r[0]??0, act=r[1], mid=r[2]??0;
+  return {
+    asg, act, mid,
+    total: (asg>0?asg:0)+(act!=null&&act>0?act:0)+(mid>0?mid:0),
+    get pct(){ return Math.round((this.total/MAXES.total)*100*10)/10; },
+    hasAsg: asg!=null&&asg>0, hasAct: act!=null&&act>0, hasMid: mid!=null&&mid>0,
+    asgPct: asg>0?(asg/MAXES.asg)*100:0, actPct: act!=null&&act>0?(act/MAXES.act)*100:0, midPct: mid>0?(mid/MAXES.mid)*100:0
+  };
+});
+
+const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length*10)/10:0;
+const med=a=>{if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y),m=Math.floor(s.length/2);return s.length%2?s[m]:Math.round((s[m-1]+s[m])/2*10)/10;};
+const gradeOf=p=>p>=90?"A+":p>=85?"A":p>=80?"A-":p>=77?"B+":p>=73?"B":p>=70?"B-":p>=67?"C+":p>=63?"C":p>=60?"C-":p>=57?"D+":p>=53?"D":p>=50?"D-":"F";
+
+const withAsg=students.filter(s=>s.hasAsg), withAct=students.filter(s=>s.hasAct), withMid=students.filter(s=>s.hasMid);
+const active=students.filter(s=>s.hasAsg||s.hasAct||s.hasMid);
+const pcts=active.map(s=>s.pct);
+
+const CS = {
+  avg:avg(pcts), median:med(pcts), high:Math.max(...pcts), low:Math.min(...pcts),
+  total:students.length, activeTotal:active.length, passing:pcts.filter(p=>p>=50).length,
+  asgAvg:avg(withAsg.map(s=>s.asg)), actAvg:avg(withAct.map(s=>s.act)), midAvg:avg(withMid.map(s=>s.mid)),
+  asgAvgPct:avg(withAsg.map(s=>s.asgPct)), actAvgPct:avg(withAct.map(s=>s.actPct)), midAvgPct:avg(withMid.map(s=>s.midPct)),
+  asgN:withAsg.length, actN:withAct.length, midN:withMid.length
+};
+
+/* Grade distribution */
+const gradeMap={};
+active.forEach(s=>{const g=gradeOf(s.pct);gradeMap[g]=(gradeMap[g]||0)+1;});
+const gradeOrder=["A+","A","A-","B+","B","B-","C+","C","C-","D+","D","D-","F"];
+const gradeDist=gradeOrder.filter(g=>gradeMap[g]).map(g=>({grade:g,count:gradeMap[g]}));
+
+/* Histogram */
+const bins=[{r:"90–100",mn:90,mx:100},{r:"80–89",mn:80,mx:89.99},{r:"70–79",mn:70,mx:79.99},{r:"60–69",mn:60,mx:69.99},{r:"50–59",mn:50,mx:59.99},{r:"0–49",mn:0,mx:49.99}];
+const hist=bins.map(b=>({range:b.r,count:pcts.filter(p=>p>=b.mn&&p<=b.mx).length}));
+
+/* ─── PAGE NAVIGATION ─── */
+function showPage(id){
+  document.querySelectorAll('[id^="page-"]').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('page-'+id).classList.remove('hidden');
+  document.querySelectorAll('#mainTabs button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+function showVersion(v){
+  ['A','B','activity','assignment'].forEach(x=>document.getElementById('ver-'+x).classList.add('hidden'));
+  document.getElementById('ver-'+v).classList.remove('hidden');
+  document.querySelectorAll('#versionTabs button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+/* ─── KPIs ─── */
+(function(){
+  const kpis = [
+    {label:"Class Average",val:CS.avg+"%",sub:"Median: "+CS.median+"%",color:"var(--g600)"},
+    {label:"Highest Score",val:CS.high+"%",sub:"Top performer",color:"var(--g700)"},
+    {label:"Passing Rate",val:Math.round(CS.passing/CS.activeTotal*100)+"%",sub:CS.passing+" of "+CS.activeTotal,color:"var(--g500)"},
+    {label:"Score Range",val:CS.low+"%–"+CS.high+"%",sub:"Lowest to highest",color:"var(--g800)"}
+  ];
+  const row=document.getElementById('kpiRow');
+  kpis.forEach(k=>{
+    row.innerHTML+=`<div class="card kpi"><div class="kpi-label">${k.label}</div><div class="kpi-val" style="color:${k.color}">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`;
+  });
+})();
+
+/* ─── CHARTS ─── */
+const gColors = gradeDist.map((_,i)=>i<3?'#2ab558':i<6?'#4fcc76':i<9?'#c4a32f':'#d64545');
+
+new Chart(document.getElementById('gradeChart'),{
+  type:'bar',
+  data:{labels:gradeDist.map(g=>g.grade),datasets:[{label:'Students',data:gradeDist.map(g=>g.count),backgroundColor:gColors,borderRadius:8}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,color:'#7a9983',font:{size:11}},grid:{color:'#e5f0e9'}},x:{ticks:{color:'#7a9983',font:{size:12,weight:600}},grid:{display:false}}}}
+});
+
+/* TRANSPOSED Score Spread: Y axis = score ranges, X axis = student count */
+new Chart(document.getElementById('spreadChart'),{
+  type:'bar',
+  data:{
+    labels:hist.map(h=>h.range),
+    datasets:[{label:'Students',data:hist.map(h=>h.count),backgroundColor:'rgba(42,181,88,0.35)',borderColor:'#2ab558',borderWidth:2,borderRadius:8}]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{beginAtZero:true,ticks:{stepSize:2,color:'#7a9983',font:{size:11}},grid:{color:'#e5f0e9'},title:{display:true,text:'Number of Students',color:'#7a9983',font:{size:11,weight:600}}},
+      y:{ticks:{color:'#7a9983',font:{size:12,weight:600}},grid:{display:false},title:{display:true,text:'Score Range (%)',color:'#7a9983',font:{size:11,weight:600}}}
+    }
+  }
+});
+
+/* ─── RINGS ─── */
+(function(){
+  const rings=[
+    {pct:CS.asgAvgPct,label:"Assignment /12.5",sub:CS.asgN+" students",color:"#22994a"},
+    {pct:CS.actAvgPct,label:"Activity /10",sub:CS.actN+" students",color:"#2ab558"},
+    {pct:CS.midAvgPct,label:"Midterm /15",sub:CS.midN+" students",color:"#1a7a3a"}
+  ];
+  const row=document.getElementById('ringsRow');
+  rings.forEach(r=>{
+    const p=Math.round(r.pct);
+    row.innerHTML+=`<div class="ring-wrap">
+      <div style="position:relative;width:110px;height:110px;margin:0 auto 8px">
+        <svg viewBox="0 0 36 36" style="transform:rotate(-90deg);width:110px;height:110px">
+          <circle cx="18" cy="18" r="15.9" fill="none" stroke="#ddf5e5" stroke-width="3.2"/>
+          <circle cx="18" cy="18" r="15.9" fill="none" stroke="${r.color}" stroke-width="3.2" stroke-dasharray="${p} ${100-p}" stroke-linecap="round"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center" class="ring-val" style="color:${r.color}">${p}%</div>
+      </div>
+      <div class="ring-label">${r.label}</div>
+      <div class="ring-sub">${r.sub}</div>
+    </div>`;
+  });
+})();
+
+/* ─── INPUT VALIDATION ─── */
+['inAsg','inAct','inMid'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    const a=parseFloat(document.getElementById('inAsg').value);
+    const b=parseFloat(document.getElementById('inAct').value);
+    const c=parseFloat(document.getElementById('inMid').value);
+    const ok=!isNaN(a)&&!isNaN(b)&&!isNaN(c)&&a>=0&&a<=12.5&&b>=0&&b<=10&&c>=0&&c<=15;
+    document.getElementById('btnCompare').disabled=!ok;
+  });
+});
+
+/* ─── COMPARE ─── */
+function compare(){
+  const a=parseFloat(document.getElementById('inAsg').value)||0;
+  const b=parseFloat(document.getElementById('inAct').value)||0;
+  const c=parseFloat(document.getElementById('inMid').value)||0;
+  const total=a+b+c, pct=Math.round((total/MAXES.total)*100*10)/10;
+  const grade=gradeOf(pct);
+  const rank=pcts.filter(p=>p>pct).length+1;
+  const ptile=Math.round(pcts.filter(p=>p<pct).length/pcts.length*100);
+
+  const above=pct>=CS.avg;
+  const diff=Math.abs(pct-CS.avg).toFixed(1);
+  const asgPct=(a/MAXES.asg)*100, actPct=(b/MAXES.act)*100, midPct=(c/MAXES.mid)*100;
+  const cats=[
+    {name:"Assignment",you:asgPct,cls:CS.asgAvgPct,tip:"Focus on completing all questions and reviewing rubric criteria."},
+    {name:"Activity",you:actPct,cls:CS.actAvgPct,tip:"Active participation and consistent attendance make a big difference."},
+    {name:"Midterm",you:midPct,cls:CS.midAvgPct,tip:"Practice past exams and focus on time management during tests."}
+  ];
+  const strongest=cats.reduce((x,y)=>(x.you-x.cls)>(y.you-y.cls)?x:y);
+  const weakest=cats.reduce((x,y)=>(x.you-x.cls)<(y.you-y.cls)?x:y);
+
+  const pctColor=pct>=70?'var(--g600)':pct>=50?'var(--amber)':'var(--red)';
+  const rankColor=rank<=10?'var(--g600)':rank<=24?'var(--g700)':'var(--amber)';
+  const ptileMsg=ptile>=80?"Outstanding! You're among the top performers.":ptile>=60?"Great job — above most of your peers.":ptile>=40?"Middle of the pack — a bit more effort could push you higher!":ptile>=20?"Room for growth — review where you lost marks.":"Don't be discouraged — reach out for support.";
+
+  /* Build meters HTML (avoid nested template literals) */
+  var metersArr = [
+    {l:"Assignment",y:a,ca:CS.asgAvg,m:MAXES.asg,col:"var(--g600)",n:CS.asgN},
+    {l:"Activity",y:b,ca:CS.actAvg,m:MAXES.act,col:"var(--g500)",n:CS.actN},
+    {l:"Midterm",y:c,ca:CS.midAvg,m:MAXES.mid,col:"var(--g700)",n:CS.midN}
+  ];
+  var metersHtml = "";
+  for (var mi=0; mi<metersArr.length; mi++) {
+    var mx = metersArr[mi];
+    var yp = (mx.y/mx.m)*100, cp = (mx.ca/mx.m)*100;
+    metersHtml += '<div class="meter">'
+      + '<div class="meter-header"><span>' + mx.l + '</span><span>You: <b style="color:var(--g700)">' + mx.y + '/' + mx.m + '</b> · Class Avg: <b style="color:var(--textMute)">' + mx.ca + '/' + mx.m + '</b> <span style="color:var(--textDim);font-size:10px">(avg of ' + mx.n + ' students)</span></span></div>'
+      + '<div class="meter-track"><div class="meter-fill" style="width:' + Math.min(yp,100) + '%;background:linear-gradient(90deg,' + mx.col + ',var(--g400))"></div><div class="meter-marker" style="left:' + Math.min(cp,100) + '%"></div><div class="meter-marker-label" style="left:' + Math.min(cp,100) + '%">▼ Class</div></div>'
+      + '</div>';
+  }
+
+  /* Build insights HTML */
+  var strongExtra = strongest.you > strongest.cls ? ", which is " + Math.round(strongest.you - strongest.cls) + "% above the class average" : "";
+  var weakExtra = weakest.you < weakest.cls ? ", which is " + Math.round(weakest.cls - weakest.you) + "% below the class average" : "";
+
+  var gradeMsg = pct>=80 ? "Great work!" : pct>=60 ? "Solid performance" : pct>=50 ? "Passing — keep going!" : "Needs improvement";
+  var aboveColor = above ? "var(--g600)" : "var(--red)";
+  var aboveArrow = above ? "▲" : "▼";
+  var aboveWord = above ? "above" : "below";
+  var topPct = Math.max(1, 100 - ptile);
+
+  const sec=document.getElementById('resultsSection');
+  sec.classList.remove('hidden');
+  sec.innerHTML =
+    '<!-- Score / Grade / Rank -->'
+    + '<div class="grid-3 mb-md">'
+    +   '<div class="card result-card">'
+    +     '<div class="result-label">Your Total Score</div>'
+    +     '<div class="result-big" style="color:var(--g700)">' + pct + '%</div>'
+    +     '<div class="result-sub">' + total + ' / ' + MAXES.total + ' marks</div>'
+    +     '<div class="result-note" style="color:' + aboveColor + '">' + aboveArrow + ' ' + diff + '% ' + aboveWord + ' class avg</div>'
+    +   '</div>'
+    +   '<div class="card result-card">'
+    +     '<div class="result-label">Your Grade</div>'
+    +     '<div class="result-big result-grade" style="color:' + pctColor + '">' + grade + '</div>'
+    +     '<div class="result-sub">' + gradeMsg + '</div>'
+    +   '</div>'
+    +   '<div class="card result-card">'
+    +     '<div class="result-label">Class Rank</div>'
+    +     '<div class="result-big result-rank" style="color:' + rankColor + '">#' + rank + '<span style="font-size:16px;color:var(--textMute)"> / ' + CS.activeTotal + '</span></div>'
+    +     '<div class="result-note" style="color:var(--g600)">Top ' + topPct + '%</div>'
+    +   '</div>'
+    + '</div>'
+
+    + '<!-- Category Meters -->'
+    + '<div class="card mb-md">'
+    +   '<div class="stitle"><span class="icon">📏</span> Category Comparison</div>'
+    +   '<div class="ssub">Your score vs class average (zeros excluded) — dark marker = class average</div>'
+    +   metersHtml
+    + '</div>'
+
+    + '<!-- Percentile -->'
+    + '<div class="card mb-md">'
+    +   '<div class="stitle"><span class="icon">📈</span> Your Percentile</div>'
+    +   '<div class="ssub">Percentage of active students you outperformed</div>'
+    +   '<div style="max-width:400px;margin:24px auto 0">'
+    +     '<div class="ptile-labels"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>'
+    +     '<div class="ptile-track"><div class="ptile-fill" style="width:' + ptile + '%"></div><div class="ptile-dot" style="left:' + ptile + '%"></div></div>'
+    +     '<div style="text-align:center;margin-top:8px">'
+    +       '<div style="font-size:14px;font-weight:700;color:var(--g800)">You scored higher than <span style="font-size:30px;font-weight:900;color:var(--g600)">' + ptile + '%</span> of active students</div>'
+    +       '<div style="font-size:12px;color:var(--textMute);margin-top:6px;line-height:1.5">' + ptileMsg + '</div>'
+    +     '</div>'
+    +   '</div>'
+    + '</div>'
+
+    + '<!-- Insights -->'
+    + '<div class="card">'
+    +   '<div class="stitle"><span class="icon">💡</span> Performance Insights</div>'
+    +   '<div class="ssub">Based on your scores vs class averages (zeros excluded)</div>'
+    +   '<div class="grid-2">'
+    +     '<div class="insight-box strong">'
+    +       '<div class="insight-tag" style="color:var(--g600)">✦ Your Strongest Area</div>'
+    +       '<div class="insight-name" style="color:var(--g800)">' + strongest.name + '</div>'
+    +       '<div class="insight-detail">You scored ' + Math.round(strongest.you) + '%' + strongExtra + '. Keep it up!</div>'
+    +     '</div>'
+    +     '<div class="insight-box focus">'
+    +       '<div class="insight-tag" style="color:#a08520">⚡ Focus Area</div>'
+    +       '<div class="insight-name" style="color:#7a6518">' + weakest.name + '</div>'
+    +       '<div class="insight-detail">You scored ' + Math.round(weakest.you) + '%' + weakExtra + '. ' + weakest.tip + '</div>'
+    +     '</div>'
+    +   '</div>'
+    + '</div>';
+  document.getElementById('btnReset').classList.remove('hidden');
+}
+
+function resetCompare(){
+  document.getElementById('inAsg').value='';
+  document.getElementById('inAct').value='';
+  document.getElementById('inMid').value='';
+  document.getElementById('resultsSection').classList.add('hidden');
+  document.getElementById('resultsSection').innerHTML='';
+  document.getElementById('btnReset').classList.add('hidden');
+  document.getElementById('btnCompare').disabled=true;
+}
+
+/* ═══════════════════════════════════════════════════ */
+/*                  EXAM CONTENT                       */
+/* ═══════════════════════════════════════════════════ */
+
+/* VERSION A MCQ */
+const mcqA = [
+  {q:"What is an object in object-oriented programming?",o:["A template","An instance of a class","An access modifier","A namespace"],a:1},
+  {q:"Which access modifier restricts access to within the same class?",o:["Public","Private","Protected","Internal"],a:1},
+  {q:"What is the underlying structure of an array-based list?",o:["Linked List","Array","Stack","Hash Table"],a:1},
+  {q:"In a Singly Linked List, each node contains:",o:["Data only","Data and previous reference","Data and next reference","Head and tail pointers"],a:2},
+  {q:"LIFO refers to:",o:["First In First Out","Last In First Out","Logical Indexed Format Order","Linked Internal File Object"],a:1},
+  {q:"Which operation removes an element from a Stack?",o:["Push","Pop","Peek","Enqueue"],a:1},
+  {q:"A Queue operates under which principle?",o:["LIFO","FIFO","Random access","Reverse order"],a:1},
+  {q:"The purpose of a constructor is to:",o:["Destroy objects","Initialize objects","Hide methods","Sort arrays"],a:1},
+  {q:"Generics in C# provide:",o:["Encryption","Type safety with flexibility","Faster execution","Automatic sorting"],a:1},
+  {q:"A Doubly Linked List node contains:",o:["Data and next","Data and previous","Data, next, and previous","Only head pointer"],a:2},
+  {q:"A Circular Linked List differs because:",o:["It uses arrays","The tail points to the head","It is always sorted","It has no nodes"],a:1},
+  {q:"Removing from the front of a queue is called:",o:["Push","Pop","Dequeue","Peek"],a:2},
+  {q:"In a linked-list-based stack pushing at head, pop occurs at:",o:["Tail","Middle","Head","Any node"],a:2},
+  {q:"A class represents:",o:["A single object","A blueprint for objects","A pointer","A library"],a:1},
+  {q:"Inserting at the front of a linked list requires:",o:["Traversing entire list","Updating head reference","Sorting first","Updating tail only"],a:1},
+  {q:"Which keyword groups related classes in C#?",o:["Using","Class","Namespace","Struct"],a:2},
+  {q:"A Sentinel node is used to:",o:["Store main data","Simplify edge cases","Sort automatically","Increase memory"],a:1},
+  {q:"In a Doubly Linked List, deleting a node requires:",o:["Updating neighboring pointers","Resetting head","Clearing entire list","Only updating next"],a:0},
+  {q:"Why do array-based stacks push at the end?",o:["Arrays grow only forward","Avoid shifting elements","Keep sorted","Save memory"],a:1},
+  {q:"The logical difference between a list and a sorted list is:",o:["Memory allocation","Insertion logic","Data type","None"],a:1}
+];
+
+const mcqB = [
+  {q:"Generics in C# provide:",o:["Encryption","Automatic sorting","Type safety with flexibility","Faster execution"],a:2},
+  {q:"A class represents:",o:["A blueprint for objects","A single object","A pointer","A library"],a:0},
+  {q:"Why do array-based stacks push at the end?",o:["Keep sorted","Save memory","Avoid shifting elements","Arrays grow only forward"],a:2},
+  {q:"A Doubly Linked List node contains:",o:["Data and next","Data, next, and previous","Data and previous","Only head pointer"],a:1},
+  {q:"Removing from the front of a queue is called:",o:["Push","Pop","Dequeue","Peek"],a:2},
+  {q:"A Queue operates under which principle?",o:["FIFO","LIFO","Reverse order","Random access"],a:0},
+  {q:"Inserting at the front of a linked list requires:",o:["Sorting first","Updating tail only","Updating head reference","Traversing entire list"],a:2},
+  {q:"What is an object in OOP?",o:["An instance of a class","A template","A namespace","An access modifier"],a:0},
+  {q:"A Circular Linked List differs because:",o:["It uses arrays","It has no nodes","The tail points to the head","It is always sorted"],a:2},
+  {q:"Which keyword groups related classes in C#?",o:["Struct","Namespace","Class","Using"],a:1},
+  {q:"The logical difference between a list and a sorted list is:",o:["Data type","None","Memory allocation","Insertion logic"],a:3},
+  {q:"LIFO refers to:",o:["Linked Internal File Object","Logical Indexed Format Order","Last In First Out","First In First Out"],a:2},
+  {q:"In a Doubly Linked List, deleting a node requires:",o:["Only updating next","Updating neighboring pointers","Resetting head","Clearing entire list"],a:1},
+  {q:"The purpose of a constructor is to:",o:["Hide methods","Destroy objects","Sort arrays","Initialize objects"],a:3},
+  {q:"In a Singly Linked List, each node contains:",o:["Data only","Data and next reference","Data and previous reference","Head and tail pointers"],a:1},
+  {q:"In a linked-list-based stack pushing at head, pop occurs at:",o:["Tail","Head","Middle","Any node"],a:1},
+  {q:"A Sentinel node is used to:",o:["Increase memory","Store main data","Sort automatically","Simplify edge cases"],a:3},
+  {q:"What is the underlying structure of an array-based list?",o:["Hash Table","Stack","Linked List","Array"],a:3},
+  {q:"Which access modifier restricts access to within the same class?",o:["Public","Protected","Private","Internal"],a:2},
+  {q:"Which operation removes an element from a Stack?",o:["Push","Peek","Enqueue","Pop"],a:3}
+];
+
+function renderMCQ(data, targetId) {
+  const el = document.getElementById(targetId);
+  var html = "";
+  for (var i = 0; i < data.length; i++) {
+    var q = data[i];
+    var optsHtml = "";
+    for (var j = 0; j < q.o.length; j++) {
+      var cls = j === q.a ? 'correct' : '';
+      var check = j === q.a ? ' ✓' : '';
+      optsHtml += '<div class="' + cls + '">' + String.fromCharCode(97+j) + ') ' + q.o[j] + check + '</div>';
+    }
+    html += '<div class="exam-q">'
+      + '<div class="q-num">Question ' + (i+1) + '</div>'
+      + '<div class="q-text">' + q.q + '</div>'
+      + '<div class="options">' + optsHtml + '</div>'
+      + '</div>';
+  }
+  el.innerHTML = html;
+}
+renderMCQ(mcqA, 'mcqA');
+renderMCQ(mcqB, 'mcqB');
+
+/* SHORT ANSWER - Version A */
+const shortAnswersA = [
+  {q:"Define Encapsulation and explain how it supports information hiding.",ans:"Encapsulation bundles data (fields) and methods that operate on it into a single class, restricting direct access to internal state via access modifiers (private, protected). It supports information hiding by exposing only a controlled public interface (getters/setters), preventing external code from directly modifying internal data and ensuring object integrity."},
+  {q:"Explain the difference between a Class and an Object using an example.",ans:"A <b>class</b> is a blueprint/template defining properties and behaviors (e.g., <code>class Car { string Color; void Drive() {} }</code>). An <b>object</b> is a concrete instance created from that class (e.g., <code>Car myCar = new Car(); myCar.Color = \"Red\";</code>). Multiple objects can be created from one class, each with its own state."},
+  {q:"Compare an Array-based List and a Linked List.",ans:"<b>Array-based List:</b> Contiguous memory, O(1) random access by index, but O(n) insertion/deletion (shifting required), fixed capacity requiring resize. <b>Linked List:</b> Non-contiguous nodes with pointers, O(1) insertion/deletion at known position, but O(n) access (traversal required), extra memory for pointers."},
+  {q:"Explain how a Stack can be implemented using both an array and a linked list.",ans:"<b>Array-based:</b> Maintain a top index. Push increments top and assigns value; Pop reads value and decrements top. Push at end avoids shifting. Resize when full. <b>Linked-list-based:</b> Push inserts a new node at head; Pop removes head node. No resizing needed. Both ensure LIFO with O(1) Push/Pop."},
+  {q:"Define Generics in C# and explain their importance in data structures.",ans:"Generics allow classes/methods to operate on parameterized types (e.g., <code>MyStack&lt;T&gt;</code>). They provide <b>type safety</b> at compile time (no invalid casts), <b>eliminate boxing/unboxing</b> for value types (better performance), and enable <b>code reuse</b> — one implementation works for int, string, or any custom type."}
+];
+
+const shortAnswersB = [
+  shortAnswersA[2], shortAnswersA[4], shortAnswersA[3], shortAnswersA[0], shortAnswersA[1]
+];
+
+function renderShort(data, targetId) {
+  var html = "";
+  for (var i = 0; i < data.length; i++) {
+    var q = data[i];
+    html += '<div class="exam-q">'
+      + '<div class="q-num">Question ' + (i+1) + ' <span class="marks-badge">6 marks</span></div>'
+      + '<div class="q-text">' + q.q + '</div>'
+      + '<div class="answer-box"><h4>Model Answer:</h4><p>' + q.ans + '</p></div>'
+      + '</div>';
+  }
+  document.getElementById(targetId).innerHTML = html;
+}
+renderShort(shortAnswersA, 'shortA');
+renderShort(shortAnswersB, 'shortB');
+
+/* PSEUDOCODE */
+const pseudoInsertAt = `<div class="exam-q">
+  <div class="q-num">InsertAt(index, newValue) <span class="marks-badge">15 marks</span></div>
+  <div class="q-text">Array-based list storing integers with a variable <code>count</code>. Validate index, shift elements, insert, update count, handle edge cases.</div>
+  <div class="answer-box"><h4>Model Answer:</h4>
+<pre>FUNCTION InsertAt(index, newValue)
+    // Validate index
+    IF index &lt; 0 OR index &gt; count THEN
+        PRINT "Error: Index out of bounds"
+        RETURN
+    END IF
+
+    // Check capacity — resize if needed
+    IF count == array.Length THEN
+        Resize()
+    END IF
+
+    // Shift elements to the right (from end to index)
+    FOR i = count - 1 DOWN TO index
+        array[i + 1] = array[i]
+    END FOR
+
+    // Insert new value
+    array[index] = newValue
+
+    // Update count
+    count = count + 1
+END FUNCTION</pre></div></div>`;
+
+const pseudoDeleteNode = `<div class="exam-q">
+  <div class="q-num">DeleteNode(Node N) <span class="marks-badge">15 marks</span></div>
+  <div class="q-text">Doubly Linked List with head and tail references. Update prev/next pointers, handle head/tail cases, maintain list integrity.</div>
+  <div class="answer-box"><h4>Model Answer:</h4>
+<pre>FUNCTION DeleteNode(Node N)
+    // Case 1: N is the only node
+    IF N.Prev == NULL AND N.Next == NULL THEN
+        head = NULL
+        tail = NULL
+
+    // Case 2: N is the head
+    ELSE IF N.Prev == NULL THEN
+        head = N.Next
+        head.Prev = NULL
+
+    // Case 3: N is the tail
+    ELSE IF N.Next == NULL THEN
+        tail = N.Prev
+        tail.Next = NULL
+
+    // Case 4: N is in the middle
+    ELSE
+        N.Prev.Next = N.Next
+        N.Next.Prev = N.Prev
+    END IF
+
+    // Clean up (optional, aids garbage collection)
+    N.Next = NULL
+    N.Prev = NULL
+END FUNCTION</pre></div></div>`;
+
+document.getElementById('pseudoA').innerHTML = pseudoInsertAt + pseudoDeleteNode;
+document.getElementById('pseudoB').innerHTML = pseudoDeleteNode + pseudoInsertAt;
+
+/* ACTIVITY CONTENT */
+document.getElementById('activityContent').innerHTML = `
+  <div class="exam-section"><h3>Question 1 — Node Structure Comparison <span class="marks-badge">2 marks</span></h3>
+  <div class="exam-q"><div class="q-text">Write the pseudocode for the basic unit (Node) of a Singly Linked List versus a Doubly Linked List. Highlight the extra pointer required for the DLL.</div>
+  <div class="answer-box"><h4>Model Answer:</h4>
+<pre>// Singly Linked List Node
+CLASS SLLNode
+    DATA value
+    POINTER next = NULL
+END CLASS
+
+// Doubly Linked List Node
+CLASS DLLNode
+    DATA value
+    POINTER next = NULL
+    POINTER prev = NULL    ← extra pointer
+END CLASS</pre>
+<p>The DLL node adds a <b>prev</b> pointer, enabling backward traversal.</p></div></div></div>
+
+  <div class="exam-section"><h3>Question 2A — InsertAfter(targetData, newData) <span class="marks-badge">3 marks</span></h3>
+  <div class="exam-q"><div class="q-text">Write pseudocode to insert a new value after a node containing specific data in a Doubly Linked List.</div>
+  <div class="answer-box"><h4>Model Answer:</h4>
+<pre>FUNCTION InsertAfter(targetData, newData)
+    current = head
+
+    // Traverse to find target
+    WHILE current != NULL
+        IF current.value == targetData THEN
+            newNode = new DLLNode(newData)
+            newNode.Next = current.Next
+            newNode.Prev = current
+
+            IF current.Next != NULL THEN
+                current.Next.Prev = newNode
+            ELSE
+                // Target is the tail
+                tail = newNode
+            END IF
+
+            current.Next = newNode
+            RETURN
+        END IF
+        current = current.Next
+    END WHILE
+
+    PRINT "Target not found"
+END FUNCTION</pre></div></div></div>
+
+  <div class="exam-section"><h3>Question 2B — DeleteNode(Node N) <span class="marks-badge">3 marks</span></h3>
+  <div class="exam-q"><div class="q-text">Write pseudocode to remove a specific node N from the Doubly Linked List.</div>
+  <div class="answer-box"><h4>Model Answer:</h4>
+<pre>FUNCTION DeleteNode(Node N)
+    IF N.Prev != NULL THEN
+        N.Prev.Next = N.Next
+    ELSE
+        head = N.Next        // N was head
+    END IF
+
+    IF N.Next != NULL THEN
+        N.Next.Prev = N.Prev
+    ELSE
+        tail = N.Prev        // N was tail
+    END IF
+END FUNCTION</pre></div></div></div>
+
+  <div class="exam-section"><h3>Question 3 — Efficiency Analysis <span class="marks-badge">2 marks</span></h3>
+  <div class="exam-q"><div class="q-text">Explain why inserting at the Head of a SLL is O(1) but inserting at the end is O(n).</div>
+  <div class="answer-box"><h4>Model Answer:</h4>
+  <p><b>Head insertion is O(1)</b> because we have a direct reference to the head. We simply create a new node, point its next to the current head, and update head — constant time, no traversal needed.</p>
+  <p><b>Tail insertion is O(n)</b> because we only have a reference to the head. To find the last node, we must traverse every node in the list (n nodes), making it linear time. (If we maintained a tail reference, it would also be O(1).)</p></div></div></div>
+`;
+
+/* ASSIGNMENT CONTENT */
+document.getElementById('assignmentContent').innerHTML = `
+  <div class="exam-section"><h3>Primary Programming Question <span class="marks-badge">5 marks</span></h3>
+  <div class="exam-q"><div class="q-text">Implement a generic <code>MyStack&lt;T&gt;</code> class from scratch using an internal array. No built-in C# collections allowed (Stack&lt;T&gt;, List&lt;T&gt;).</div>
+  <div class="answer-box"><h4>Requirements:</h4>
+  <ul>
+    <li><b>Private members:</b> T[] items, int count/top, int capacity</li>
+    <li><b>Constructors:</b> Default (capacity 5), parameterized (custom capacity)</li>
+    <li><b>Push(T item):</b> Add to top, trigger Resize() if full</li>
+    <li><b>Pop():</b> Remove and return top item, handle empty stack</li>
+    <li><b>Peek():</b> Return top without removing</li>
+    <li><b>PrintStack():</b> Output all items</li>
+    <li><b>Private Resize():</b> Double capacity, copy elements to new array</li>
+  </ul>
+  <p style="margin-top:10px">Also create a <b>LabReport</b> class with ExperimentName, Timestamp, ResultValue properties, a private CalculateGrade() method (Pass if >50, Fail otherwise), and a ToString() method. Test MyStack with both int and LabReport types.</p></div></div></div>
+
+  <div class="exam-section"><h3>Advanced Problem <span class="marks-badge">2 marks</span></h3>
+  <div class="exam-q"><div class="q-text">Create <code>LimitedStack&lt;T&gt;</code> inheriting from MyStack&lt;T&gt;.</div>
+  <div class="answer-box"><h4>Requirements:</h4>
+  <ul>
+    <li>Enforce a maximum capacity (e.g., 10 items)</li>
+    <li>Override Push() — if full, remove the oldest (bottom) item before adding new one</li>
+    <li>Implements a "recent history buffer" pattern</li>
+    <li>May need to change some parent members from private to protected</li>
+  </ul></div></div></div>
+
+  <div class="exam-section"><h3>Mini-Challenge <span class="marks-badge">1 mark</span></h3>
+  <div class="exam-q"><div class="q-text">Add <code>ReverseStack()</code> to MyStack&lt;T&gt;.</div>
+  <div class="answer-box"><h4>Requirements:</h4>
+  <ul>
+    <li>Reverse elements <b>in-place</b> — no second array or list</li>
+    <li>Swap elements directly within the existing internal array</li>
+  </ul></div></div></div>
+
+  <div class="exam-section"><h3>Theory Questions <span class="marks-badge">2 marks (4 × 0.5)</span></h3>
+  <div class="exam-q">
+    <div class="q-num">1. Generics</div>
+    <div class="q-text">Why is MyStack&lt;T&gt; preferable to using object[]?</div>
+    <div class="answer-box"><p>Using generics provides <b>compile-time type safety</b> (prevents inserting wrong types), eliminates <b>boxing/unboxing</b> for value types (better performance), and avoids the need for runtime type casting. With object[], any type could be inserted, leading to runtime errors and performance overhead from constant boxing.</p></div>
+  </div>
+  <div class="exam-q">
+    <div class="q-num">2. Memory Management</div>
+    <div class="q-text">What happens to the old array after Resize() creates a new one?</div>
+    <div class="answer-box"><p>Once the internal reference points to the new array, the old array has <b>no remaining references</b> and becomes eligible for <b>garbage collection</b>. The .NET garbage collector will eventually reclaim that memory automatically. Destructors/finalizers can run cleanup before deallocation, but in C# this is typically handled by the GC without explicit intervention.</p></div>
+  </div>
+  <div class="exam-q">
+    <div class="q-num">3. Access Modifiers</div>
+    <div class="q-text">Why is the internal array private instead of public?</div>
+    <div class="answer-box"><p>Making the array private prevents external code from directly manipulating it — e.g., inserting values at arbitrary positions, changing the array reference, modifying capacity without updating count, or bypassing the LIFO contract. This enforces <b>encapsulation</b>, ensuring the stack's internal invariants remain intact.</p></div>
+  </div>
+  <div class="exam-q">
+    <div class="q-num">4. Static Members</div>
+    <div class="q-text">Would a static Count in LabReport be unique per object or shared?</div>
+    <div class="answer-box"><p>It would be <b>shared across all instances</b>. Static members belong to the class itself, not to individual objects. Every time a new LabReport is constructed and the constructor increments Count, all objects see the same updated value. It effectively counts total LabReport instances created.</p></div>
+  </div></div>
+`;
+</script>
+</body>
+</html>
