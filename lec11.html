@@ -797,58 +797,7 @@
 
 
       <!-- ═══ SLIDE 10 — Sort Stability ═══ -->
-      <section class="slide">
-        <div class="slide-top">
-          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting Algorithms</div></div>
-          <span class="pill">Interactive</span>
-        </div>
-        <h2>Sort Stability</h2>
-        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:10px 16px;margin-bottom:14px;position:relative;z-index:2;">
-          <span style="font-size:14px;color:#374151;">Objects A, B, C, D have distances 1, 3, 3, 4. <strong>B and C share the same key (dist = 3).</strong> Watch what happens to them after each type of sort.</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;position:relative;z-index:2;margin-bottom:14px;">
-
-          <!-- Column 1: Unsorted -->
-          <div class="sort-panel">
-            <div class="sort-panel-hdr" style="background:#1e293b;">
-              <div><div class="sort-panel-title">Original — Unsorted</div><div class="sort-panel-sub">Input order, no sort applied</div></div>
-            </div>
-            <div class="sort-panel-body" style="padding:14px;">
-              <div id="stab-orig" style="display:flex;flex-direction:column;gap:7px;"></div>
-              <div style="margin-top:12px;font-size:12px;color:#64748b;padding:8px 10px;background:#f8fafc;border-radius:6px;border:1px solid var(--soft);line-height:1.5;">B came <strong>before</strong> C in the original input. A stable sort must keep it that way.</div>
-            </div>
-          </div>
-
-          <!-- Column 2: Unstable -->
-          <div class="sort-panel">
-            <div class="sort-panel-hdr" style="background:#1e293b;">
-              <div><div class="sort-panel-title">Unstable Sort</div><div class="sort-panel-sub">Equal keys may reorder on each run</div></div>
-              <button onclick="runUnstableSort()" style="background:#fff;color:#1e293b;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--mono);white-space:nowrap;flex-shrink:0;">Run Again &#8635;</button>
-            </div>
-            <div class="sort-panel-body" style="padding:14px;">
-              <div id="stab-unstable" style="display:flex;flex-direction:column;gap:7px;transition:opacity .28s;"></div>
-              <div id="stab-unstable-msg" style="margin-top:12px;font-size:12px;padding:8px 10px;border-left:3px solid #e2e8f0;background:#f8fafc;border-radius:4px;color:#374151;min-height:46px;line-height:1.5;"></div>
-            </div>
-          </div>
-
-          <!-- Column 3: Stable -->
-          <div class="sort-panel">
-            <div class="sort-panel-hdr" style="background:#1e293b;">
-              <div><div class="sort-panel-title">Stable Sort</div><div class="sort-panel-sub">Equal keys always keep their input order</div></div>
-              <button onclick="runStableSort()" style="background:#fff;color:#1e293b;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--mono);white-space:nowrap;flex-shrink:0;">Run &#10003;</button>
-            </div>
-            <div class="sort-panel-body" style="padding:14px;">
-              <div id="stab-stable" style="display:flex;flex-direction:column;gap:7px;transition:opacity .28s;"></div>
-              <div id="stab-stable-msg" style="margin-top:12px;font-size:12px;padding:8px 10px;border-left:3px solid var(--accent);background:#f8fafc;border-radius:4px;color:#374151;min-height:46px;line-height:1.5;"></div>
-            </div>
-          </div>
-
-        </div>
-        <div class="callout" style="position:relative;z-index:2;margin-top:0;">
-          <div style="font-size:14px;color:#14532d;line-height:1.6;"><strong>Key rule:</strong> Sort stability refers to the ability of keys to maintain their relative order in the list. A stable sort guarantees it — an unstable sort does not.</div>
-        </div>
-        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
-      </section>
+    
 
 <section class="slide">
         <style>
@@ -873,7 +822,7 @@
           <div class="meta"><div class="course">Analysis</div><div class="sub">Growth Classes</div></div>
           <span class="pill">Comparison</span>
         </div>
-        <h2>Interactive Comparison: All Growth Classes</h2>
+        <h2>All Growth Classes</h2>
         <div class="card">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;">
             <div style="font-weight:900;">Input Size (N): <span id="cmpNVal" class="pill">128</span></div>
@@ -1132,6 +1081,3037 @@
     resetBoBuilder();
   </script>
 </section>
+
+
+<section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Bubble Sort</div>
+            <div class="sub">Core Concept</div>
+          </div>
+          <span class="pill">Overview</span>
+        </div>
+
+        <h2>What is Bubble Sort?</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>Easy to <strong>implement and understand</strong></li>
+              <li>Generally has <strong>pretty poor performance</strong> compared to modern algorithms</li>
+              <li>Repeatedly scans the list, <strong>swapping adjacent elements</strong> that are out of order</li>
+              <li>Continues until a full pass produces <strong>no swaps</strong> — list is sorted!</li>
+            </ul>
+
+            <div class="callout">
+              <p style="margin:0;">The largest (or smallest) values gradually <strong style="color:var(--accent);">"bubble up"</strong> to their correct position at the end of the list with each pass.</p>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <p style="margin:0; font-size:17px;">
+                <strong>Each pass:</strong> <code style="background:#fef9c3; color:#92400e;">O(n)</code> comparisons<br/>
+                <strong>Up to N passes:</strong> <code style="background:#fef9c3; color:#92400e;">O(n)</code> passes<br/>
+                <strong>Total:</strong> <strong style="color:#dc2626; font-size:19px;">O(n²)</strong> worst-case
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <div class="viz-panel" style="text-align:center;">
+              <div class="viz-label">EXAMPLE ARRAY</div>
+              <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-bottom:16px;">
+                <div class="arr-box">6</div><div class="arr-box">5</div><div class="arr-box">3</div><div class="arr-box">1</div><div class="arr-box">8</div><div class="arr-box">7</div><div class="arr-box">2</div><div class="arr-box">4</div>
+              </div>
+              <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">↓ after sorting ↓</div>
+              <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                <div class="arr-box settled">1</div><div class="arr-box settled">2</div><div class="arr-box settled">3</div><div class="arr-box settled">4</div><div class="arr-box settled">5</div><div class="arr-box settled">6</div><div class="arr-box settled">7</div><div class="arr-box settled">8</div>
+              </div>
+            </div>
+
+            <div class="info-card" style="margin-top:14px; border-left-color:var(--accent);">
+              <p style="margin:0; font-size:16px;">For <strong>N = 8</strong> elements we require up to <strong style="color:var(--accent);">N − 1 = 7 passes</strong> in the worst case.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Bubble Sort</div>
+            <div class="sub">Mechanism</div>
+          </div>
+          <span class="pill">How it works</span>
+        </div>
+
+        <h2>Sorted vs Unsorted Partition</h2>
+
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>The list is conceptually divided into two parts: <strong>unsorted</strong> and <strong style="color:var(--accent);">sorted</strong></li>
+              <li>At the start the entire list is <strong>unsorted</strong></li>
+              <li>Each pass <em>bubbles</em> the largest remaining element from the unsorted region into its correct position</li>
+              <li>After every pass the <strong style="color:var(--accent);">sorted partition grows</strong> by one element at the tail</li>
+              <li>For a list of <strong>N</strong> elements, up to <strong>N − 1</strong> passes are required</li>
+            </ul>
+
+            <div class="card-grid" style="grid-template-columns:1fr 1fr; margin-top:10px;">
+              <div class="info-card" style="border-left-color:#16a34a;">
+                <h3 style="color:#166534; margin-top:0;">After Pass 1</h3>
+                <p style="font-size:14px; margin-bottom:0;">Largest element is in its final position (index N−1)</p>
+              </div>
+              <div class="info-card" style="border-left-color:#16a34a;">
+                <h3 style="color:#166534; margin-top:0;">After Pass k</h3>
+                <p style="font-size:14px; margin-bottom:0;">Last k elements are in their final sorted positions</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <div class="viz-panel" style="text-align:center;">
+              <div class="viz-label">PARTITION DIAGRAM</div>
+              
+              <div style="display:flex; gap:6px; justify-content:center; align-items:center; margin-bottom:6px;">
+                <div class="arr-box">5</div>
+                <div class="arr-box">3</div>
+                <div class="arr-box">1</div>
+                <div class="arr-box">4</div>
+                <div class="arr-box">2</div>
+                <div style="width:5px; height:50px; background:#94a3b8; border-radius:3px; margin:0 4px;"></div>
+                <div class="arr-box settled">6</div>
+                <div class="arr-box settled">7</div>
+                <div class="arr-box settled">8</div>
+              </div>
+              
+              <div style="display:flex; gap:6px; justify-content:center; margin-bottom:14px; text-align:center;">
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">0</div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">j</div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">k</div>
+                <div style="width:5px; margin:0 4px;"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">Last</div>
+              </div>
+
+              <div style="display:flex; justify-content:center; gap:30px; border-top:1px solid var(--soft); padding-top:12px;">
+                <span style="font-size:13px; color:var(--muted); font-weight:800;">◀ Unsorted ▶</span>
+                <span style="font-size:13px; color:var(--accent); font-weight:800;">◀ Sorted ▶</span>
+              </div>
+            </div>
+
+            <div class="sort-legend" style="justify-content:center; margin-top:0;">
+              <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unsorted partition</div>
+              <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Sorted partition</div>
+              <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#94a3b8; width:6px;"></div>Boundary</div>
+            </div>
+
+            <div class="callout" style="margin-top:0;">
+              <p style="margin:0; font-size:15px;">Pointer <code>k</code> marks the end of the unsorted region. During a pass, pointer <code>j</code> scans from <code>0</code> up to <code>k</code>. After each pass, the sorted tail grows and <code>k</code> shifts left.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Bubble Sort</div>
+            <div class="sub">Interactive Demo</div>
+          </div>
+          <span class="pill">Visualiser</span>
+        </div>
+
+        <h2>Live Bubble Sort Visualiser</h2>
+
+        <div class="viz-panel" id="viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
+          <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;" id="viz-pass">Press Play to begin</div>
+          
+          <div id="viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:16px;">
+          </div>
+          
+          <div id="viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
+          
+          <div id="viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+            <button class="viz-btn" onclick="vizPlay()">▶ Play</button>
+            <button class="viz-btn" onclick="vizPause()" style="background:#374151;">⏸ Pause</button>
+            <button class="viz-btn" onclick="vizStep()">⏭ Step</button>
+            <button class="viz-btn" onclick="vizReset()" style="background:#374151;">↺ Reset</button>
+            <button class="viz-btn" onclick="vizShuffle()" style="background:#374151;">🔀 Shuffle</button>
+            
+            <div style="display:flex; align-items:center; gap:8px; margin-left:14px;">
+              <span style="font-size:12px; font-weight:700; color:var(--muted);">Speed:</span>
+              <input type="range" id="viz-speed" min="100" max="900" value="500" style="width:100px;" oninput="vizSetSpeed(this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unsorted</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Comparing</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#ffedd5; border:2px solid #f97316;"></div>Swapping</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Sorted</div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+
+        <script>
+          (function() {
+            let vizArr = [];
+            let vizSteps = [];
+            let vizCurrentStep = 0;
+            let vizTimer = null;
+            let vizSpeed = 500;
+
+            function generateBubbleSortSteps(initialArr) {
+              let arr = [...initialArr];
+              let steps = [];
+              let n = arr.length;
+              let sortedIndices = [];
+
+              steps.push({ arr: [...arr], cmp: [], swp: false, sorted: [...sortedIndices], msg: 'Ready to sort', pass: 0 });
+
+              for (let i = 0; i < n - 1; i++) {
+                let swapped = false;
+                for (let j = 0; j < n - i - 1; j++) {
+                  steps.push({ arr: [...arr], cmp: [j, j+1], swp: false, sorted: [...sortedIndices], msg: `Comparing ${arr[j]} and ${arr[j+1]}`, pass: i+1 });
+                  
+                  if (arr[j] > arr[j + 1]) {
+                    let temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                    swapped = true;
+                    steps.push({ arr: [...arr], cmp: [j, j+1], swp: true, sorted: [...sortedIndices], msg: `Swapping ${arr[j+1]} and ${arr[j]}`, pass: i+1 });
+                  }
+                }
+                
+                sortedIndices.push(n - i - 1);
+                steps.push({ arr: [...arr], cmp: [], swp: false, sorted: [...sortedIndices], msg: `${arr[n - i - 1]} is now in its final position`, pass: i+1 });
+                
+                if (!swapped) {
+                  for(let k = 0; k < n - i - 1; k++) {
+                    if(!sortedIndices.includes(k)) sortedIndices.push(k);
+                  }
+                  steps.push({ arr: [...arr], cmp: [], swp: false, sorted: [...sortedIndices], msg: `No swaps occurred. Array is fully sorted!`, pass: i+1 });
+                  break;
+                }
+              }
+              
+              if(sortedIndices.length < n && !sortedIndices.includes(0)) {
+                sortedIndices.push(0);
+                steps.push({ arr: [...arr], cmp: [], swp: false, sorted: [...sortedIndices], msg: `Array is fully sorted!`, pass: n-1 });
+              }
+              return steps;
+            }
+
+            function renderVizStep(stepIndex) {
+              if (vizSteps.length === 0) return;
+              const step = vizSteps[stepIndex];
+              const container = document.getElementById('viz-array');
+              if (!container) return; 
+              
+              let html = '';
+              const maxVal = Math.max(...step.arr);
+              
+              step.arr.forEach((val, idx) => {
+                const barHeight = Math.max(10, (val / maxVal) * 80); 
+                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
+                
+                if (step.sorted.includes(idx)) {
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; 
+                } else if (step.cmp.includes(idx)) {
+                  if (step.swp) {
+                    bg = '#ffedd5'; border = '#f97316'; textColor = '#9a3412'; 
+                  } else {
+                    bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e'; 
+                  }
+                }
+
+                html += `
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1;">
+                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.2s;"></div>
+                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; transition:all 0.2s; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                  </div>`;
+              });
+
+              container.innerHTML = html;
+              document.getElementById('viz-status').textContent = step.msg;
+              document.getElementById('viz-pass').textContent = step.pass === 0 ? 'Press Play to begin' : `Pass ${step.pass}`;
+            }
+
+            // Bind functions to the global window object so HTML buttons can see them
+            window.vizInit = function(arr) {
+              vizArr = arr || [6, 5, 3, 1, 8, 7, 2, 4];
+              vizSteps = generateBubbleSortSteps(vizArr);
+              vizCurrentStep = 0;
+              renderVizStep(0);
+            };
+
+            window.vizPlay = function() {
+              if (vizTimer) return;
+              const delay = 1000 - vizSpeed; 
+              vizTimer = setInterval(() => {
+                if (vizCurrentStep < vizSteps.length - 1) {
+                  vizCurrentStep++;
+                  renderVizStep(vizCurrentStep);
+                } else {
+                  window.vizPause();
+                }
+              }, delay);
+            };
+
+            window.vizPause = function() {
+              if (vizTimer) {
+                clearInterval(vizTimer);
+                vizTimer = null;
+              }
+            };
+
+            window.vizStep = function() {
+              window.vizPause(); // stop auto-play if running
+              if (vizCurrentStep < vizSteps.length - 1) {
+                vizCurrentStep++;
+                renderVizStep(vizCurrentStep);
+              }
+            };
+
+            window.vizReset = function() {
+              window.vizPause();
+              window.vizInit([6, 5, 3, 1, 8, 7, 2, 4]); 
+            };
+
+            window.vizShuffle = function() {
+              window.vizPause();
+              let newArr = [...vizArr].sort(() => Math.random() - 0.5);
+              window.vizInit(newArr);
+            };
+
+            window.vizSetSpeed = function(val) {
+              vizSpeed = parseInt(val);
+              if (vizTimer) {
+                window.vizPause();
+                window.vizPlay(); 
+              }
+            };
+
+            // Initialize after a tiny delay to ensure HTML is rendered
+            setTimeout(() => {
+              window.vizInit([6, 5, 3, 1, 8, 7, 2, 4]);
+            }, 50);
+          })();
+        </script>
+      </section>
+      <section class="slide">
+        <style>
+          /* Syntax Highlighting for this slide */
+          .kw { color: #38bdf8; font-weight: bold; }
+          .fn { color: #a3e635; }
+          .vr { color: #e2e8f0; }
+          .nu { color: #fcd34d; }
+          .cm { color: #64748b; font-style: italic; }
+        </style>
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Bubble Sort</div>
+            <div class="sub">Algorithm</div>
+          </div>
+          <span class="pill">Pseudocode</span>
+        </div>
+
+        <h2>Bubble Sort — Pseudocode</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div class="sort-panel-title">Standard Implementation</div>
+            </div>
+            <div style="padding:16px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:14px; line-height:1.6; color:#e2e8f0; white-space:pre;"><span class="kw">procedure</span> <span class="fn">bubbleSort</span>( <span class="vr">A</span> : list of sortable items )
+  <span class="vr">n</span> = <span class="fn">length</span>(<span class="vr">A</span>)
+
+  <span class="kw">repeat</span>  <span class="cm">// up to N passes</span>
+    <span class="vr">swapped</span> = <span class="kw">false</span>
+
+    <span class="kw">for</span> <span class="vr">i</span> = <span class="nu">1</span> <span class="kw">to</span> <span class="vr">n</span>-<span class="nu">1</span> <span class="kw">inclusive</span> <span class="kw">do</span>
+
+      <span class="kw">if</span> <span class="vr">A</span>[<span class="vr">i</span>-<span class="nu">1</span>] > <span class="vr">A</span>[<span class="vr">i</span>] <span class="kw">then</span>
+        <span class="cm">// pair is out of order — swap</span>
+        <span class="fn">swap</span>( <span class="vr">A</span>[<span class="vr">i</span>-<span class="nu">1</span>], <span class="vr">A</span>[<span class="vr">i</span>] )
+        <span class="vr">swapped</span> = <span class="kw">true</span>
+      <span class="kw">end if</span>
+
+    <span class="kw">end for</span>
+
+  <span class="kw">until not</span> <span class="vr">swapped</span>  <span class="cm">// no swaps = sorted</span>
+
+<span class="kw">end procedure</span></div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="info-card">
+              <h3 style="margin-top:0;">Outer loop</h3>
+              <p style="font-size:15px; margin-bottom:0;">Repeats until no swaps occur in a full pass — this is the <em>termination condition</em>.</p>
+            </div>
+            <div class="info-card">
+              <h3 style="margin-top:0;">Inner loop</h3>
+              <p style="font-size:15px; margin-bottom:0;">Scans the array left to right, comparing each adjacent pair <code>A[i-1]</code> and <code>A[i]</code>.</p>
+            </div>
+            <div class="info-card">
+              <h3 style="margin-top:0;">Swap flag</h3>
+              <p style="font-size:15px; margin-bottom:0;"><code>swapped</code> tracks whether any swap happened. If false after a full pass, the list is already sorted — <strong>early exit</strong>.</p>
+            </div>
+            <div class="callout">
+              <p style="margin:0; font-size:14px;">The <code>n–1</code> passes come from needing to push the largest element step-by-step all the way to position <code>n−1</code>.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <style>
+          /* Syntax Highlighting for this slide */
+          .kw { color: #38bdf8; font-weight: bold; }
+          .fn { color: #a3e635; }
+          .vr { color: #e2e8f0; }
+          .nu { color: #fcd34d; }
+          .cm { color: #64748b; font-style: italic; }
+        </style>
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Bubble Sort</div>
+            <div class="sub">Improvements</div>
+          </div>
+          <span class="pill">Optimisations</span>
+        </div>
+
+        <h2>Bubble Sort — Optimisations</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="callout" style="margin-top:0;">
+              <p style="font-size:15px; font-weight:800; color:var(--accent); margin:0 0 4px;">Optimisation 1 — Skip the sorted partition</p>
+              <p style="font-size:14px; margin:0;">Decrement <code>n</code> by 1 after every pass — the last element is already in place.</p>
+            </div>
+            
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div class="sort-panel-title">Decrement n</div>
+              </div>
+              <div style="padding:14px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:13px; line-height:1.6; color:#e2e8f0; white-space:pre;"><span class="kw">procedure</span> <span class="fn">bubbleSort</span>( <span class="vr">A</span> )
+  <span class="vr">n</span> = <span class="fn">length</span>(<span class="vr">A</span>)
+  <span class="kw">repeat</span>
+    <span class="vr">swapped</span> = <span class="kw">false</span>
+    <span class="kw">for</span> <span class="vr">i</span> = <span class="nu">1</span> <span class="kw">to</span> <span class="vr">n</span>-<span class="nu">1</span> <span class="kw">do</span>
+      <span class="kw">if</span> <span class="vr">A</span>[<span class="vr">i</span>-<span class="nu">1</span>] > <span class="vr">A</span>[<span class="vr">i</span>] <span class="kw">then</span>
+        <span class="fn">swap</span>(<span class="vr">A</span>[<span class="vr">i</span>-<span class="nu">1</span>], <span class="vr">A</span>[<span class="vr">i</span>])
+        <span class="vr">swapped</span> = <span class="kw">true</span>
+      <span class="kw">end if</span>
+    <span class="kw">end for</span>
+    <span class="vr">n</span> = <span class="vr">n</span> – <span class="nu">1</span>  <span class="cm">← skip sorted tail</span>
+  <span class="kw">until not</span> <span class="vr">swapped</span>
+<span class="kw">end procedure</span></div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="callout" style="margin-top:0; border-left-color:#f59e0b; background:#fffbeb;">
+              <p style="font-size:15px; font-weight:800; color:#d97706; margin:0 0 4px;">Optimisation 2 — Track last swap position</p>
+              <p style="font-size:14px; margin:0;">After each pass, the new boundary is the index of the <em>last swap</em> — everything after it is already sorted.</p>
+            </div>
+            
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div class="sort-panel-title">Dynamic Boundary</div>
+              </div>
+              <div style="padding:14px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:13px; line-height:1.6; color:#e2e8f0; white-space:pre;"><span class="kw">procedure</span> <span class="fn">bubbleSort</span>( <span class="vr">A</span> )
+  <span class="vr">n</span> = <span class="fn">length</span>(<span class="vr">A</span>)
+  <span class="kw">repeat</span>
+    <span class="vr">newn</span> = <span class="nu">0</span>
+    <span class="kw">for</span> <span class="vr">i</span> = <span class="nu">1</span> <span class="kw">to</span> <span class="vr">n</span>-<span class="nu">1</span> <span class="kw">do</span>
+      <span class="kw">if</span> <span class="vr">A</span>[<span class="vr">i</span>-<span class="nu">1</span>] > <span class="vr">A</span>[<span class="vr">i</span>] <span class="kw">then</span>
+        <span class="fn">swap</span>(<span class="vr">A</span>[<span class="vr">i</span>-<span class="nu">1</span>], <span class="vr">A</span>[<span class="vr">i</span>])
+        <span class="vr">newn</span> = <span class="vr">i</span>  <span class="cm">← record last swap</span>
+      <span class="kw">end if</span>
+    <span class="kw">end for</span>
+    <span class="vr">n</span> = <span class="vr">newn</span>  <span class="cm">← jump directly to boundary</span>
+  <span class="kw">until</span> <span class="vr">n</span> = <span class="nu">0</span>
+<span class="kw">end procedure</span></div>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+<section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Insertion Sort</div>
+            <div class="sub">Core Concept</div>
+          </div>
+          <span class="pill">Overview</span>
+        </div>
+
+        <h2>What is Insertion Sort?</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>Builds the final sorted array <strong>one item at a time</strong>.</li>
+              <li>Highly efficient for <strong>small data sets</strong> or arrays that are already <strong>partially sorted</strong>.</li>
+              <li>Takes an element from the unsorted portion and inserts it into its correct position in the sorted portion.</li>
+              <li>It is a <strong>stable</strong>, <strong>in-place</strong> algorithm.</li>
+            </ul>
+
+            <div class="callout">
+              <p style="margin:0;">Think of it like <strong style="color:var(--accent);">sorting playing cards in your hands</strong>. You pick up one card at a time and slide it into its correct ordered position among the cards you already hold.</p>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <p style="margin:0; font-size:17px;">
+                <strong>Best Case:</strong> <code style="background:#f0fdf4; color:#166534;">O(n)</code> (Already sorted)<br/>
+                <strong>Average & Worst Case:</strong> <strong style="color:#dc2626; font-size:19px;">O(n²)</strong> (Reversed)<br/>
+                <strong>Space Complexity:</strong> <code>O(1)</code>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <div class="viz-panel" style="text-align:center;">
+              <div class="viz-label">EXAMPLE — INSERTING "3"</div>
+              <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">Sorted left side, picking next element...</div>
+              <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-bottom:16px;">
+                <div class="arr-box settled">1</div><div class="arr-box settled">5</div><div class="arr-box settled">6</div><div class="arr-box current" style="transform:translateY(-10px);">3</div><div class="arr-box">8</div><div class="arr-box">7</div>
+              </div>
+              <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">↓ shift larger elements right, insert 3 ↓</div>
+              <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                <div class="arr-box settled">1</div><div class="arr-box settled">3</div><div class="arr-box settled">5</div><div class="arr-box settled">6</div><div class="arr-box">8</div><div class="arr-box">7</div>
+              </div>
+            </div>
+
+            <div class="info-card" style="margin-top:14px; border-left-color:var(--accent);">
+              <p style="margin:0; font-size:16px;">Because it only shifts elements when necessary, it does <strong style="color:var(--accent);">zero shifts</strong> if the array is already sorted.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Insertion Sort</div>
+            <div class="sub">Mechanism</div>
+          </div>
+          <span class="pill">How it works</span>
+        </div>
+
+        <h2>Sorted vs Unsorted Partition</h2>
+
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>The list is conceptually divided: <strong style="color:var(--accent);">sorted</strong> (left) and <strong>unsorted</strong> (right).</li>
+              <li>At the start, the very first element (index 0) is considered a sorted partition of length 1.</li>
+              <li>Pointer <code>i</code> steps through the unsorted items, picking one as the <code>key</code>.</li>
+              <li>Pointer <code>j</code> scans backwards through the sorted partition to find where the <code>key</code> belongs, shifting larger elements to the right.</li>
+            </ul>
+
+            <div class="card-grid" style="grid-template-columns:1fr 1fr; margin-top:10px;">
+              <div class="info-card" style="border-left-color:#16a34a;">
+                <h3 style="color:#166534; margin-top:0;">The "Key"</h3>
+                <p style="font-size:14px; margin-bottom:0;">The active element temporarily removed from the array to be placed.</p>
+              </div>
+              <div class="info-card" style="border-left-color:#f59e0b;">
+                <h3 style="color:#92400e; margin-top:0;">Shifting</h3>
+                <p style="font-size:14px; margin-bottom:0;">Elements > key slide right by 1 to make an empty slot.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <div class="viz-panel" style="text-align:center;">
+              <div class="viz-label">PARTITION DIAGRAM</div>
+              
+              <div style="display:flex; gap:6px; justify-content:center; align-items:center; margin-bottom:6px;">
+                <div class="arr-box settled">2</div>
+                <div class="arr-box settled">4</div>
+                <div class="arr-box settled">7</div>
+                <div style="width:5px; height:50px; background:#94a3b8; border-radius:3px; margin:0 4px;"></div>
+                <div class="arr-box current" style="transform:translateY(-8px);">3</div>
+                <div class="arr-box">8</div>
+                <div class="arr-box">5</div>
+              </div>
+              
+              <div style="display:flex; gap:6px; justify-content:center; margin-bottom:14px; text-align:center;">
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">0</div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">j ←</div>
+                <div style="width:5px; margin:0 4px;"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">i (key)</div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">Last</div>
+              </div>
+
+              <div style="display:flex; justify-content:center; gap:30px; border-top:1px solid var(--soft); padding-top:12px;">
+                <span style="font-size:13px; color:var(--accent); font-weight:800;">◀ Sorted ▶</span>
+                <span style="font-size:13px; color:var(--muted); font-weight:800;">◀ Unsorted ▶</span>
+              </div>
+            </div>
+
+            <div class="sort-legend" style="justify-content:center; margin-top:0;">
+              <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Sorted partition</div>
+              <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Active Key (arr[i])</div>
+              <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unsorted partition</div>
+            </div>
+
+            <div class="callout" style="margin-top:0;">
+              <p style="margin:0; font-size:15px;">The sorted partition grows from the <strong>left</strong> (head), unlike Bubble Sort which grows at the tail.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Insertion Sort</div>
+            <div class="sub">Interactive Demo</div>
+          </div>
+          <span class="pill">Visualiser</span>
+        </div>
+
+        <h2> Insertion Sort</h2>
+
+        <div class="viz-panel" id="ins-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
+          <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;" id="ins-viz-pass">Press Play to begin</div>
+          
+          <div id="ins-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:16px;">
+            </div>
+          
+          <div id="ins-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
+          
+          <div id="ins-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+            <button class="viz-btn" onclick="insVizPlay()">▶ Play</button>
+            <button class="viz-btn" onclick="insVizPause()" style="background:#374151;">⏸ Pause</button>
+            <button class="viz-btn" onclick="insVizStep()">⏭ Step</button>
+            <button class="viz-btn" onclick="insVizReset()" style="background:#374151;">↺ Reset</button>
+            <button class="viz-btn" onclick="insVizShuffle()" style="background:#374151;">🔀 Shuffle</button>
+            
+            <div style="display:flex; align-items:center; gap:8px; margin-left:14px;">
+              <span style="font-size:12px; font-weight:700; color:var(--muted);">Speed:</span>
+              <input type="range" id="ins-viz-speed" min="100" max="900" value="500" style="width:100px;" oninput="insVizSetSpeed(this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unsorted</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Sorted Portion</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Active Key (arr[i])</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#ffedd5; border:2px solid #f97316;"></div>Shifting Right</div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+
+        <script>
+          (function() {
+            let vizArr = [];
+            let vizSteps = [];
+            let vizCurrentStep = 0;
+            let vizTimer = null;
+            let vizSpeed = 500;
+
+            function generateInsertionSortSteps(initialArr) {
+              let arr = [...initialArr];
+              let steps = [];
+              let n = arr.length;
+              
+              // Index 0 is initially "sorted"
+              steps.push({ arr: [...arr], sorted: [0], keyIdx: -1, shiftIdx: -1, msg: 'Initial state: first element is sorted', pass: 0 });
+
+              for (let i = 1; i < n; i++) {
+                let key = arr[i];
+                let j = i - 1;
+                
+                // Select Key
+                let currentSorted = Array.from({length: i}, (_, idx) => idx);
+                steps.push({ arr: [...arr], sorted: [...currentSorted], keyIdx: i, shiftIdx: -1, msg: `Select key = ${key}`, pass: i });
+
+                while (j >= 0 && arr[j] > key) {
+                  // Comparison & Shift
+                  steps.push({ arr: [...arr], sorted: [...currentSorted], keyIdx: j+1, shiftIdx: j, msg: `${arr[j]} > ${key}, shifting ${arr[j]} right`, pass: i });
+                  arr[j + 1] = arr[j];
+                  j = j - 1;
+                  
+                  // Show the shifted state
+                  let tempArr = [...arr];
+                  tempArr[j+1] = key; // temp placement for visualizer
+                  steps.push({ arr: [...tempArr], sorted: [...currentSorted], keyIdx: j+1, shiftIdx: -1, msg: `Space created`, pass: i });
+                }
+                
+                arr[j + 1] = key;
+                currentSorted.push(i);
+                steps.push({ arr: [...arr], sorted: [...currentSorted], keyIdx: j+1, shiftIdx: -1, msg: `Inserted ${key} into correct position`, pass: i });
+              }
+              
+              let finalSorted = Array.from({length: n}, (_, idx) => idx);
+              steps.push({ arr: [...arr], sorted: [...finalSorted], keyIdx: -1, shiftIdx: -1, msg: `Array is fully sorted!`, pass: n-1 });
+              return steps;
+            }
+
+            function renderVizStep(stepIndex) {
+              if (vizSteps.length === 0) return;
+              const step = vizSteps[stepIndex];
+              const container = document.getElementById('ins-viz-array');
+              if (!container) return; 
+              
+              let html = '';
+              const maxVal = Math.max(...step.arr);
+              
+              step.arr.forEach((val, idx) => {
+                const barHeight = Math.max(10, (val / maxVal) * 80); 
+                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
+                let transform = '';
+
+                if (idx === step.keyIdx) {
+                  // Active key
+                  bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e';
+                  transform = 'transform: translateY(-8px); box-shadow: 0 4px 10px rgba(245,158,11,0.2);';
+                } else if (idx === step.shiftIdx) {
+                  // Element being shifted
+                  bg = '#ffedd5'; border = '#f97316'; textColor = '#9a3412'; 
+                } else if (step.sorted.includes(idx)) {
+                  // Sorted area
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; 
+                }
+
+                html += `
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
+                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.2s;"></div>
+                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; transition:all 0.2s; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                  </div>`;
+              });
+
+              container.innerHTML = html;
+              document.getElementById('ins-viz-status').textContent = step.msg;
+              document.getElementById('ins-viz-pass').textContent = step.pass === 0 ? 'Press Play to begin' : `Iteration ${step.pass}`;
+            }
+
+            window.insVizInit = function(arr) {
+              vizArr = arr || [8, 4, 6, 2, 7, 3, 1, 5];
+              vizSteps = generateInsertionSortSteps(vizArr);
+              vizCurrentStep = 0;
+              renderVizStep(0);
+            };
+
+            window.insVizPlay = function() {
+              if (vizTimer) return;
+              const delay = 1000 - vizSpeed; 
+              vizTimer = setInterval(() => {
+                if (vizCurrentStep < vizSteps.length - 1) {
+                  vizCurrentStep++;
+                  renderVizStep(vizCurrentStep);
+                } else {
+                  window.insVizPause();
+                }
+              }, delay);
+            };
+
+            window.insVizPause = function() {
+              if (vizTimer) {
+                clearInterval(vizTimer);
+                vizTimer = null;
+              }
+            };
+
+            window.insVizStep = function() {
+              window.insVizPause();
+              if (vizCurrentStep < vizSteps.length - 1) {
+                vizCurrentStep++;
+                renderVizStep(vizCurrentStep);
+              }
+            };
+
+            window.insVizReset = function() {
+              window.insVizPause();
+              window.insVizInit([8, 4, 6, 2, 7, 3, 1, 5]); 
+            };
+
+            window.insVizShuffle = function() {
+              window.insVizPause();
+              let newArr = [...vizArr].sort(() => Math.random() - 0.5);
+              window.insVizInit(newArr);
+            };
+
+            window.insVizSetSpeed = function(val) {
+              vizSpeed = parseInt(val);
+              if (vizTimer) {
+                window.insVizPause();
+                window.insVizPlay(); 
+              }
+            };
+
+            setTimeout(() => {
+              window.insVizInit([8, 4, 6, 2, 7, 3, 1, 5]);
+            }, 50);
+          })();
+        </script>
+      </section>
+
+
+      <section class="slide">
+        <style>
+          .kw { color: #38bdf8; font-weight: bold; }
+          .fn { color: #a3e635; }
+          .vr { color: #e2e8f0; }
+          .nu { color: #fcd34d; }
+          .cm { color: #64748b; font-style: italic; }
+        </style>
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Insertion Sort</div>
+            <div class="sub">Algorithm</div>
+          </div>
+          <span class="pill">Pseudocode</span>
+        </div>
+
+        <h2>Insertion Sort — Pseudocode</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div class="sort-panel-title">Standard Implementation</div>
+            </div>
+            <div style="padding:16px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:14px; line-height:1.6; color:#e2e8f0; white-space:pre;"><span class="kw">procedure</span> <span class="fn">insertionSort</span>( <span class="vr">A</span> : array of items )
+  <span class="vr">n</span> = <span class="fn">length</span>(<span class="vr">A</span>)
+  
+  <span class="cm">// Assume A[0] is already sorted.</span>
+  <span class="kw">for</span> <span class="vr">i</span> = <span class="nu">1</span> <span class="kw">to</span> <span class="vr">n</span>-<span class="nu">1</span> <span class="kw">do</span>
+    <span class="vr">key</span> = <span class="vr">A</span>[<span class="vr">i</span>]
+    <span class="vr">j</span> = <span class="vr">i</span> - <span class="nu">1</span>
+    
+    <span class="cm">// Shift larger elements to the right</span>
+    <span class="kw">while</span> <span class="vr">j</span> >= <span class="nu">0</span> <span class="kw">and</span> <span class="vr">A</span>[<span class="vr">j</span>] > <span class="vr">key</span> <span class="kw">do</span>
+      <span class="vr">A</span>[<span class="vr">j</span>+<span class="nu">1</span>] = <span class="vr">A</span>[<span class="vr">j</span>]
+      <span class="vr">j</span> = <span class="vr">j</span> - <span class="nu">1</span>
+    <span class="kw">end while</span>
+    
+    <span class="cm">// Place the key into the empty slot</span>
+    <span class="vr">A</span>[<span class="vr">j</span>+<span class="nu">1</span>] = <span class="vr">key</span>
+    
+  <span class="kw">end for</span>
+<span class="kw">end procedure</span></div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="info-card">
+              <h3 style="margin-top:0;">Outer Loop</h3>
+              <p style="font-size:15px; margin-bottom:0;">Iterates from <code>1</code> to <code>n-1</code>. The variable <code>key</code> holds the value currently being sorted.</p>
+            </div>
+            <div class="info-card">
+              <h3 style="margin-top:0;">Inner Loop (While)</h3>
+              <p style="font-size:15px; margin-bottom:0;">Scans <strong>backwards</strong> through the sorted portion (<code>j >= 0</code>). If an element is larger than the <code>key</code>, it copies it one position to the right.</p>
+            </div>
+            <div class="info-card" style="border-left-color:var(--accent);">
+              <h3 style="margin-top:0; color:var(--accent);">Insertion</h3>
+              <p style="font-size:15px; margin-bottom:0;">Once the inner loop stops (either finding a smaller element or reaching index 0), the <code>key</code> is placed into its correct spot at <code>A[j+1]</code>.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <style>
+          .kw { color: #38bdf8; font-weight: bold; }
+          .fn { color: #a3e635; }
+          .vr { color: #e2e8f0; }
+          .nu { color: #fcd34d; }
+          .cm { color: #64748b; font-style: italic; }
+        </style>
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Insertion Sort</div>
+            <div class="sub">Traits & Improvements</div>
+          </div>
+          <span class="pill">Optimisations</span>
+        </div>
+
+        <h2>Insertion Sort — Traits & Variants</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="callout" style="margin-top:0;">
+              <p style="font-size:15px; font-weight:800; color:var(--accent); margin:0 0 4px;">Trait 1 — Highly Adaptive</p>
+              <p style="font-size:14px; margin:0;">Insertion sort is "adaptive". If the array is already sorted, the `while` loop condition fails immediately.</p>
+            </div>
+            
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div class="sort-panel-title">O(n) Best-Case Scenario</div>
+              </div>
+              <div style="padding:14px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:13px; line-height:1.6; color:#e2e8f0;">
+                <span class="cm">// If array is [1, 2, 3, 4]</span><br>
+                <span class="kw">for</span> <span class="vr">i</span> = <span class="nu">1</span> <span class="kw">to</span> <span class="nu">3</span> <span class="kw">do</span><br>
+                &nbsp;&nbsp;<span class="vr">key</span> = <span class="vr">A</span>[<span class="vr">i</span>] <span class="cm">// e.g., key = 2</span><br>
+                &nbsp;&nbsp;<span class="vr">j</span> = <span class="nu">0</span><br>
+                &nbsp;&nbsp;<span class="cm">// A[j] is 1. 1 > 2 is FALSE.</span><br>
+                &nbsp;&nbsp;<span class="cm">// Loop never runs!</span><br>
+                &nbsp;&nbsp;<span class="kw">while</span> <span class="vr">j</span> >= <span class="nu">0</span> <span class="kw">and</span> <span class="vr">A</span>[<span class="vr">j</span>] > <span class="vr">key</span> <span class="kw">do</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;...<br>
+                &nbsp;&nbsp;<span class="kw">end while</span><br>
+                <span class="kw">end for</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="callout" style="margin-top:0; border-left-color:#f59e0b; background:#fffbeb;">
+              <p style="font-size:15px; font-weight:800; color:#d97706; margin:0 0 4px;">Variant — Binary Insertion Sort</p>
+              <p style="font-size:14px; margin:0;">Instead of scanning backwards linearly, use <strong>Binary Search</strong> to find the insertion point on the sorted left side.</p>
+            </div>
+            
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div class="sort-panel-title">Fewer Comparisons, Same Shifts</div>
+              </div>
+              <div style="padding:14px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:13px; line-height:1.6; color:#e2e8f0;">
+                <span class="kw">procedure</span> <span class="fn">binaryInsertionSort</span>(<span class="vr">A</span>)<br>
+                &nbsp;&nbsp;<span class="kw">for</span> <span class="vr">i</span> = <span class="nu">1</span> <span class="kw">to</span> <span class="vr">n</span>-<span class="nu">1</span> <span class="kw">do</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="vr">key</span> = <span class="vr">A</span>[<span class="vr">i</span>]<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">// O(log n) comparisons to find index</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="vr">pos</span> = <span class="fn">binarySearch</span>(<span class="vr">A</span>, <span class="nu">0</span>, <span class="vr">i</span>-<span class="nu">1</span>, <span class="vr">key</span>)<br>
+                <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="cm">// Still requires O(n) shifts!</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> <span class="vr">j</span> = <span class="vr">i</span>-<span class="nu">1</span> <span class="kw">down to</span> <span class="vr">pos</span> <span class="kw">do</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="vr">A</span>[<span class="vr">j</span>+<span class="nu">1</span>] = <span class="vr">A</span>[<span class="vr">j</span>]<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">end for</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="vr">A</span>[<span class="vr">pos</span>] = <span class="vr">key</span><br>
+                &nbsp;&nbsp;<span class="kw">end for</span><br>
+                <span class="kw">end procedure</span>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Selection Sort</div>
+            <div class="sub">Core Concept</div>
+          </div>
+          <span class="pill">Overview</span>
+        </div>
+
+        <h2>What is Selection Sort?</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>Often considered the <strong>simplest of sorts</strong> to understand.</li>
+              <li>You subdivide the list into <strong>sorted</strong> and <strong>unsorted</strong> parts.</li>
+              <li>You actively search the unsorted part to <strong>select the smallest (or largest) element</strong>.</li>
+              <li>Once found, you swap it into its final position at the end of the sorted part.</li>
+            </ul>
+
+            <div class="callout">
+              <p style="margin:0;">The idea is highly intuitive: "Find the smallest item, put it first. Find the next smallest, put it second."</p>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <p style="margin:0; font-size:17px;">
+                <strong>Best Case:</strong> <strong style="color:#dc2626; font-size:19px;">O(n²)</strong><br/>
+                <strong>Worst Case:</strong> <strong style="color:#dc2626; font-size:19px;">O(n²)</strong><br/>
+                <strong>Space Complexity:</strong> <code>O(1)</code>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <div class="viz-panel" style="text-align:center;">
+              <div class="viz-label">EXAMPLE — FINDING THE MINIMUM</div>
+              <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">Scanning unsorted right side for the smallest value...</div>
+              <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-bottom:16px;">
+                <div class="arr-box settled">2</div><div class="arr-box settled">3</div><div class="arr-box">9</div><div class="arr-box">7</div><div class="arr-box">8</div><div class="arr-box current" style="transform:scale(1.1);">5</div>
+              </div>
+              <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">↓ swap 5 into the next sorted slot ↓</div>
+              <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                <div class="arr-box settled">2</div><div class="arr-box settled">3</div><div class="arr-box settled">5</div><div class="arr-box">7</div><div class="arr-box">8</div><div class="arr-box">9</div>
+              </div>
+            </div>
+
+            <div class="info-card" style="margin-top:14px; border-left-color:var(--accent);">
+              <p style="margin:0; font-size:16px;">The runtime is almost exactly the same <strong>regardless of input</strong>. Even if the array is already sorted, it still scans the whole remainder of the list to be sure.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Selection Sort</div>
+            <div class="sub">Mechanism</div>
+          </div>
+          <span class="pill">How it works</span>
+        </div>
+
+        <h2>Sorted vs Unsorted Partition</h2>
+
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>The list is divided into a <strong style="color:var(--accent);">sorted</strong> (left) and <strong>unsorted</strong> (right) partition.</li>
+              <li>Pointer <code>i</code> marks the first element of the unsorted partition.</li>
+              <li>We assume the element at <code>i</code> is the minimum (<code>pos_min</code>).</li>
+              <li>Pointer <code>j</code> iterates through the rest of the array. If it finds a smaller element, <code>pos_min</code> is updated.</li>
+              <li>At the end of the pass, we swap the element at <code>pos_min</code> with the element at <code>i</code>.</li>
+            </ul>
+
+            <div class="card-grid" style="grid-template-columns:1fr 1fr; margin-top:10px;">
+              <div class="info-card" style="border-left-color:#f59e0b;">
+                <h3 style="color:#92400e; margin-top:0;">Position of Min</h3>
+                <p style="font-size:14px; margin-bottom:0;">Tracks the <em>index</em> of the smallest value found so far during the pass.</p>
+              </div>
+              <div class="info-card" style="border-left-color:#16a34a;">
+                <h3 style="color:#166534; margin-top:0;">The Swap</h3>
+                <p style="font-size:14px; margin-bottom:0;">Happens strictly once per pass, adding the absolute minimum to the sorted tail.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <div class="viz-panel" style="text-align:center;">
+              <div class="viz-label">PARTITION DIAGRAM</div>
+              
+              <div style="display:flex; gap:6px; justify-content:center; align-items:center; margin-bottom:6px;">
+                <div class="arr-box settled">3</div>
+                <div class="arr-box settled">5</div>
+                <div style="width:5px; height:50px; background:#94a3b8; border-radius:3px; margin:0 4px;"></div>
+                <div class="arr-box">9</div>
+                <div class="arr-box">15</div>
+                <div class="arr-box current" style="transform:translateY(-8px);">7</div>
+                <div class="arr-box">8</div>
+                <div class="arr-box">11</div>
+              </div>
+              
+              <div style="display:flex; gap:6px; justify-content:center; margin-bottom:14px; text-align:center;">
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">0</div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:5px; margin:0 4px;"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">i</div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">j (pos_min)</div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">Last</div>
+              </div>
+
+              <div style="display:flex; justify-content:center; gap:30px; border-top:1px solid var(--soft); padding-top:12px;">
+                <span style="font-size:13px; color:var(--accent); font-weight:800;">◀ Sorted ▶</span>
+                <span style="font-size:13px; color:var(--muted); font-weight:800;">◀ Unsorted ▶</span>
+              </div>
+            </div>
+
+            <div class="sort-legend" style="justify-content:center; margin-top:0;">
+              <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Sorted partition</div>
+              <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Current Min Candidate</div>
+              <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unsorted partition</div>
+            </div>
+
+            <div class="callout" style="margin-top:0;">
+              <p style="margin:0; font-size:15px;">Unlike Bubble Sort which does constant swapping, Selection Sort does exactly <strong>one swap per pass</strong>, making it slightly better when memory writes are costly.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Selection Sort</div>
+            <div class="sub">Interactive Demo</div>
+          </div>
+          <span class="pill">Visualiser</span>
+        </div>
+
+        <h2>Live Selection Sort Visualiser</h2>
+
+        <div class="viz-panel" id="sel-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
+          <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;" id="sel-viz-pass">Press Play to begin</div>
+          
+          <div id="sel-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:16px;">
+            </div>
+          
+          <div id="sel-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
+          
+          <div id="sel-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+            <button class="viz-btn" onclick="selVizPlay()">▶ Play</button>
+            <button class="viz-btn" onclick="selVizPause()" style="background:#374151;">⏸ Pause</button>
+            <button class="viz-btn" onclick="selVizStep()">⏭ Step</button>
+            <button class="viz-btn" onclick="selVizReset()" style="background:#374151;">↺ Reset</button>
+            <button class="viz-btn" onclick="selVizShuffle()" style="background:#374151;">🔀 Shuffle</button>
+            
+            <div style="display:flex; align-items:center; gap:8px; margin-left:14px;">
+              <span style="font-size:12px; font-weight:700; color:var(--muted);">Speed:</span>
+              <input type="range" id="sel-viz-speed" min="100" max="900" value="500" style="width:100px;" oninput="selVizSetSpeed(this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unsorted</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Sorted</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Scanning Array[j]</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fee2e2; border:2px solid #ef4444;"></div>Current pos_min</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#ffedd5; border:2px solid #f97316;"></div>Swapping</div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+
+        <script>
+          (function() {
+            let vizArr = [];
+            let vizSteps = [];
+            let vizCurrentStep = 0;
+            let vizTimer = null;
+            let vizSpeed = 500;
+
+            function generateSelectionSortSteps(initialArr) {
+              let arr = [...initialArr];
+              let steps = [];
+              let n = arr.length;
+              let sorted = [];
+
+              steps.push({ arr: [...arr], sorted: [], scan: -1, min: -1, swp: [], msg: 'Initial state', pass: 0 });
+
+              for (let i = 0; i < n - 1; i++) {
+                let pos_min = i;
+                steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: pos_min, swp: [], msg: `Assume min is at index ${i} (value: ${arr[i]})`, pass: i+1 });
+
+                for (let j = i + 1; j < n; j++) {
+                  steps.push({ arr: [...arr], sorted: [...sorted], scan: j, min: pos_min, swp: [], msg: `Scanning index ${j}. Current min is ${arr[pos_min]}`, pass: i+1 });
+                  if (arr[j] < arr[pos_min]) {
+                    pos_min = j;
+                    steps.push({ arr: [...arr], sorted: [...sorted], scan: j, min: pos_min, swp: [], msg: `New minimum found: ${arr[j]} at index ${j}`, pass: i+1 });
+                  }
+                }
+
+                if (pos_min !== i) {
+                  steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: pos_min, swp: [i, pos_min], msg: `Swapping ${arr[i]} with min ${arr[pos_min]}`, pass: i+1 });
+                  let temp = arr[i];
+                  arr[i] = arr[pos_min];
+                  arr[pos_min] = temp;
+                  steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: -1, swp: [i, pos_min], msg: `Swap complete.`, pass: i+1 });
+                } else {
+                  steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: pos_min, swp: [], msg: `${arr[i]} is already the minimum. No swap needed.`, pass: i+1 });
+                }
+                sorted.push(i);
+              }
+              
+              sorted.push(n - 1);
+              steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: -1, swp: [], msg: `Array is fully sorted!`, pass: n-1 });
+              return steps;
+            }
+
+            function renderVizStep(stepIndex) {
+              if (vizSteps.length === 0) return;
+              const step = vizSteps[stepIndex];
+              const container = document.getElementById('sel-viz-array');
+              if (!container) return; 
+              
+              let html = '';
+              const maxVal = Math.max(...step.arr);
+              
+              step.arr.forEach((val, idx) => {
+                const barHeight = Math.max(10, (val / maxVal) * 80); 
+                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
+                let transform = '';
+
+                if (step.swp.includes(idx)) {
+                  // Swapping
+                  bg = '#ffedd5'; border = '#f97316'; textColor = '#9a3412';
+                } else if (idx === step.min) {
+                  // Minimum found
+                  bg = '#fee2e2'; border = '#ef4444'; textColor = '#991b1b';
+                  transform = 'transform: translateY(-5px); box-shadow: 0 4px 10px rgba(239,68,68,0.2);';
+                } else if (idx === step.scan) {
+                  // Currently scanning
+                  bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e';
+                } else if (step.sorted.includes(idx)) {
+                  // Sorted area
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; 
+                }
+
+                html += `
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
+                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.2s;"></div>
+                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; transition:all 0.2s; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                  </div>`;
+              });
+
+              container.innerHTML = html;
+              document.getElementById('sel-viz-status').textContent = step.msg;
+              document.getElementById('sel-viz-pass').textContent = step.pass === 0 ? 'Press Play to begin' : `Pass ${step.pass}`;
+            }
+
+            window.selVizInit = function(arr) {
+              vizArr = arr || [9, 3, 5, 15, 7, 8, 2, 11];
+              vizSteps = generateSelectionSortSteps(vizArr);
+              vizCurrentStep = 0;
+              renderVizStep(0);
+            };
+
+            window.selVizPlay = function() {
+              if (vizTimer) return;
+              const delay = 1000 - vizSpeed; 
+              vizTimer = setInterval(() => {
+                if (vizCurrentStep < vizSteps.length - 1) {
+                  vizCurrentStep++;
+                  renderVizStep(vizCurrentStep);
+                } else {
+                  window.selVizPause();
+                }
+              }, delay);
+            };
+
+            window.selVizPause = function() {
+              if (vizTimer) {
+                clearInterval(vizTimer);
+                vizTimer = null;
+              }
+            };
+
+            window.selVizStep = function() {
+              window.selVizPause();
+              if (vizCurrentStep < vizSteps.length - 1) {
+                vizCurrentStep++;
+                renderVizStep(vizCurrentStep);
+              }
+            };
+
+            window.selVizReset = function() {
+              window.selVizPause();
+              window.selVizInit([9, 3, 5, 15, 7, 8, 2, 11]); 
+            };
+
+            window.selVizShuffle = function() {
+              window.selVizPause();
+              let newArr = [...vizArr].sort(() => Math.random() - 0.5);
+              window.selVizInit(newArr);
+            };
+
+            window.selVizSetSpeed = function(val) {
+              vizSpeed = parseInt(val);
+              if (vizTimer) {
+                window.selVizPause();
+                window.selVizPlay(); 
+              }
+            };
+
+            setTimeout(() => {
+              window.selVizInit([9, 3, 5, 15, 7, 8, 2, 11]);
+            }, 50);
+          })();
+        </script>
+      </section>
+
+
+      <section class="slide">
+        <style>
+          .kw { color: #38bdf8; font-weight: bold; }
+          .fn { color: #a3e635; }
+          .vr { color: #e2e8f0; }
+          .nu { color: #fcd34d; }
+          .cm { color: #64748b; font-style: italic; }
+        </style>
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Selection Sort</div>
+            <div class="sub">Algorithm</div>
+          </div>
+          <span class="pill">C# Implementation</span>
+        </div>
+
+        <h2>Selection Sort — Code Example</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b; display:flex; justify-content:space-between; align-items:center;">
+              <div class="sort-panel-title">Standard C# Implementation</div>
+              <span class="sort-badge" style="background:rgba(255,255,255,.1); font-size:10px;">cforbeginners.com</span>
+            </div>
+            <div style="padding:16px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:13px; line-height:1.5; color:#e2e8f0; white-space:pre;"><span class="kw">public void</span> <span class="fn">selectSort</span>(<span class="kw">int</span>[] <span class="vr">arr</span>)
+{
+  <span class="cm">// pos_min tracks the index of the minimum value</span>
+  <span class="kw">int</span> <span class="vr">pos_min</span>, <span class="vr">temp</span>;
+
+  <span class="kw">for</span>(<span class="kw">int</span> <span class="vr">i</span> = <span class="nu">0</span>; <span class="vr">i</span> < <span class="vr">arr</span>.Length - <span class="nu">1</span>; <span class="vr">i</span>++)
+  {
+    <span class="vr">pos_min</span> = <span class="vr">i</span>; <span class="cm">// set min to current index</span>
+
+    <span class="kw">for</span>(<span class="kw">int</span> <span class="vr">j</span> = <span class="vr">i</span> + <span class="nu">1</span>; <span class="vr">j</span> < <span class="vr">arr</span>.Length; <span class="vr">j</span>++)
+    {   
+      <span class="kw">if</span>(<span class="vr">arr</span>[<span class="vr">j</span>] < <span class="vr">arr</span>[<span class="vr">pos_min</span>])
+      {
+        <span class="cm">// Update index when smaller value is found</span>
+        <span class="vr">pos_min</span> = <span class="vr">j</span>;            
+      }
+    }
+
+    <span class="cm">// Only swap if a new minimum was actually found</span>
+    <span class="kw">if</span>(<span class="vr">pos_min</span> != <span class="vr">i</span>)
+    {
+      <span class="vr">temp</span> = <span class="vr">arr</span>[<span class="vr">i</span>];
+      <span class="vr">arr</span>[<span class="vr">i</span>] = <span class="vr">arr</span>[<span class="vr">pos_min</span>];
+      <span class="vr">arr</span>[<span class="vr">pos_min</span>] = <span class="vr">temp</span>;
+    }    
+  }
+}</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="info-card">
+              <h3 style="margin-top:0;">Outer Loop</h3>
+              <p style="font-size:15px; margin-bottom:0;">Iterates <code>i</code> up to <code>Length - 1</code>. This marks the growing boundary of our sorted array on the left.</p>
+            </div>
+            <div class="info-card">
+              <h3 style="margin-top:0;">Inner Loop</h3>
+              <p style="font-size:15px; margin-bottom:0;">Scans from <code>i + 1</code> to the end. It doesn't shift or swap items inside this loop; it purely <strong>searches</strong> for the lowest value.</p>
+            </div>
+            <div class="info-card" style="border-left-color:var(--accent);">
+              <h3 style="margin-top:0; color:var(--accent);">The Swap</h3>
+              <p style="font-size:15px; margin-bottom:0;">Occurs only at the very end of the outer loop. We only perform the swap if <code>pos_min</code> changed, confirming we found something smaller.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Selection Sort</div>
+            <div class="sub">Traits & Performance</div>
+          </div>
+          <span class="pill">Big-O</span>
+        </div>
+
+        <h2>Selection Sort — Performance</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="callout" style="margin-top:0; border-left-color:#dc2626; background:#fef2f2;">
+              <p style="font-size:15px; font-weight:800; color:#991b1b; margin:0 0 4px;">Strictly O(n²) in ALL cases</p>
+              <p style="font-size:14px; margin:0;">Selection Sort is entirely completely blind to the existing order of the data. Best case, average case, and worst case are all identical.</p>
+            </div>
+
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div class="sort-panel-title">Why no "Best Case"?</div>
+              </div>
+              <div class="sort-panel-body" style="padding:16px; background:#fff; font-size:15px; line-height:1.6; color:#0f172a;">
+                <p style="margin-top:0;">Even if you pass in a perfectly sorted array like <code>[1, 2, 3, 4, 5]</code>, the algorithm doesn't know it's sorted.</p>
+                <p style="margin-bottom:0;">To guarantee that <code>1</code> is the absolute minimum, the inner loop <strong>must still check 2, 3, 4, and 5</strong>. This forces it to scan the entire remaining array every single pass.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="callout" style="margin-top:0; border-left-color:#16a34a; background:#f0fdf4;">
+              <p style="font-size:15px; font-weight:800; color:#166534; margin:0 0 4px;">Redeeming Quality: Minimal Writes</p>
+              <p style="font-size:14px; margin:0;">While comparisons are <code>O(n²)</code>, the actual number of <strong>swaps</strong> is at most <code>O(n)</code>.</p>
+            </div>
+            
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#052e16;">
+                <div class="sort-panel-title">Comparisons vs. Swaps</div>
+              </div>
+              <div class="sort-panel-body" style="padding:0; background:#fff;">
+                <table style="margin:0; border:none; border-radius:0;">
+                  <tr>
+                    <th style="background:#f8fafc; color:#0f172a; border-bottom:1px solid #e2e8f0; text-align:left; padding:12px 16px;">Algorithm</th>
+                    <th style="background:#f8fafc; color:#0f172a; border-bottom:1px solid #e2e8f0; text-align:center; padding:12px 16px;">Swaps (Worst)</th>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0;">Bubble Sort</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center;"><code style="background:#fee2e2; color:#991b1b;">O(n²)</code></td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0;">Insertion Sort</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center;"><code style="background:#fee2e2; color:#991b1b;">O(n²)</code> (shifts)</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px; font-weight:800; color:var(--accent);">Selection Sort</td>
+                    <td style="padding:12px 16px; text-align:center; font-weight:800;"><code style="background:#dcfce7; color:#166534;">O(n)</code></td>
+                  </tr>
+                </table>
+              </div>
+              <div style="padding:12px 16px; font-size:13px; color:var(--muted); background:#f8fafc; border-top:1px solid var(--soft);">
+                <strong>Takeaway:</strong> If you are working on hardware where writing to memory is significantly more expensive than reading from it (e.g., certain types of EEPROM or flash memory), Selection Sort has a distinct advantage over Bubble and Insertion sort.
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Merge Sort</div>
+            <div class="sub">Core Concept</div>
+          </div>
+          <span class="pill">Overview</span>
+        </div>
+
+        <h2>What is Merge Sort?</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>A classic <strong style="color:var(--accent);">Divide and Conquer</strong> algorithm.</li>
+              <li>Divides the array into <code>n</code> sublists, each containing 1 element (a list of 1 element is inherently sorted).</li>
+              <li>Repeatedly <strong>merges</strong> sublists to produce new sorted sublists until there is only 1 sorted list remaining.</li>
+              <li>A highly popular and reliable choice for sorting <strong>large datasets</strong>.</li>
+            </ul>
+
+            <div class="callout">
+              <p style="margin:0;">Instead of struggling to sort a massive list all at once, Merge Sort breaks the problem down into trivial pieces, then intelligently stitches them back together.</p>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <p style="margin:0; font-size:17px;">
+                <strong>Best & Worst Case:</strong> <code style="background:#f0fdf4; color:#166534;">O(n log n)</code><br/>
+                <strong>Space Complexity:</strong> <strong style="color:#dc2626; font-size:19px;">O(n)</strong> (Requires extra memory)<br/>
+                <strong>Stability:</strong> Stable
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <div class="viz-panel" style="text-align:center;">
+              <div class="viz-label">EXAMPLE ARRAY</div>
+              <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">Original Input</div>
+              <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-bottom:16px;">
+                <div class="arr-box">3</div><div class="arr-box">9</div><div class="arr-box">5</div><div class="arr-box">2</div><div class="arr-box">7</div><div class="arr-box">8</div><div class="arr-box">6</div><div class="arr-box">15</div>
+              </div>
+              <div style="font-size:13px; color:var(--muted); margin-bottom:10px;">↓ after dividing and merging ↓</div>
+              <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                <div class="arr-box settled">2</div><div class="arr-box settled">3</div><div class="arr-box settled">5</div><div class="arr-box settled">6</div><div class="arr-box settled">7</div><div class="arr-box settled">8</div><div class="arr-box settled">9</div><div class="arr-box settled">15</div>
+              </div>
+            </div>
+
+            <div class="info-card" style="margin-top:14px; border-left-color:var(--accent);">
+              <p style="margin:0; font-size:16px;">Merge Sort guarantees <strong style="color:var(--accent);">O(n log n)</strong> performance regardless of how the initial data is arranged.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Merge Sort</div>
+            <div class="sub">Mechanism</div>
+          </div>
+          <span class="pill">How it works</span>
+        </div>
+
+        <h2>The Two Phases: Divide &amp; Merge</h2>
+
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <div class="info-card" style="border-left-color:#dc2626; margin-bottom:14px;">
+              <h3 style="color:#991b1b; margin-top:0;">1. The Divide Phase</h3>
+              <p style="font-size:15px; margin-bottom:0;">Find the midpoint of the array and split it into two halves. Recursively repeat this process on each half until every sublist contains exactly <strong>1 element</strong>.</p>
+            </div>
+            
+            <div class="info-card" style="border-left-color:#16a34a; margin-bottom:14px;">
+              <h3 style="color:#166534; margin-top:0;">2. The Merge Phase</h3>
+              <p style="font-size:15px; margin-bottom:0;">Take two adjacent sorted sublists and <strong>merge</strong> them into a single sorted list. Repeat this bottom-up until the entire array is reconstructed.</p>
+            </div>
+
+            
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <div class="viz-panel" style="text-align:center; background:#fff;">
+              <div class="viz-label">MERGE STEP DIAGRAM</div>
+              
+              <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Two sorted sublists:</div>
+              <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-bottom:12px;">
+                <div style="display:flex; gap:4px; padding:6px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">
+                  <div class="arr-box current" style="width:36px; height:36px; font-size:16px;">3</div>
+                  <div class="arr-box" style="width:36px; height:36px; font-size:16px;">9</div>
+                </div>
+                <div style="font-weight:800; color:#94a3b8;">+</div>
+                <div style="display:flex; gap:4px; padding:6px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px;">
+                  <div class="arr-box current" style="width:36px; height:36px; font-size:16px;">2</div>
+                  <div class="arr-box" style="width:36px; height:36px; font-size:16px;">5</div>
+                </div>
+              </div>
+              
+              <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Compare heads (3 vs 2). Pull smaller into new array:</div>
+              <div style="display:flex; gap:4px; justify-content:center; margin-bottom:14px;">
+                <div class="arr-box settled" style="width:36px; height:36px; font-size:16px;">2</div>
+                <div class="arr-box checked" style="width:36px; height:36px; font-size:16px; opacity:0.3;"></div>
+                <div class="arr-box checked" style="width:36px; height:36px; font-size:16px; opacity:0.3;"></div>
+                <div class="arr-box checked" style="width:36px; height:36px; font-size:16px; opacity:0.3;"></div>
+              </div>
+
+            </div>
+
+            <div class="callout" style="margin-top:0;">
+              <p style="margin:0; font-size:15px;">Merging two sorted arrays of size <code>N/2</code> takes exactly <code>O(N)</code> time. Since we split the array in half <code>log N</code> times, the total time is <strong>O(N log N)</strong>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Merge Sort</div>
+            <div class="sub">Interactive Demo</div>
+          </div>
+          <span class="pill">Visualiser</span>
+        </div>
+
+        <h2>Live Merge Sort Visualiser</h2>
+
+        <div class="viz-panel" id="merge-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
+          <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;" id="merge-viz-pass">Press Play to begin</div>
+          
+          <div id="merge-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:16px;">
+            </div>
+          
+          <div id="merge-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
+          
+          <div id="merge-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+            <button class="viz-btn" onclick="mergeVizPlay()">▶ Play</button>
+            <button class="viz-btn" onclick="mergeVizPause()" style="background:#374151;">⏸ Pause</button>
+            <button class="viz-btn" onclick="mergeVizStep()">⏭ Step</button>
+            <button class="viz-btn" onclick="mergeVizReset()" style="background:#374151;">↺ Reset</button>
+            <button class="viz-btn" onclick="mergeVizShuffle()" style="background:#374151;">🔀 Shuffle</button>
+            
+            <div style="display:flex; align-items:center; gap:8px; margin-left:14px;">
+              <span style="font-size:12px; font-weight:700; color:var(--muted);">Speed:</span>
+              <input type="range" id="merge-viz-speed" min="100" max="900" value="500" style="width:100px;" oninput="mergeVizSetSpeed(this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Waiting</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dbeafe; border:2px solid #3b82f6;"></div>Active Sublists</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Comparing</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Writing / Sorted</div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+
+        <script>
+          (function() {
+            let vizArr = [];
+            let vizSteps = [];
+            let vizCurrentStep = 0;
+            let vizTimer = null;
+            let vizSpeed = 500;
+
+            function generateMergeSortSteps(initialArr) {
+              let arr = [...initialArr];
+              let steps = [];
+              let n = arr.length;
+              
+              steps.push({ arr: [...arr], range: [-1, -1], cmp: [], write: -1, msg: 'Initial state', pass: 'Start' });
+
+              function merge(left, mid, right, depth) {
+                let temp = [];
+                let i = left;
+                let j = mid + 1;
+
+                steps.push({ arr: [...arr], range: [left, right], cmp: [], write: -1, msg: `Merging sublists [${left}-${mid}] and [${mid+1}-${right}]`, pass: `Depth ${depth}` });
+
+                while (i <= mid && j <= right) {
+                  steps.push({ arr: [...arr], range: [left, right], cmp: [i, j], write: -1, msg: `Comparing ${arr[i]} and ${arr[j]}`, pass: `Depth ${depth}` });
+                  if (arr[i] <= arr[j]) {
+                    temp.push(arr[i++]);
+                  } else {
+                    temp.push(arr[j++]);
+                  }
+                }
+
+                while (i <= mid) temp.push(arr[i++]);
+                while (j <= right) temp.push(arr[j++]);
+
+                // Write back from temp to original array
+                for (let k = 0; k < temp.length; k++) {
+                  arr[left + k] = temp[k];
+                  steps.push({ arr: [...arr], range: [left, right], cmp: [], write: left + k, msg: `Writing ${temp[k]} into position ${left + k}`, pass: `Depth ${depth}` });
+                }
+              }
+
+              function mergeSortRecursive(left, right, depth) {
+                if (left >= right) return;
+                let mid = Math.floor((left + right) / 2);
+                mergeSortRecursive(left, mid, depth + 1);
+                mergeSortRecursive(mid + 1, right, depth + 1);
+                merge(left, mid, right, depth);
+              }
+
+              mergeSortRecursive(0, n - 1, 1);
+              
+              steps.push({ arr: [...arr], range: [0, n-1], cmp: [], write: -1, sorted: true, msg: `Array is fully sorted!`, pass: 'Complete' });
+              return steps;
+            }
+
+            function renderVizStep(stepIndex) {
+              if (vizSteps.length === 0) return;
+              const step = vizSteps[stepIndex];
+              const container = document.getElementById('merge-viz-array');
+              if (!container) return; 
+              
+              let html = '';
+              const maxVal = Math.max(...step.arr);
+              
+              step.arr.forEach((val, idx) => {
+                const barHeight = Math.max(10, (val / maxVal) * 80); 
+                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
+                let transform = '';
+
+                if (step.sorted) {
+                  // Entire array is sorted at the end
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534';
+                } else if (idx >= step.range[0] && idx <= step.range[1]) {
+                  // In the active range being merged
+                  bg = '#dbeafe'; border = '#3b82f6'; textColor = '#1e3a8a';
+                  
+                  if (step.cmp.includes(idx)) {
+                    // Being actively compared
+                    bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e';
+                    transform = 'transform: translateY(-5px); box-shadow: 0 4px 10px rgba(245,158,11,0.2);';
+                  } else if (idx === step.write) {
+                    // Being written to
+                    bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534';
+                    transform = 'transform: scale(1.05);';
+                  }
+                }
+
+                html += `
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
+                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.2s;"></div>
+                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; transition:all 0.2s; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                  </div>`;
+              });
+
+              container.innerHTML = html;
+              document.getElementById('merge-viz-status').textContent = step.msg;
+              document.getElementById('merge-viz-pass').textContent = step.pass === 'Start' ? 'Press Play to begin' : step.pass;
+            }
+
+            window.mergeVizInit = function(arr) {
+              vizArr = arr || [8, 4, 6, 2, 7, 3, 1, 5];
+              vizSteps = generateMergeSortSteps(vizArr);
+              vizCurrentStep = 0;
+              renderVizStep(0);
+            };
+
+            window.mergeVizPlay = function() {
+              if (vizTimer) return;
+              const delay = 1000 - vizSpeed; 
+              vizTimer = setInterval(() => {
+                if (vizCurrentStep < vizSteps.length - 1) {
+                  vizCurrentStep++;
+                  renderVizStep(vizCurrentStep);
+                } else {
+                  window.mergeVizPause();
+                }
+              }, delay);
+            };
+
+            window.mergeVizPause = function() {
+              if (vizTimer) {
+                clearInterval(vizTimer);
+                vizTimer = null;
+              }
+            };
+
+            window.mergeVizStep = function() {
+              window.mergeVizPause();
+              if (vizCurrentStep < vizSteps.length - 1) {
+                vizCurrentStep++;
+                renderVizStep(vizCurrentStep);
+              }
+            };
+
+            window.mergeVizReset = function() {
+              window.mergeVizPause();
+              window.mergeVizInit([8, 4, 6, 2, 7, 3, 1, 5]); 
+            };
+
+            window.mergeVizShuffle = function() {
+              window.mergeVizPause();
+              let newArr = [...vizArr].sort(() => Math.random() - 0.5);
+              window.mergeVizInit(newArr);
+            };
+
+            window.mergeVizSetSpeed = function(val) {
+              vizSpeed = parseInt(val);
+              if (vizTimer) {
+                window.mergeVizPause();
+                window.mergeVizPlay(); 
+              }
+            };
+
+            setTimeout(() => {
+              window.mergeVizInit([8, 4, 6, 2, 7, 3, 1, 5]);
+            }, 50);
+          })();
+        </script>
+      </section>
+
+
+      <section class="slide">
+        <style>
+          .kw { color: #38bdf8; font-weight: bold; }
+          .fn { color: #a3e635; }
+          .vr { color: #e2e8f0; }
+          .nu { color: #fcd34d; }
+          .cm { color: #64748b; font-style: italic; }
+        </style>
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Merge Sort</div>
+            <div class="sub">Algorithm</div>
+          </div>
+          <span class="pill">Recursive Implementation</span>
+        </div>
+
+        <h2>Merge Sort — Code Architecture</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b; display:flex; justify-content:space-between; align-items:center;">
+              <div class="sort-panel-title">Pseudocode Structure</div>
+            </div>
+            <div style="padding:16px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:13px; line-height:1.5; color:#e2e8f0; white-space:pre;"><span class="kw">procedure</span> <span class="fn">mergeSort</span>(<span class="vr">arr</span>, <span class="vr">left</span>, <span class="vr">right</span>)
+  <span class="kw">if</span> <span class="vr">left</span> >= <span class="vr">right</span>
+    <span class="kw">return</span> <span class="cm">// Base case: 1 element is sorted</span>
+    
+  <span class="vr">mid</span> = (<span class="vr">left</span> + <span class="vr">right</span>) / <span class="nu">2</span>
+  
+  <span class="cm">// Recursively sort first half</span>
+  <span class="fn">mergeSort</span>(<span class="vr">arr</span>, <span class="vr">left</span>, <span class="vr">mid</span>)
+  
+  <span class="cm">// Recursively sort second half</span>
+  <span class="fn">mergeSort</span>(<span class="vr">arr</span>, <span class="vr">mid</span>+<span class="nu">1</span>, <span class="vr">right</span>)
+  
+  <span class="cm">// Merge the two sorted halves</span>
+  <span class="fn">merge</span>(<span class="vr">arr</span>, <span class="vr">left</span>, <span class="vr">mid</span>, <span class="vr">right</span>)
+<span class="kw">end procedure</span></div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="info-card" style="border-left-color:#dc2626;">
+              <h3 style="margin-top:0; color:#991b1b;">The Base Case</h3>
+              <p style="font-size:15px; margin-bottom:0;"><code>left >= right</code> means the sublist has shrunk to 1 element. The recursion stops and unwinds.</p>
+            </div>
+            <div class="info-card">
+              <h3 style="margin-top:0;">The Recursive Calls</h3>
+              <p style="font-size:15px; margin-bottom:0;">The algorithm calls itself on the left half, then the right half, driving deep down the tree until everything is split up.</p>
+            </div>
+            <div class="info-card" style="border-left-color:var(--accent);">
+              <h3 style="margin-top:0; color:var(--accent);">The Heavy Lifting</h3>
+              <p style="font-size:15px; margin-bottom:0;">The actual sorting logic lives entirely inside the <code>merge()</code> helper function, which handles the O(n) array stitching at each level.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Merge Sort</div>
+            <div class="sub">Traits & Performance</div>
+          </div>
+          <span class="pill">Analysis</span>
+        </div>
+
+        <h2>Merge Sort — Key Traits</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="callout" style="margin-top:0; border-left-color:#16a34a; background:#f0fdf4;">
+              <p style="font-size:15px; font-weight:800; color:#166534; margin:0 0 4px;">Rock Solid O(n log n) Performance</p>
+              <p style="font-size:14px; margin:0;">Because the list is always divided strictly in half, the recursion tree is perfectly balanced. It takes <code>log n</code> levels to split, and merging at each level takes <code>O(n)</code>.</p>
+            </div>
+
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div class="sort-panel-title">Not In-Place! (The Tradeoff)</div>
+              </div>
+              <div class="sort-panel-body" style="padding:16px; background:#fff; font-size:15px; line-height:1.6; color:#0f172a;">
+                <p style="margin-top:0;">Merge Sort's biggest flaw is its <strong>Space Complexity</strong>.</p>
+                <p style="margin-bottom:0;">To safely merge two halves without overwriting data, it requires a temporary array. This means sorting an array of 1,000,000 items requires allocating memory for <em>another</em> 1,000,000 items. Memory footprint: <code style="background:#fee2e2; color:#991b1b; padding:2px 6px; border-radius:4px;">O(n)</code>.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="card" style="margin-top:0;">
+              <h3 style="margin-top:0; color:var(--ink);">Stability</h3>
+              <p style="font-size:14px;">Merge sort is naturally <strong>stable</strong>. When comparing elements during the merge phase (e.g., <code>arr[i] <= arr[j]</code>), we pull from the left half first if they are equal, preserving their original relative order.</p>
+            </div>
+            
+            <div class="sort-panel" style="margin-top:8px;">
+              <div class="sort-panel-hdr" style="background:#052e16;">
+                <div class="sort-panel-title">When to use Merge Sort?</div>
+              </div>
+              <div class="sort-panel-body" style="padding:0; background:#fff;">
+                <table style="margin:0; border:none; border-radius:0;">
+                  <tr>
+                    <th style="background:#f8fafc; color:#0f172a; border-bottom:1px solid #e2e8f0; text-align:left; padding:12px 16px;">Scenario</th>
+                    <th style="background:#f8fafc; color:#0f172a; border-bottom:1px solid #e2e8f0; text-align:center; padding:12px 16px;">Suitability</th>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0;">Massive Datasets</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center;"><strong style="color:#16a34a;">Excellent</strong></td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0;">Linked Lists</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center;"><strong style="color:#16a34a;">Perfect</strong> (No random access needed)</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px;">Strict Memory Limits</td>
+                    <td style="padding:12px 16px; text-align:center;"><strong style="color:#dc2626;">Poor</strong> (Use Quick or Heap sort)</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Quick Sort</div>
+            <div class="sub">Core Concept</div>
+          </div>
+          <span class="pill">Overview</span>
+        </div>
+
+        <h2>What is Quick Sort?</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>Like Merge Sort, it is a <strong style="color:var(--accent);">Divide and Conquer</strong> algorithm.</li>
+              <li>It recursively divides the array into sub-parts and sorts those sub-arrays.</li>
+              <li>You select one element to act as a <strong>Pivot</strong>.</li>
+              <li>The list is divided into three parts:
+                <ul style="margin-top:4px; margin-bottom:4px; font-size:16px;">
+                  <li>Elements <strong>less than</strong> the pivot (moved to the left)</li>
+                  <li>The <strong>Pivot</strong> itself (now in its final sorted position)</li>
+                  <li>Elements <strong>greater than</strong> the pivot (moved to the right)</li>
+                </ul>
+              </li>
+              <li>Then, recursively quicksort the left part, followed by the right part.</li>
+            </ul>
+
+            <div class="card" style="margin-top:16px;">
+              <p style="margin:0; font-size:17px;">
+                <strong>Best & Average Case:</strong> <code style="background:#f0fdf4; color:#166534;">$O(n \log n)$</code><br/>
+                <strong>Worst Case:</strong> <strong style="color:#dc2626; font-size:19px;">$O(n^2)$</strong> (if a bad pivot is chosen)<br/>
+                <strong>Space Complexity:</strong> <code>$O(\log n)$</code> (In-place sorting!)
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <div class="viz-panel" style="text-align:center;">
+              <div class="viz-label">PIVOT SELECTION STRATEGIES</div>
+              <p style="font-size:14px; color:var(--muted); margin-top:0; margin-bottom:12px;">How do we choose the pivot? The choice heavily impacts performance.</p>
+              
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div class="info-card" style="padding:10px;">
+                  <h4 style="margin:0; color:var(--ink); font-size:14px;">1. Last Element / First Element</h4>
+                  <p style="margin:2px 0 0; font-size:13px; color:var(--muted);">Easiest to code (used in our example), but triggers worst-case $O(n^2)$ if the array is already sorted.</p>
+                </div>
+                <div class="info-card" style="padding:10px;">
+                  <h4 style="margin:0; color:var(--ink); font-size:14px;">2. Random Element</h4>
+                  <p style="margin:2px 0 0; font-size:13px; color:var(--muted);">Pick a random index. Avoids consistent worst-case scenarios.</p>
+                </div>
+                <div class="info-card" style="padding:10px; border-left-color:var(--accent);">
+                  <h4 style="margin:0; color:var(--accent); font-size:14px;">3. Median-of-Three</h4>
+                  <p style="margin:2px 0 0; font-size:13px; color:var(--muted);">Look at the far left, far right, and middle elements, and use their median value. Highly optimal!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Quick Sort</div>
+            <div class="sub">Mechanism</div>
+          </div>
+          <span class="pill">How it works</span>
+        </div>
+
+        <h2>The Partition Phase</h2>
+
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <p style="margin-top:0; font-size:16px;">The magic of Quick Sort happens inside the <code>Partition</code> step. Assuming we pick the <strong>Last Element</strong> as the pivot:</p>
+            <ul style="margin-bottom:14px;">
+              <li>We track the boundary of elements smaller than the pivot using pointer <code>i</code>.</li>
+              <li>We traverse the array with pointer <code>j</code>.</li>
+              <li>If <code>arr[j] < pivot</code>, we expand our "smaller" boundary (<code>i++</code>) and <strong>swap</strong> <code>arr[i]</code> with <code>arr[j]</code>.</li>
+              <li>Once <code>j</code> reaches the end, we swap the pivot into position <code>i + 1</code>.</li>
+              <li>The pivot is now exactly where it belongs in the final sorted array!</li>
+            </ul>
+
+            
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:18px;">
+            <div class="viz-panel" style="text-align:center; background:#fff;">
+              <div class="viz-label">PARTITION DIAGRAM</div>
+              
+              <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Target Pivot = 6 (Last Element)</div>
+              <div style="display:flex; gap:6px; justify-content:center; align-items:center; margin-bottom:12px;">
+                <div class="arr-box settled" style="background:#dbeafe; border-color:#3b82f6; color:#1e3a8a;">3</div>
+                <div class="arr-box settled" style="background:#dbeafe; border-color:#3b82f6; color:#1e3a8a;">5</div>
+                <div class="arr-box settled" style="background:#dbeafe; border-color:#3b82f6; color:#1e3a8a;">2</div>
+                
+                <div style="width:3px; height:46px; background:#94a3b8; margin:0 2px;"></div>
+                
+                <div class="arr-box checked" style="background:#fee2e2; border-color:#ef4444; color:#991b1b;">9</div>
+                <div class="arr-box checked" style="background:#fee2e2; border-color:#ef4444; color:#991b1b;">7</div>
+                <div class="arr-box checked" style="background:#fee2e2; border-color:#ef4444; color:#991b1b;">8</div>
+                
+                <div class="arr-box current" style="background:#f3e8ff; border-color:#a855f7; color:#6b21a8; transform:translateY(-8px);">6</div>
+              </div>
+              
+              <div style="display:flex; gap:6px; justify-content:center; margin-bottom:6px;">
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono); font-weight:bold;">i ←</div>
+                <div style="width:3px; margin:0 2px;"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);"></div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono); font-weight:bold;">j ←</div>
+                <div style="width:46px; font-size:11px; color:var(--muted); font-family:var(--mono);">Pivot</div>
+              </div>
+
+              <div style="font-size:12px; color:var(--muted); margin-bottom:6px; margin-top:14px;">End of pass: Swap Pivot into i+1 (Index 3)</div>
+              <div style="display:flex; gap:6px; justify-content:center; align-items:center;">
+                <div class="arr-box" style="opacity:0.5;">3</div>
+                <div class="arr-box" style="opacity:0.5;">5</div>
+                <div class="arr-box" style="opacity:0.5;">2</div>
+                <div class="arr-box settled" style="background:#dcfce7; border-color:#16a34a; color:#166534; box-shadow:0 0 10px rgba(22,163,74,.4);">6</div>
+                <div class="arr-box" style="opacity:0.5;">7</div>
+                <div class="arr-box" style="opacity:0.5;">8</div>
+                <div class="arr-box" style="opacity:0.5;">9</div>
+              </div>
+
+            </div>
+
+            <div class="callout" style="margin-top:0;">
+              <p style="margin:0; font-size:15px;">After partitioning, the pivot (6) is permanently sorted. The left side <code>[3,5,2]</code> and right side <code>[7,8,9]</code> will now be recursively sorted in the exact same way.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Quick Sort</div>
+            <div class="sub">Interactive Demo</div>
+          </div>
+          <span class="pill">Visualiser</span>
+        </div>
+
+        <h2>Live Quick Sort Visualiser</h2>
+
+        <div class="viz-panel" id="qs-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
+          <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;" id="qs-viz-pass">Press Play to begin</div>
+          
+          <div id="qs-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:16px;">
+            </div>
+          
+          <div id="qs-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
+          
+          <div id="qs-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+            <button class="viz-btn" onclick="qsVizPlay()">▶ Play</button>
+            <button class="viz-btn" onclick="qsVizPause()" style="background:#374151;">⏸ Pause</button>
+            <button class="viz-btn" onclick="qsVizStep()">⏭ Step</button>
+            <button class="viz-btn" onclick="qsVizReset()" style="background:#374151;">↺ Reset</button>
+            <button class="viz-btn" onclick="qsVizShuffle()" style="background:#374151;">🔀 Shuffle</button>
+            
+            <div style="display:flex; align-items:center; gap:8px; margin-left:14px;">
+              <span style="font-size:12px; font-weight:700; color:var(--muted);">Speed:</span>
+              <input type="range" id="qs-viz-speed" min="100" max="900" value="500" style="width:100px;" oninput="qsVizSetSpeed(this.value)">
+            </div>
+          </div>
+        </div>
+
+        <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Inactive</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dbeafe; border:2px solid #3b82f6;"></div>Active Range</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f3e8ff; border:2px solid #a855f7;"></div>Pivot</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Comparing</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#ffedd5; border:2px solid #f97316;"></div>Swapping</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Final Sorted Position</div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+
+        <script>
+          (function() {
+            let vizArr = [];
+            let vizSteps = [];
+            let vizCurrentStep = 0;
+            let vizTimer = null;
+            let vizSpeed = 500;
+
+            function generateQuickSortSteps(initialArr) {
+              let arr = [...initialArr];
+              let steps = [];
+              let sortedIndices = [];
+
+              function swap(i, j) {
+                let temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+              }
+
+              steps.push({ arr: [...arr], range: [-1, -1], pivot: -1, cmp: [], swp: [], sorted: [...sortedIndices], msg: 'Initial state', pass: 'Start' });
+
+              function partition(low, high) {
+                let pivotVal = arr[high];
+                steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [], swp: [], sorted: [...sortedIndices], msg: `Selected pivot: ${pivotVal} at index ${high}`, pass: `Partition [${low}-${high}]` });
+
+                let i = low - 1;
+                for (let j = low; j < high; j++) {
+                  steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [j, high], swp: [], sorted: [...sortedIndices], msg: `Checking if arr[${j}] (${arr[j]}) < pivot (${pivotVal})`, pass: `Partition [${low}-${high}]` });
+                  
+                  if (arr[j] < pivotVal) {
+                    i++;
+                    steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [], swp: [i, j], sorted: [...sortedIndices], msg: `${arr[j]} < ${pivotVal}, expanding lower boundary and swapping arr[${i}] with arr[${j}]`, pass: `Partition [${low}-${high}]` });
+                    swap(i, j);
+                    steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [], swp: [i, j], sorted: [...sortedIndices], msg: `Swapped. Boundary 'i' is now at index ${i}`, pass: `Partition [${low}-${high}]` });
+                  }
+                }
+                
+                i++;
+                steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [], swp: [i, high], sorted: [...sortedIndices], msg: `End of loop. Moving pivot into its sorted place at index ${i}`, pass: `Partition [${low}-${high}]` });
+                swap(i, high);
+                sortedIndices.push(i);
+                steps.push({ arr: [...arr], range: [low, high], pivot: i, cmp: [], swp: [], sorted: [...sortedIndices], msg: `Pivot ${pivotVal} locked in place.`, pass: `Partition [${low}-${high}]` });
+                
+                return i;
+              }
+
+              function quickSortRec(low, high) {
+                if (low < high) {
+                  let pi = partition(low, high);
+                  quickSortRec(low, pi - 1);
+                  quickSortRec(pi + 1, high);
+                } else if (low === high) {
+                  if (!sortedIndices.includes(low)) sortedIndices.push(low);
+                  steps.push({ arr: [...arr], range: [low, high], pivot: -1, cmp: [], swp: [], sorted: [...sortedIndices], msg: `Sub-array of length 1 is inherently sorted.`, pass: `Base Case` });
+                }
+              }
+
+              quickSortRec(0, arr.length - 1);
+              steps.push({ arr: [...arr], range: [-1, -1], pivot: -1, cmp: [], swp: [], sorted: Array.from({length: arr.length}, (_, i) => i), msg: `Array is fully sorted!`, pass: 'Complete' });
+              return steps;
+            }
+
+            function renderVizStep(stepIndex) {
+              if (vizSteps.length === 0) return;
+              const step = vizSteps[stepIndex];
+              const container = document.getElementById('qs-viz-array');
+              if (!container) return; 
+              
+              let html = '';
+              const maxVal = Math.max(...step.arr);
+              
+              step.arr.forEach((val, idx) => {
+                const barHeight = Math.max(10, (val / maxVal) * 80); 
+                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
+                let transform = '';
+
+                // Apply colors based on state
+                if (step.sorted.includes(idx)) {
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; // Sorted
+                } else if (idx >= step.range[0] && idx <= step.range[1]) {
+                  bg = '#dbeafe'; border = '#3b82f6'; textColor = '#1e3a8a'; // Active range
+                }
+
+                // Overrides for specific actions
+                if (idx === step.pivot) {
+                  bg = '#f3e8ff'; border = '#a855f7'; textColor = '#6b21a8'; // Pivot
+                  transform = 'transform: translateY(-8px); box-shadow: 0 4px 10px rgba(168,85,247,0.3);';
+                } else if (step.swp.includes(idx)) {
+                  bg = '#ffedd5'; border = '#f97316'; textColor = '#9a3412'; // Swapping
+                  transform = 'transform: scale(1.05);';
+                } else if (step.cmp.includes(idx)) {
+                  bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e'; // Comparing
+                }
+
+                html += `
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
+                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.2s;"></div>
+                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; transition:all 0.2s; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                  </div>`;
+              });
+
+              container.innerHTML = html;
+              document.getElementById('qs-viz-status').textContent = step.msg;
+              document.getElementById('qs-viz-pass').textContent = step.pass;
+            }
+
+            window.qsVizInit = function(arr) {
+              vizArr = arr || [9, 3, 5, 15, 7, 8, 2, 11];
+              vizSteps = generateQuickSortSteps(vizArr);
+              vizCurrentStep = 0;
+              renderVizStep(0);
+            };
+
+            window.qsVizPlay = function() {
+              if (vizTimer) return;
+              const delay = 1000 - vizSpeed; 
+              vizTimer = setInterval(() => {
+                if (vizCurrentStep < vizSteps.length - 1) {
+                  vizCurrentStep++;
+                  renderVizStep(vizCurrentStep);
+                } else {
+                  window.qsVizPause();
+                }
+              }, delay);
+            };
+
+            window.qsVizPause = function() {
+              if (vizTimer) {
+                clearInterval(vizTimer);
+                vizTimer = null;
+              }
+            };
+
+            window.qsVizStep = function() {
+              window.qsVizPause();
+              if (vizCurrentStep < vizSteps.length - 1) {
+                vizCurrentStep++;
+                renderVizStep(vizCurrentStep);
+              }
+            };
+
+            window.qsVizReset = function() {
+              window.qsVizPause();
+              window.qsVizInit([9, 3, 5, 15, 7, 8, 2, 11]); 
+            };
+
+            window.qsVizShuffle = function() {
+              window.qsVizPause();
+              let newArr = [...vizArr].sort(() => Math.random() - 0.5);
+              window.qsVizInit(newArr);
+            };
+
+            window.qsVizSetSpeed = function(val) {
+              vizSpeed = parseInt(val);
+              if (vizTimer) {
+                window.qsVizPause();
+                window.qsVizPlay(); 
+              }
+            };
+
+            setTimeout(() => {
+              window.qsVizInit([9, 3, 5, 15, 7, 8, 2, 11]);
+            }, 50);
+          })();
+        </script>
+      </section>
+
+
+      <section class="slide">
+        <style>
+          .kw { color: #38bdf8; font-weight: bold; }
+          .fn { color: #a3e635; }
+          .vr { color: #e2e8f0; }
+          .nu { color: #fcd34d; }
+          .cm { color: #64748b; font-style: italic; }
+        </style>
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Quick Sort</div>
+            <div class="sub">Algorithm</div>
+          </div>
+          <span class="pill">C# Implementation</span>
+        </div>
+
+        <h2>Quick Sort — Code Architecture</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div class="sort-panel-title">1. The Recursive Driver</div>
+              </div>
+              <div style="padding:14px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:12px; line-height:1.5; color:#e2e8f0; white-space:pre;"><span class="cm">/* low -> Starting index, high -> Ending index */</span>
+<span class="kw">void</span> <span class="fn">quickSort</span>(<span class="kw">int</span>[] <span class="vr">arr</span>, <span class="kw">int</span> <span class="vr">low</span>, <span class="kw">int</span> <span class="vr">high</span>) {
+  <span class="kw">if</span> (<span class="vr">low</span> < <span class="vr">high</span>) {
+    <span class="cm">// pivot is the partitioning index</span>
+    <span class="cm">// arr[pivot] is now at right place</span>
+    <span class="kw">int</span> <span class="vr">pivot</span> = <span class="fn">Partition</span>(<span class="vr">arr</span>, <span class="vr">low</span>, <span class="vr">high</span>);
+
+    <span class="fn">quickSort</span>(<span class="vr">arr</span>, <span class="vr">low</span>, <span class="vr">pivot</span> - <span class="nu">1</span>); <span class="cm">// Before pivot</span>
+    <span class="fn">quickSort</span>(<span class="vr">arr</span>, <span class="vr">pivot</span> + <span class="nu">1</span>, <span class="vr">high</span>); <span class="cm">// After pivot</span>
+  }
+}</div>
+            </div>
+
+            <div class="info-card">
+              <h3 style="margin-top:0;">Base Case Check</h3>
+              <p style="font-size:14px; margin-bottom:0;"><code>if (low &lt; high)</code> ensures we only try to sort lists of 2 or more elements. If not, there are no more elements to sort in that branch.</p>
+            </div>
+          </div>
+
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#052e16;">
+              <div class="sort-panel-title">2. The Partition Logic</div>
+            </div>
+            <div style="padding:14px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:12px; line-height:1.5; color:#e2e8f0; white-space:pre;"><span class="kw">static int</span> <span class="fn">Partition</span>(<span class="kw">int</span>[] <span class="vr">arr</span>, <span class="kw">int</span> <span class="vr">low</span>, <span class="kw">int</span> <span class="vr">high</span>) {
+  <span class="cm">// Choose the pivot (last element here)</span>
+  <span class="kw">int</span> <span class="vr">pivot</span> = <span class="vr">arr</span>[<span class="vr">high</span>]; 
+  
+  <span class="cm">// Index of smaller element.</span>
+  <span class="kw">int</span> <span class="vr">i</span> = <span class="vr">low</span> - <span class="nu">1</span>; 
+  
+  <span class="cm">// Traverse arr and move smaller elements to left</span>
+  <span class="kw">for</span> (<span class="kw">int</span> <span class="vr">j</span> = <span class="vr">low</span>; <span class="vr">j</span> <= <span class="vr">high</span> - <span class="nu">1</span>; <span class="vr">j</span>++) {
+    <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">j</span>] < <span class="vr">pivot</span>) {
+      <span class="vr">i</span>++; 
+      <span class="fn">Swap</span>(<span class="vr">arr</span>, <span class="vr">i</span>, <span class="vr">j</span>); 
+    }
+  }
+  
+  <span class="cm">// Move pivot to its correct sorted position</span>
+  <span class="fn">Swap</span>(<span class="vr">arr</span>, <span class="vr">i</span> + <span class="nu">1</span>, <span class="vr">high</span>); 
+  
+  <span class="kw">return</span> <span class="vr">i</span> + <span class="nu">1</span>; <span class="cm">// return the Pivot position</span>
+}</div>
+          </div>
+
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Quick Sort</div>
+            <div class="sub">Traits & Performance</div>
+          </div>
+          <span class="pill">Analysis</span>
+        </div>
+
+        <h2>Quick Sort — Key Traits</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="callout" style="margin-top:0; border-left-color:#16a34a; background:#f0fdf4;">
+              <p style="font-size:15px; font-weight:800; color:#166534; margin:0 0 4px;">In-Place Sorting (Massive Advantage!)</p>
+              <p style="font-size:14px; margin:0;">Unlike Merge Sort which requires $O(n)$ extra memory to merge arrays, Quick Sort swaps elements within the original array, keeping its memory footprint to $O(\log n)$ for the recursion stack.</p>
+            </div>
+
+            
+
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div class="sort-panel-title">The "Worst Case" Flaw</div>
+              </div>
+              <div class="sort-panel-body" style="padding:16px; background:#fff; font-size:14px; line-height:1.6; color:#0f172a;">
+                <p style="margin-top:0;">If you always pick the <strong>Last Element</strong> as the pivot, and the array is <em>already sorted</em>, your pivot is always the largest item.</p>
+                <p style="margin-bottom:0;">This causes the array to divide into sizes of <code>N-1</code> and <code>0</code> instead of splitting in half. The recursion tree becomes a straight line, degrading performance to a terrible <strong style="color:#dc2626; font-size:16px;">$O(n^2)$</strong>. Randomizing the pivot prevents this!</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="card" style="margin-top:0;">
+              <h3 style="margin-top:0; color:var(--ink);">Unstable</h3>
+              <p style="font-size:14px;">Quick sort is naturally <strong>unstable</strong>. Elements of equal value can have their relative order swapped around wildly as items are thrown back and forth across the pivot boundary.</p>
+            </div>
+            
+            <div class="sort-panel" style="margin-top:8px;">
+              <div class="sort-panel-hdr" style="background:#052e16;">
+                <div class="sort-panel-title">Quick Sort vs. Merge Sort</div>
+              </div>
+              <div class="sort-panel-body" style="padding:0; background:#fff;">
+                <table style="margin:0; border:none; border-radius:0;">
+                  <tr>
+                    <th style="background:#f8fafc; color:#0f172a; border-bottom:1px solid #e2e8f0; text-align:left; padding:12px 16px;">Feature</th>
+                    <th style="background:#f8fafc; color:#0f172a; border-bottom:1px solid #e2e8f0; text-align:center; padding:12px 16px;">Quick Sort</th>
+                    <th style="background:#f8fafc; color:#0f172a; border-bottom:1px solid #e2e8f0; text-align:center; padding:12px 16px;">Merge Sort</th>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; font-weight:bold;">Time (Avg)</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center; color:#166534;">$O(n \log n)$</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center; color:#166534;">$O(n \log n)$</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; font-weight:bold;">Time (Worst)</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center; color:#dc2626;">$O(n^2)$</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center; color:#166534;">$O(n \log n)$</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; font-weight:bold;">Space (RAM)</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center; color:#166534;">$O(\log n)$</td>
+                    <td style="padding:12px 16px; border-bottom:1px solid #e2e8f0; text-align:center; color:#dc2626;">$O(n)$</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:12px 16px; font-weight:bold;">Stability</td>
+                    <td style="padding:12px 16px; text-align:center;">Unstable</td>
+                    <td style="padding:12px 16px; text-align:center; font-weight:bold;">Stable</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+<section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Searching &amp; Sorting</div>
+            <div class="sub">Topic Transition</div>
+          </div>
+          <span class="pill">Part 2</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; flex:1; padding-bottom:40px;">
+          
+          <h1 style="font-size:4rem; font-weight:900; color:var(--ink); margin:0 0 24px; letter-spacing:-0.02em; text-align:center;">
+            Searching Algorithms
+          </h1>
+
+          <div class="callout" style="max-width:850px; font-size:20px; line-height:1.6; border-left-width:6px; padding:24px 32px; background:var(--soft2);">
+            <p style="margin:0 0 16px;">
+              A <strong style="color:var(--accent);">Searching Algorithm</strong> is a step-by-step procedure designed to locate a specific target element within a larger collection of data. 
+            </p>
+            <p style="margin:0; font-size:18px; color:var(--muted);">
+              It is one of the most fundamental operations in computer science. The efficiency of a search depends heavily on the chosen data structure and whether the underlying data is organized (sorted) or unorganized (unsorted).
+            </p>
+          </div>
+
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Linear Search</div>
+            <div class="sub">Concept Breakdown</div>
+          </div>
+          <span class="pill">Overview</span>
+        </div>
+
+        <h2>What is Linear Search?</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>The most straightforward and intuitive searching method.</li>
+              <li>Scans the array sequentially from the <strong>very beginning to the end</strong>.</li>
+              <li>Checks each element one by one until the target value is found or the list ends.</li>
+              <li><strong>Major Advantage:</strong> The array does <em>not</em> need to be sorted. It works on any raw data.</li>
+            </ul>
+
+            <div class="callout">
+              <p style="margin:0;">Think of it like looking for a specific book on an unorganized shelf by checking the spine of every single book from left to right.</p>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <p style="margin:0; font-size:17px;">
+                <strong>Best Case:</strong> <code style="background:#f0fdf4; color:#166534;">$O(1)$</code> (Target is the first item)<br/>
+                <strong>Worst Case:</strong> <strong style="color:#dc2626; font-size:19px;">$O(n)$</strong> (Target is the last item, or not present)<br/>
+                <strong>Space Complexity:</strong> <code>$O(1)$</code>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            
+            
+            <div class="info-card" style="margin-top:14px; border-left-color:var(--accent);">
+              <h3 style="color:var(--accent); margin-top:0;">The Trade-off</h3>
+              <p style="margin:0; font-size:15px;">Because it checks every element, it is incredibly inefficient for large datasets. Searching a database of 1,000,000 users might take 1,000,000 checks in the worst case.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Linear Search</div>
+            <div class="sub">Interactive Demo</div>
+          </div>
+          <span class="pill">Visualiser</span>
+        </div>
+
+        <h2>Live Linear Search Visualiser</h2>
+
+        <div class="viz-panel" id="ls-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
+            <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;" id="ls-viz-pass">Press Play to begin</div>
+            <div style="font-size:16px; font-weight:800; color:var(--ink); background:var(--soft2); padding:6px 16px; border-radius:8px; border:1px solid var(--soft);">Target: <span style="color:var(--accent);">17</span></div>
+          </div>
+          
+          <div id="ls-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:100px; margin-bottom:16px;">
+            </div>
+          
+          <div id="ls-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
+          
+          <div id="ls-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+            <button class="viz-btn" onclick="lsVizPlay()">▶ Play</button>
+            <button class="viz-btn" onclick="lsVizPause()" style="background:#374151;">⏸ Pause</button>
+            <button class="viz-btn" onclick="lsVizStep()">⏭ Step</button>
+            <button class="viz-btn" onclick="lsVizReset()" style="background:#374151;">↺ Reset</button>
+          </div>
+        </div>
+
+        <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unchecked</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Currently Checking</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fee2e2; border:2px solid #ef4444;"></div>Not a Match</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Target Found</div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+
+        <script>
+          (function() {
+            let vizArr = [14, 2, 9, 17, 5, 8, 11, 3];
+            let target = 17;
+            let vizSteps = [];
+            let vizCurrentStep = 0;
+            let vizTimer = null;
+
+            function generateLinearSearchSteps() {
+              let steps = [];
+              steps.push({ arr: [...vizArr], curr: -1, checked: [], found: false, msg: 'Initial state: Starting search from index 0.', pass: 'Start' });
+
+              let checked = [];
+              for (let i = 0; i < vizArr.length; i++) {
+                steps.push({ arr: [...vizArr], curr: i, checked: [...checked], found: false, msg: `Checking index ${i}. Is ${vizArr[i]} == ${target}?`, pass: `Step ${i+1}` });
+                
+                if (vizArr[i] === target) {
+                  steps.push({ arr: [...vizArr], curr: i, checked: [...checked], found: true, msg: `Match found! ${vizArr[i]} == ${target}. Search complete at index ${i}.`, pass: 'Found!' });
+                  return steps;
+                }
+                
+                checked.push(i);
+                steps.push({ arr: [...vizArr], curr: -1, checked: [...checked], found: false, msg: `${vizArr[i]} != ${target}. Moving to next element.`, pass: `Step ${i+1}` });
+              }
+              
+              steps.push({ arr: [...vizArr], curr: -1, checked: [...checked], found: false, msg: `End of array reached. Target ${target} not found.`, pass: 'Not Found' });
+              return steps;
+            }
+
+            function renderVizStep(stepIndex) {
+              if (vizSteps.length === 0) return;
+              const step = vizSteps[stepIndex];
+              const container = document.getElementById('ls-viz-array');
+              if (!container) return; 
+              
+              let html = '';
+              const maxVal = Math.max(...step.arr);
+              
+              step.arr.forEach((val, idx) => {
+                const barHeight = Math.max(10, (val / maxVal) * 50); 
+                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
+                let transform = '';
+
+                if (step.found && idx === step.curr) {
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; // Found
+                  transform = 'transform: scale(1.1); box-shadow: 0 4px 10px rgba(22,163,74,.3);';
+                } else if (idx === step.curr) {
+                  bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e'; // Checking
+                  transform = 'transform: translateY(-5px);';
+                } else if (step.checked.includes(idx)) {
+                  bg = '#fee2e2'; border = '#fca5a5'; textColor = '#991b1b'; // Checked & Failed
+                  transform = 'opacity: 0.5;';
+                }
+
+                html += `
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
+                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0;"></div>
+                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                  </div>`;
+              });
+
+              container.innerHTML = html;
+              document.getElementById('ls-viz-status').textContent = step.msg;
+              document.getElementById('ls-viz-pass').textContent = step.pass === 'Start' ? 'Press Play to begin' : step.pass;
+            }
+
+            window.lsVizInit = function() {
+              vizSteps = generateLinearSearchSteps();
+              vizCurrentStep = 0;
+              renderVizStep(0);
+            };
+
+            window.lsVizPlay = function() {
+              if (vizTimer) return;
+              vizTimer = setInterval(() => {
+                if (vizCurrentStep < vizSteps.length - 1) {
+                  vizCurrentStep++;
+                  renderVizStep(vizCurrentStep);
+                } else {
+                  window.lsVizPause();
+                }
+              }, 800);
+            };
+
+            window.lsVizPause = function() {
+              if (vizTimer) {
+                clearInterval(vizTimer);
+                vizTimer = null;
+              }
+            };
+
+            window.lsVizStep = function() {
+              window.lsVizPause();
+              if (vizCurrentStep < vizSteps.length - 1) {
+                vizCurrentStep++;
+                renderVizStep(vizCurrentStep);
+              }
+            };
+
+            window.lsVizReset = function() {
+              window.lsVizPause();
+              window.lsVizInit(); 
+            };
+
+            setTimeout(() => { window.lsVizInit(); }, 50);
+          })();
+        </script>
+      </section>
+
+
+      <section class="slide">
+        <style>
+          .kw { color: #38bdf8; font-weight: bold; }
+          .fn { color: #a3e635; }
+          .vr { color: #e2e8f0; }
+          .nu { color: #fcd34d; }
+          .cm { color: #64748b; font-style: italic; }
+        </style>
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Linear Search</div>
+            <div class="sub">Algorithm</div>
+          </div>
+          <span class="pill">C# Implementation</span>
+        </div>
+
+        <h2>Linear Search — Code Example</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div class="sort-panel-title">Standard Implementation</div>
+            </div>
+            <div style="padding:16px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:14px; line-height:1.6; color:#e2e8f0; white-space:pre;"><span class="kw">public int</span> <span class="fn">LinearSearch</span>(<span class="kw">int</span>[] <span class="vr">arr</span>, <span class="kw">int</span> <span class="vr">target</span>) 
+{
+  <span class="cm">// Traverse the array from start to finish</span>
+  <span class="kw">for</span> (<span class="kw">int</span> <span class="vr">i</span> = <span class="nu">0</span>; <span class="vr">i</span> < <span class="vr">arr</span>.Length; <span class="vr">i</span>++) 
+  {
+    <span class="cm">// If the current element matches the target</span>
+    <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">i</span>] == <span class="vr">target</span>) 
+    {
+      <span class="kw">return</span> <span class="vr">i</span>; <span class="cm">// Return the index where it was found</span>
+    }
+  }
+  
+  <span class="cm">// If the loop completes without returning,</span>
+  <span class="cm">// the target is not in the array.</span>
+  <span class="kw">return</span> -<span class="nu">1</span>; 
+}</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="info-card">
+              <h3 style="margin-top:0;">The Loop</h3>
+              <p style="font-size:15px; margin-bottom:0;">A simple <code>for</code> loop controls the scan. It guarantees that we don't skip any elements and stops automatically at the end of the array.</p>
+            </div>
+            <div class="info-card">
+              <h3 style="margin-top:0;">Early Exit</h3>
+              <p style="font-size:15px; margin-bottom:0;">The moment the <code>if</code> statement evaluates to true, the method <strong>returns</strong>. It does not waste time checking the rest of the array.</p>
+            </div>
+            <div class="info-card" style="border-left-color:var(--accent);">
+              <h3 style="margin-top:0; color:var(--accent);">Returning -1</h3>
+              <p style="font-size:15px; margin-bottom:0;">It is a standard programming convention to return <code>-1</code> when a search fails, because <code>-1</code> can never be a valid array index.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Binary Search</div>
+            <div class="sub">Concept Breakdown</div>
+          </div>
+          <span class="pill">Overview</span>
+        </div>
+
+        <h2>What is Binary Search?</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <div>
+            <ul style="margin-bottom:14px;">
+              <li>A highly efficient search algorithm that follows the <strong style="color:var(--accent);">Divide and Conquer</strong> paradigm.</li>
+              <li><strong>Strict Requirement:</strong> The array <span style="text-decoration:underline; color:#dc2626; font-weight:bold;">MUST be sorted</span> beforehand.</li>
+              <li>It compares the target value to the <strong>middle element</strong> of the array.</li>
+              <li>If they aren't equal, the half in which the target cannot lie is eliminated, and the search continues on the remaining half.</li>
+            </ul>
+
+            <div class="callout">
+              <p style="margin:0;">Think of searching for a word in a physical dictionary. You don't read page 1, then page 2. You open to the middle. If your word comes alphabetically later, you ignore the entire first half of the book.</p>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <p style="margin:0; font-size:17px;">
+                <strong>Best Case:</strong> <code style="background:#f0fdf4; color:#166534;">$O(1)$</code> (Target is exactly in the middle)<br/>
+                <strong>Worst Case:</strong> <strong style="color:var(--accent); font-size:19px;">$O(\log n)$</strong> (Halves the dataset each step)<br/>
+                <strong>Space Complexity:</strong> <code>$O(1)$</code> (Iterative approach)
+              </p>
+            </div>
+          </div>
+
+          <div>
+            
+            
+            <div class="info-card" style="margin-top:14px; border-left-color:var(--accent);">
+              <h3 style="color:var(--accent); margin-top:0;">The Power of Log(n)</h3>
+              <p style="margin:0; font-size:15px;">Because it halves the search space every single step, searching an array of <strong>1,000,000</strong> items takes at most <strong>20 comparisons</strong>. Linear search could take 1,000,000!</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
+
+
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Binary Search</div>
+            <div class="sub">Interactive Demo</div>
+          </div>
+          <span class="pill">Visualiser</span>
+        </div>
+
+        <h2>Live Binary Search Visualiser</h2>
+
+        <div class="viz-panel" id="bs-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
+            <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;" id="bs-viz-pass">Press Play to begin</div>
+            <div style="font-size:16px; font-weight:800; color:var(--ink); background:var(--soft2); padding:6px 16px; border-radius:8px; border:1px solid var(--soft);">Target: <span style="color:var(--accent);">11</span></div>
+          </div>
+          
+          <div id="bs-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:80px; margin-bottom:4px;">
+            </div>
+          <div id="bs-viz-pointers" style="display:flex; gap:8px; height:20px; margin-bottom:16px;">
+            </div>
+          
+          <div id="bs-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
+          
+          <div id="bs-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+            <button class="viz-btn" onclick="bsVizPlay()">▶ Play</button>
+            <button class="viz-btn" onclick="bsVizPause()" style="background:#374151;">⏸ Pause</button>
+            <button class="viz-btn" onclick="bsVizStep()">⏭ Step</button>
+            <button class="viz-btn" onclick="bsVizReset()" style="background:#374151;">↺ Reset</button>
+          </div>
+        </div>
+
+        <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#e2e8f0; border:2px solid #cbd5e1;"></div>Eliminated Range</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dbeafe; border:2px solid #3b82f6;"></div>Active Search Space</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Midpoint (Checking)</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Target Found</div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+
+        <script>
+          (function() {
+            let vizArr = [2, 3, 5, 8, 9, 11, 14, 17];
+            let target = 11;
+            let vizSteps = [];
+            let vizCurrentStep = 0;
+            let vizTimer = null;
+
+            function generateBinarySearchSteps() {
+              let steps = [];
+              let low = 0;
+              let high = vizArr.length - 1;
+              let stepCount = 1;
+
+              steps.push({ arr: [...vizArr], low: low, high: high, mid: -1, found: false, msg: `Initial state: Search space spans index ${low} to ${high}.`, pass: 'Start' });
+
+              while (low <= high) {
+                let mid = Math.floor((low + high) / 2);
+                steps.push({ arr: [...arr], low: low, high: high, mid: mid, found: false, msg: `Calculated Midpoint: floor((${low} + ${high}) / 2) = index ${mid}. Checking if ${vizArr[mid]} == ${target}.`, pass: `Step ${stepCount}` });
+
+                if (vizArr[mid] === target) {
+                  steps.push({ arr: [...vizArr], low: low, high: high, mid: mid, found: true, msg: `Match found! ${vizArr[mid]} == ${target}. Search complete.`, pass: 'Found!' });
+                  return steps;
+                }
+
+                if (vizArr[mid] < target) {
+                  steps.push({ arr: [...vizArr], low: low, high: high, mid: mid, found: false, msg: `${vizArr[mid]} < ${target}. Target must be in the right half. Eliminating left half.`, pass: `Step ${stepCount}` });
+                  low = mid + 1;
+                } else {
+                  steps.push({ arr: [...vizArr], low: low, high: high, mid: mid, found: false, msg: `${vizArr[mid]} > ${target}. Target must be in the left half. Eliminating right half.`, pass: `Step ${stepCount}` });
+                  high = mid - 1;
+                }
+                
+                if(low <= high) {
+                   steps.push({ arr: [...vizArr], low: low, high: high, mid: -1, found: false, msg: `New search space boundaries: Low = ${low}, High = ${high}.`, pass: `Step ${stepCount}` });
+                }
+                stepCount++;
+              }
+              
+              steps.push({ arr: [...vizArr], low: low, high: high, mid: -1, found: false, msg: `Low boundary (${low}) crossed High boundary (${high}). Target not found.`, pass: 'Not Found' });
+              return steps;
+            }
+
+            function renderVizStep(stepIndex) {
+              if (vizSteps.length === 0) return;
+              const step = vizSteps[stepIndex];
+              const container = document.getElementById('bs-viz-array');
+              const ptrContainer = document.getElementById('bs-viz-pointers');
+              if (!container || !ptrContainer) return; 
+              
+              let html = '';
+              let ptrHtml = '';
+              const maxVal = Math.max(...step.arr);
+              
+              step.arr.forEach((val, idx) => {
+                const barHeight = Math.max(10, (val / maxVal) * 35); 
+                let bg = '#e2e8f0', border = '#cbd5e1', textColor = '#94a3b8'; // Eliminated default
+                let transform = 'opacity:0.4;';
+                let ptrText = '';
+
+                // Determine active pointers
+                if (idx === step.low && idx === step.high && idx === step.mid) ptrText = 'L/M/H';
+                else if (idx === step.low && idx === step.mid) ptrText = 'L/M';
+                else if (idx === step.high && idx === step.mid) ptrText = 'M/H';
+                else if (idx === step.low && idx === step.high) ptrText = 'L/H';
+                else if (idx === step.low) ptrText = 'L';
+                else if (idx === step.high) ptrText = 'H';
+                else if (idx === step.mid) ptrText = 'M';
+
+                if (step.found && idx === step.mid) {
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; // Found
+                  transform = 'transform: scale(1.1); box-shadow: 0 4px 10px rgba(22,163,74,.3); opacity:1;';
+                  ptrText = 'Found';
+                } else if (idx === step.mid) {
+                  bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e'; // Checking Mid
+                  transform = 'transform: translateY(-5px); opacity:1;';
+                } else if (idx >= step.low && idx <= step.high) {
+                  bg = '#dbeafe'; border = '#3b82f6'; textColor = '#1e3a8a'; // Active space
+                  transform = 'opacity:1;';
+                }
+
+                html += `
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
+                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0;"></div>
+                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                  </div>`;
+                  
+                ptrHtml += `
+                  <div style="flex:1; text-align:center; font-size:12px; font-family:var(--mono); font-weight:800; color:var(--muted);">
+                    ${ptrText}
+                  </div>
+                `;
+              });
+
+              container.innerHTML = html;
+              ptrContainer.innerHTML = ptrHtml;
+              document.getElementById('bs-viz-status').textContent = step.msg;
+              document.getElementById('bs-viz-pass').textContent = step.pass === 'Start' ? 'Press Play to begin' : step.pass;
+            }
+
+            window.bsVizInit = function() {
+              vizSteps = generateBinarySearchSteps();
+              vizCurrentStep = 0;
+              renderVizStep(0);
+            };
+
+            window.bsVizPlay = function() {
+              if (vizTimer) return;
+              vizTimer = setInterval(() => {
+                if (vizCurrentStep < vizSteps.length - 1) {
+                  vizCurrentStep++;
+                  renderVizStep(vizCurrentStep);
+                } else {
+                  window.bsVizPause();
+                }
+              }, 1200); // Slightly slower to read the logic
+            };
+
+            window.bsVizPause = function() {
+              if (vizTimer) {
+                clearInterval(vizTimer);
+                vizTimer = null;
+              }
+            };
+
+            window.bsVizStep = function() {
+              window.bsVizPause();
+              if (vizCurrentStep < vizSteps.length - 1) {
+                vizCurrentStep++;
+                renderVizStep(vizCurrentStep);
+              }
+            };
+
+            window.bsVizReset = function() {
+              window.bsVizPause();
+              window.bsVizInit(); 
+            };
+
+            setTimeout(() => { window.bsVizInit(); }, 50);
+          })();
+        </script>
+      </section>
+
+
+      <section class="slide">
+        <style>
+          .kw { color: #38bdf8; font-weight: bold; }
+          .fn { color: #a3e635; }
+          .vr { color: #e2e8f0; }
+          .nu { color: #fcd34d; }
+          .cm { color: #64748b; font-style: italic; }
+        </style>
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">Binary Search</div>
+            <div class="sub">Algorithm</div>
+          </div>
+          <span class="pill">C# Implementation</span>
+        </div>
+
+        <h2>Binary Search — Code Example</h2>
+        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div class="sort-panel-title">Iterative Implementation</div>
+            </div>
+            <div style="padding:16px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:12.5px; line-height:1.5; color:#e2e8f0; white-space:pre;"><span class="kw">public int</span> <span class="fn">BinarySearch</span>(<span class="kw">int</span>[] <span class="vr">arr</span>, <span class="kw">int</span> <span class="vr">target</span>) 
+{
+  <span class="kw">int</span> <span class="vr">low</span> = <span class="nu">0</span>;
+  <span class="kw">int</span> <span class="vr">high</span> = <span class="vr">arr</span>.Length - <span class="nu">1</span>;
+
+  <span class="cm">// Loop until the boundaries cross</span>
+  <span class="kw">while</span> (<span class="vr">low</span> <= <span class="vr">high</span>) 
+  {
+    <span class="cm">// Calculate mid to prevent integer overflow</span>
+    <span class="kw">int</span> <span class="vr">mid</span> = <span class="vr">low</span> + (<span class="vr">high</span> - <span class="vr">low</span>) / <span class="nu">2</span>;
+
+    <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">mid</span>] == <span class="vr">target</span>) 
+      <span class="kw">return</span> <span class="vr">mid</span>; <span class="cm">// Target found!</span>
+
+    <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">mid</span>] < <span class="vr">target</span>) 
+      <span class="vr">low</span> = <span class="vr">mid</span> + <span class="nu">1</span>; <span class="cm">// Search right half</span>
+    <span class="kw">else</span> 
+      <span class="vr">high</span> = <span class="vr">mid</span> - <span class="nu">1</span>; <span class="cm">// Search left half</span>
+  }
+  
+  <span class="kw">return</span> -<span class="nu">1</span>; <span class="cm">// Target not found</span>
+}</div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div class="info-card">
+              <h3 style="margin-top:0;">The Boundaries</h3>
+              <p style="font-size:15px; margin-bottom:0;"><code>low</code> and <code>high</code> act as walls containing the active search space. The loop continues as long as these walls haven't crossed over each other.</p>
+            </div>
+            <div class="info-card" style="border-left-color:#f59e0b;">
+              <h3 style="margin-top:0; color:#92400e;">Calculating Mid</h3>
+              <p style="font-size:15px; margin-bottom:0;"><code>low + (high - low) / 2</code> is mathematically identical to <code>(low + high) / 2</code>, but is used in professional code to prevent integer overflow errors on massive arrays.</p>
+            </div>
+            <div class="info-card" style="border-left-color:var(--accent);">
+              <h3 style="margin-top:0; color:var(--accent);">Elimination</h3>
+              <p style="font-size:15px; margin-bottom:0;">Adjusting <code>low = mid + 1</code> or <code>high = mid - 1</code> instantly discards half of the remaining array without needing to actively delete or modify any data.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
+          <div class="slide-no" data-slide-no></div>
+        </div>
+      </section>
 
       <!-- ═══ SLIDE 12 — Thank You ═══ -->
       <section class="slide">
