@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COIS 2020H — Trees</title>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root{
+      --stage-0:#0b1220; --stage-1:#0f1a2e;
+      --slide-bg:#ffffff; --ink:#0f172a; --muted:#475569;
+      --soft:#e2e8f0; --soft2:#f1f5f9;
+      --accent:#16a34a; --accent-2:#22c55e;
+      --radius:20px; --shadow:0 25px 60px rgba(0,0,0,.45);
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      --sans:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+      --baseW:1600; --baseH:900; --scale:1;
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{margin:0;font-family:var(--sans);background:radial-gradient(1400px 800px at 20% 10%,rgba(34,197,94,.15),transparent 60%),radial-gradient(1200px 800px at 85% 20%,rgba(22,163,74,.10),transparent 55%),linear-gradient(180deg,var(--stage-0),var(--stage-1));color:#e5e7eb;overflow:hidden;}
+    #progress-container{position:fixed;top:0;left:0;width:100%;height:8px;background:rgba(255,255,255,.10);z-index:9999;backdrop-filter:blur(6px);}
+    #progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .25s ease;}
+    .stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;}
+    .deck-wrap{width:calc(var(--baseW)*1px);height:calc(var(--baseH)*1px);transform:scale(var(--scale));transform-origin:center center;position:relative;}
+    .deck{width:100%;height:100%;position:relative;}
+    .slide{width:100%;height:100%;background:var(--slide-bg);color:var(--ink);border-radius:var(--radius);box-shadow:var(--shadow);position:absolute;inset:0;display:none;overflow:hidden;padding:44px 56px;animation:slideIn .28s ease;}
+    .slide.active{display:block;}
+    @keyframes slideIn{from{opacity:0;transform:translateY(14px) scale(.99);}to{opacity:1;transform:translateY(0) scale(1);}}
+    .slide::before,.slide::after{content:"";position:absolute;width:220px;height:220px;pointer-events:none;opacity:.95;z-index:0;}
+    .slide::before{top:-1px;left:-1px;background:radial-gradient(circle at 0% 0%,rgba(34,197,94,.22),transparent 55%),linear-gradient(135deg,rgba(22,163,74,.95),rgba(34,197,94,.55));clip-path:polygon(0 0,100% 0,0 100%);}
+    .slide::after{bottom:-1px;right:-1px;background:radial-gradient(circle at 100% 100%,rgba(34,197,94,.22),transparent 55%),linear-gradient(315deg,rgba(22,163,74,.95),rgba(34,197,94,.55));clip-path:polygon(100% 100%,100% 0,0 100%);}
+    .slide-top{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px;}
+    .meta{display:flex;flex-direction:column;gap:3px;line-height:1.15;}
+    .meta .course{font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);font-size:15px;}
+    .meta .sub{font-size:14px;color:var(--muted);}
+    h1{font-size:52px;margin:8px 0 10px;letter-spacing:-1.1px;line-height:1.06;position:relative;z-index:2;}
+    h2{font-size:36px;margin:4px 0 14px;letter-spacing:-0.8px;position:relative;z-index:2;border-bottom:3px solid var(--accent);padding-bottom:8px;display:inline-block;}
+    h3{font-size:22px;margin:10px 0 6px;color:#0b2a14;position:relative;z-index:2;}
+    p,li{font-size:18px;line-height:1.6;color:var(--ink);position:relative;z-index:2;}
+    .muted{color:var(--muted);}
+    code{font-family:var(--mono);font-size:.9em;background:#f3f4f6;padding:2px 6px;border-radius:8px;border:1px solid #e5e7eb;}
+    .grid-2{display:grid;grid-template-columns:1.25fr 1fr;gap:24px;align-items:start;position:relative;z-index:2;}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start;position:relative;z-index:2;}
+    .card{background:var(--soft2);border:1px solid var(--soft);border-radius:18px;padding:16px;position:relative;z-index:2;}
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:12px;position:relative;z-index:2;}
+    .info-card{background:#fff;border:1px solid var(--soft);border-left:6px solid var(--accent);border-radius:16px;padding:14px;}
+    .pill{display:inline-block;border:1px solid var(--soft);background:var(--soft2);border-radius:999px;padding:5px 13px;font-size:13px;color:var(--muted);font-family:var(--mono);white-space:nowrap;}
+    .callout{border-left:6px solid var(--accent);padding:14px 18px;background:#f6fffa;border-radius:14px;margin-top:12px;position:relative;z-index:2;}
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:16px;border:1px solid var(--soft);margin-top:12px;position:relative;z-index:2;background:#fff;}
+    th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--soft);font-size:16px;vertical-align:top;}
+    th{background:#0b2a14;color:#fff;font-weight:800;}
+    tr:last-child td{border-bottom:none;}
+    tr:nth-child(even) td{background:#fbfdff;}
+    .slide-footer{position:absolute;left:56px;right:56px;bottom:22px;display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px;z-index:2;}
+    .slide-no{font-family:var(--mono);background:var(--soft2);border:1px solid var(--soft);padding:5px 11px;border-radius:999px;color:var(--muted);}
+    .controls{position:fixed;right:18px;bottom:18px;z-index:10000;display:flex;gap:10px;align-items:center;}
+    .iconbtn{width:44px;height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(15,23,42,.45);color:#e5e7eb;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(10px);transition:transform .12s ease,background .12s ease;user-select:none;}
+    .iconbtn:hover{transform:translateY(-2px);background:rgba(15,23,42,.65);}
+    .iconbtn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+    .iconbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+
+    /* ── Interactive styles ── */
+    .hl-ring{animation:pulse-hl 1.1s ease-in-out infinite;}
+    @keyframes pulse-hl{0%,100%{opacity:.9;r:var(--r0);}50%{opacity:.5;r:var(--r1);}}
+
+    /* Quiz */
+    .quiz-opt{background:#f8fafc;border:2px solid var(--soft);border-radius:14px;padding:10px 16px;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center;}
+    .quiz-opt:hover{border-color:var(--accent);background:#f0fdf4;}
+    .quiz-opt.correct{border-color:#16a34a;background:#dcfce7;color:#166534;}
+    .quiz-opt.wrong{border-color:#ef4444;background:#fee2e2;color:#991b1b;animation:shake .4s ease;}
+    /* Gold highlight for revealing the correct answer after a wrong pick — distinct from both green and red */
+    .quiz-opt.reveal{border-color:#d97706!important;background:linear-gradient(135deg,#fef3c7,#fde68a)!important;color:#78350f!important;box-shadow:0 0 0 3px rgba(217,119,6,.28)!important;font-weight:800!important;}
+    .quiz-opt.reveal::before{content:"★ ";font-size:14px;}
+    .quiz-opt.correct::before{content:"✓ ";font-size:14px;}
+    @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+    @keyframes bounce-in{0%{transform:scale(.5);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+
+    /* ── Professional Sort / Search panels ── */
+    .sort-panel{background:#f8fafc;border:1px solid var(--soft);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 4px 16px rgba(0,0,0,.06);}
+    .sort-panel-hdr{padding:13px 18px;display:flex;justify-content:space-between;align-items:center;}
+    .sort-panel-hdr.bubble{background:linear-gradient(120deg,#7f1d1d 0%,#dc2626 100%);}
+    .sort-panel-hdr.bst{background:linear-gradient(120deg,#052e16 0%,#15803d 100%);}
+    .sort-panel-title{font-size:15px;font-weight:800;color:#fff;letter-spacing:.02em;}
+    .sort-panel-sub{font-size:11px;color:rgba(255,255,255,.65);margin-top:2px;}
+    .sort-badge{font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;letter-spacing:.04em;font-family:var(--mono);white-space:nowrap;transition:background .3s;}
+    .sort-panel-body{padding:14px;flex:1;}
+    .sort-bars{display:flex;align-items:flex-end;gap:8px;height:108px;}
+    .sort-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;cursor:default;}
+    .sort-bar{width:100%;border-radius:7px 7px 0 0;border-bottom:none;transition:height .42s cubic-bezier(.34,1.56,.64,1),background .22s,border-color .22s,box-shadow .22s;}
+    .sort-bar-val{font-size:15px;font-weight:900;font-family:var(--mono);transition:color .22s;}
+    .sort-bar-idx{font-size:10px;color:#94a3b8;}
+    .sort-legend{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;}
+    .sort-legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);}
+    .sort-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+    .sort-stats{display:flex;border-top:1px solid var(--soft);}
+    .sort-stat{flex:1;padding:8px 12px;text-align:center;border-right:1px solid var(--soft);}
+    .sort-stat:last-child{border-right:none;}
+    .sort-stat-val{font-size:19px;font-weight:900;font-family:var(--mono);}
+    .sort-stat-lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:1px;}
+    .sort-stat-msg{flex:2;text-align:left;padding:8px 14px;display:flex;align-items:center;}
+
+    /* Drag & Drop */
+    .drop-zone{min-height:68px;border:2.5px dashed #cbd5e1;border-radius:14px;padding:10px 14px;text-align:center;font-size:14px;color:#94a3b8;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+    .drop-zone.drag-over{border-color:var(--accent);background:#f0fdf4;}
+    .drop-zone.locked{border-style:solid;border-color:#16a34a;background:#dcfce7;color:#166534;font-weight:700;}
+    .desc-card{background:#fff;border:2px solid var(--soft);border-radius:12px;padding:10px 14px;font-size:13px;font-weight:600;cursor:grab;user-select:none;transition:box-shadow .15s,transform .15s;}
+    .desc-card:hover{box-shadow:0 6px 16px rgba(0,0,0,.12);transform:translateY(-2px);}
+    .desc-card.used{opacity:.35;pointer-events:none;}
+    @keyframes wrong-flash{0%,100%{background:#fff;}50%{background:#fee2e2;}}
+
+    /* Sort/Search viz */
+    .arr-box{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:18px;border:2.5px solid #cbd5e1;background:#f8fafc;transition:all .3s;}
+    .arr-box.comparing{background:#fef9c3;border-color:#f59e0b;color:#92400e;}
+    .arr-box.swapped{background:#fed7aa;border-color:#ea580c;color:#9a3412;}
+    .arr-box.settled{background:#dcfce7;border-color:#16a34a;color:#166534;}
+    .arr-box.found{background:#dcfce7;border-color:#16a34a;color:#166534;animation:bounce-in .4s ease;}
+    .arr-box.checked{background:#fee2e2;border-color:#ef4444;color:#991b1b;}
+    .arr-box.current{background:#fef9c3;border-color:#f59e0b;color:#92400e;animation:pulse-box .7s ease-in-out infinite;}
+    @keyframes pulse-box{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+    .viz-btn{background:#0f1a2e;color:#e5e7eb;border:1px solid rgba(255,255,255,.2);padding:8px 18px;border-radius:12px;cursor:pointer;font-weight:800;font-size:13px;transition:transform .12s,background .12s;}
+    .viz-btn:hover{transform:translateY(-1px);background:#1e3a5f;}
+    .viz-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+    .viz-panel{background:#f8fafc;border:1px solid var(--soft);border-radius:16px;padding:14px;position:relative;}
+    .viz-label{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+    .cmp-counter{font-family:var(--mono);font-size:22px;font-weight:900;color:var(--accent);}
+  </style>
+</head>
+<body>
+<div id="progress-container"><div id="progress-bar"></div></div>
+<div class="stage">
+  <div class="deck-wrap" id="deckWrap">
+    <div class="deck" id="deck">
+
+      <!-- ═══ SLIDE 1 — Title ═══ -->
+      <section class="slide active">
+        <div class="slide-top">
+          <div class="meta">
+            <div class="course">COIS 2020H — Trent University</div>
+            <div class="sub">Lecture 11 — Trees &amp; Algorithms</div>
+          </div>
+        </div>
+        <h1>Trees, Sorting &amp; Searching</h1>
+        <h2 style="margin-top:0;border:none;color:var(--muted);">Data Structures in Action</h2>
+        <div class="card" style="margin-top:20px;">
+          <p style="margin:0;"><strong>Topics:</strong> Tree Terminology · Tree Types · Bubble vs Tree Sort · Linear vs BST Search</p>
+          <div class="grid-3" style="margin-top:14px;">
+            <div class="info-card"><div style="font-size:11px;font-weight:800;color:var(--muted);">DATE</div><div style="font-weight:900;">2026</div></div>
+            <div class="info-card"><div style="font-size:11px;font-weight:800;color:var(--muted);">TOPIC</div><div style="font-weight:900;">Trees</div></div>
+            <div class="info-card"><div style="font-size:11px;font-weight:800;color:var(--muted);">FORMAT</div><div style="font-weight:900;">Interactive</div></div>
+          </div>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 2 — Tree Terminology QUIZ ═══ -->
+      <section class="slide" id="slide-quiz">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Review — Interactive Quiz</div></div>
+          <span class="pill">Quiz</span>
+        </div>
+        <h2>Tree Terminology Challenge</h2>
+        <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:24px;align-items:start;position:relative;z-index:2;">
+          <!-- SVG Tree -->
+          <div>
+            <svg id="termSVG" viewBox="0 0 520 310" style="width:100%;display:block;overflow:visible;">
+              <!-- Edges -->
+              <line id="te-50-30" x1="260" y1="58" x2="140" y2="148" stroke="#16a34a" stroke-width="3.5"/>
+              <line id="te-50-70" x1="260" y1="58" x2="380" y2="148" stroke="#16a34a" stroke-width="3.5"/>
+              <line id="te-30-10" x1="140" y1="148" x2="78"  y2="248" stroke="#16a34a" stroke-width="3.5"/>
+              <line id="te-30-40" x1="140" y1="148" x2="202" y2="248" stroke="#16a34a" stroke-width="3.5"/>
+              <line id="te-70-60" x1="380" y1="148" x2="318" y2="248" stroke="#16a34a" stroke-width="3.5"/>
+              <line id="te-70-90" x1="380" y1="148" x2="442" y2="248" stroke="#16a34a" stroke-width="3.5"/>
+              <!-- Nodes -->
+              <circle id="tn-50" cx="260" cy="58"  r="28" fill="#0b2a14" stroke="#22c55e" stroke-width="2.5"/>
+              <text x="260" y="64"  text-anchor="middle" fill="white" font-size="16" font-weight="bold" font-family="monospace">50</text>
+              <circle id="tn-30" cx="140" cy="148" r="24" fill="#16a34a" stroke="#22c55e" stroke-width="2"/>
+              <text x="140" y="154" text-anchor="middle" fill="white" font-size="15" font-weight="bold" font-family="monospace">30</text>
+              <circle id="tn-70" cx="380" cy="148" r="24" fill="#16a34a" stroke="#22c55e" stroke-width="2"/>
+              <text x="380" y="154" text-anchor="middle" fill="white" font-size="15" font-weight="bold" font-family="monospace">70</text>
+              <circle id="tn-10" cx="78"  cy="248" r="22" fill="#22c55e" stroke="#16a34a" stroke-width="2"/>
+              <text x="78"  y="254" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="monospace">10</text>
+              <circle id="tn-40" cx="202" cy="248" r="22" fill="#22c55e" stroke="#16a34a" stroke-width="2"/>
+              <text x="202" y="254" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="monospace">40</text>
+              <circle id="tn-60" cx="318" cy="248" r="22" fill="#22c55e" stroke="#16a34a" stroke-width="2"/>
+              <text x="318" y="254" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="monospace">60</text>
+              <circle id="tn-90" cx="442" cy="248" r="22" fill="#22c55e" stroke="#16a34a" stroke-width="2"/>
+              <text x="442" y="254" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="monospace">90</text>
+              <!-- Depth labels -->
+              <text x="10" y="63"  fill="#94a3b8" font-size="12" font-style="italic">depth 0</text>
+              <text x="10" y="153" fill="#94a3b8" font-size="12" font-style="italic">depth 1</text>
+              <text x="10" y="253" fill="#94a3b8" font-size="12" font-style="italic">depth 2</text>
+              <!-- Highlight layer -->
+              <g id="term-hl"></g>
+            </svg>
+          </div>
+          <!-- Quiz Panel -->
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-size:14px;color:var(--muted);font-weight:700;">Progress: <span id="qProgress">0 / 8</span></div>
+              <div style="font-size:14px;color:var(--muted);">Score: <span id="qScore" style="color:var(--accent);font-weight:800;">0</span></div>
+            </div>
+            <!-- Progress bar -->
+            <div style="background:#e2e8f0;border-radius:999px;height:8px;overflow:hidden;">
+              <div id="qProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .4s;"></div>
+            </div>
+            <div id="qQuestion" style="font-size:18px;font-weight:800;color:var(--ink);min-height:52px;line-height:1.35;">Click <strong>Start</strong> to test your tree vocabulary!</div>
+            <div id="qOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+            <div id="qFeedback" style="font-size:15px;font-weight:700;min-height:40px;padding:10px 14px;border-radius:12px;display:none;"></div>
+            <div style="display:flex;gap:10px;">
+              <button class="viz-btn" id="qStartBtn" onclick="quizStart()">Start Quiz</button>
+              <button class="viz-btn" id="qNextBtn" onclick="quizNext()" style="display:none;">Next →</button>
+              <button class="viz-btn" onclick="quizReset()" style="background:#374151;">Reset</button>
+            </div>
+          </div>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Trees</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 3 — Types of Trees DRAG & DROP ═══ -->
+      <section class="slide" id="slide-dnd">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Review — Drag &amp; Drop</div></div>
+          <span class="pill">Match</span>
+        </div>
+        <h2>Types of Trees — Match the Description</h2>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:2;">
+          <!-- General Tree -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+            <div style="font-size:15px;font-weight:800;color:var(--ink);">General Tree</div>
+            <svg viewBox="0 0 110 85" style="width:100%;max-height:75px;">
+              <line x1="55" y1="14" x2="28" y2="42" stroke="#16a34a" stroke-width="2.5"/>
+              <line x1="55" y1="14" x2="55" y2="42" stroke="#16a34a" stroke-width="2.5"/>
+              <line x1="55" y1="14" x2="82" y2="42" stroke="#16a34a" stroke-width="2.5"/>
+              <line x1="28" y1="42" x2="14" y2="70" stroke="#16a34a" stroke-width="2.5"/>
+              <line x1="28" y1="42" x2="42" y2="70" stroke="#16a34a" stroke-width="2.5"/>
+              <circle cx="55" cy="14" r="11" fill="#0b2a14" stroke="#22c55e" stroke-width="2"/>
+              <circle cx="28" cy="42" r="9"  fill="#16a34a" stroke="#22c55e" stroke-width="1.5"/>
+              <circle cx="55" cy="42" r="9"  fill="#16a34a" stroke="#22c55e" stroke-width="1.5"/>
+              <circle cx="82" cy="42" r="9"  fill="#16a34a" stroke="#22c55e" stroke-width="1.5"/>
+              <circle cx="14" cy="70" r="8"  fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+              <circle cx="42" cy="70" r="8"  fill="#22c55e" stroke="#16a34a" stroke-width="1.5"/>
+            </svg>
+            <div class="drop-zone" id="dz-general" data-correct="general" ondragover="dndOver(event)" ondragleave="dndLeave(event)" ondrop="dndDrop(event)">Drop description here</div>
+          </div>
+          <!-- Binary Tree -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+            <div style="font-size:15px;font-weight:800;color:#1d4ed8;">Binary Tree</div>
+            <svg viewBox="0 0 110 85" style="width:100%;max-height:75px;">
+              <line x1="55" y1="14" x2="30" y2="46" stroke="#3b82f6" stroke-width="2.5"/>
+              <line x1="55" y1="14" x2="80" y2="46" stroke="#3b82f6" stroke-width="2.5"/>
+              <line x1="30" y1="46" x2="16" y2="74" stroke="#3b82f6" stroke-width="2.5"/>
+              <line x1="30" y1="46" x2="44" y2="74" stroke="#3b82f6" stroke-width="2.5"/>
+              <line x1="80" y1="46" x2="66" y2="74" stroke="#3b82f6" stroke-width="2.5"/>
+              <line x1="80" y1="46" x2="94" y2="74" stroke="#3b82f6" stroke-width="2.5"/>
+              <circle cx="55" cy="14" r="11" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+              <circle cx="30" cy="46" r="9"  fill="#2563eb" stroke="#3b82f6" stroke-width="1.5"/>
+              <circle cx="80" cy="46" r="9"  fill="#2563eb" stroke="#3b82f6" stroke-width="1.5"/>
+              <circle cx="16" cy="74" r="7"  fill="#60a5fa" stroke="#3b82f6" stroke-width="1.5"/>
+              <circle cx="44" cy="74" r="7"  fill="#60a5fa" stroke="#3b82f6" stroke-width="1.5"/>
+              <circle cx="66" cy="74" r="7"  fill="#60a5fa" stroke="#3b82f6" stroke-width="1.5"/>
+              <circle cx="94" cy="74" r="7"  fill="#60a5fa" stroke="#3b82f6" stroke-width="1.5"/>
+            </svg>
+            <div class="drop-zone" id="dz-binary" data-correct="binary" ondragover="dndOver(event)" ondragleave="dndLeave(event)" ondrop="dndDrop(event)">Drop description here</div>
+          </div>
+          <!-- BST -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+            <div style="font-size:15px;font-weight:800;color:#92400e;">BST</div>
+            <svg viewBox="0 0 110 85" style="width:100%;max-height:75px;">
+              <line x1="55" y1="14" x2="30" y2="46" stroke="#f59e0b" stroke-width="2.5"/>
+              <line x1="55" y1="14" x2="80" y2="46" stroke="#f59e0b" stroke-width="2.5"/>
+              <line x1="30" y1="46" x2="16" y2="74" stroke="#f59e0b" stroke-width="2.5"/>
+              <line x1="30" y1="46" x2="44" y2="74" stroke="#f59e0b" stroke-width="2.5"/>
+              <line x1="80" y1="46" x2="66" y2="74" stroke="#f59e0b" stroke-width="2.5"/>
+              <line x1="80" y1="46" x2="94" y2="74" stroke="#f59e0b" stroke-width="2.5"/>
+              <circle cx="55" cy="14" r="11" fill="#451a03" stroke="#f59e0b" stroke-width="2"/>
+              <text x="55" y="19" text-anchor="middle" fill="white" font-size="9" font-weight="bold">50</text>
+              <circle cx="30" cy="46" r="9"  fill="#92400e" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="30" y="50" text-anchor="middle" fill="white" font-size="8" font-weight="bold">30</text>
+              <circle cx="80" cy="46" r="9"  fill="#92400e" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="80" y="50" text-anchor="middle" fill="white" font-size="8" font-weight="bold">70</text>
+              <circle cx="16" cy="74" r="7"  fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="16" y="78" text-anchor="middle" fill="#451a03" font-size="7" font-weight="bold">10</text>
+              <circle cx="44" cy="74" r="7"  fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="44" y="78" text-anchor="middle" fill="#451a03" font-size="7" font-weight="bold">40</text>
+              <circle cx="66" cy="74" r="7"  fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="66" y="78" text-anchor="middle" fill="#451a03" font-size="7" font-weight="bold">60</text>
+              <circle cx="94" cy="74" r="7"  fill="#fbbf24" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="94" y="78" text-anchor="middle" fill="#451a03" font-size="7" font-weight="bold">90</text>
+            </svg>
+            <div class="drop-zone" id="dz-bst" data-correct="bst" ondragover="dndOver(event)" ondragleave="dndLeave(event)" ondrop="dndDrop(event)">Drop description here</div>
+          </div>
+          <!-- AVL -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+            <div style="font-size:15px;font-weight:800;color:#6d28d9;">AVL Tree</div>
+            <svg viewBox="0 0 110 85" style="width:100%;max-height:75px;">
+              <line x1="55" y1="14" x2="30" y2="46" stroke="#8b5cf6" stroke-width="2.5"/>
+              <line x1="55" y1="14" x2="80" y2="46" stroke="#8b5cf6" stroke-width="2.5"/>
+              <line x1="30" y1="46" x2="16" y2="74" stroke="#8b5cf6" stroke-width="2.5"/>
+              <line x1="30" y1="46" x2="44" y2="74" stroke="#8b5cf6" stroke-width="2.5"/>
+              <line x1="80" y1="46" x2="66" y2="74" stroke="#8b5cf6" stroke-width="2.5"/>
+              <line x1="80" y1="46" x2="94" y2="74" stroke="#8b5cf6" stroke-width="2.5"/>
+              <circle cx="55" cy="14" r="11" fill="#3b0764" stroke="#8b5cf6" stroke-width="2"/>
+              <circle cx="30" cy="46" r="9"  fill="#6d28d9" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="80" cy="46" r="9"  fill="#6d28d9" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="16" cy="74" r="7"  fill="#a78bfa" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="44" cy="74" r="7"  fill="#a78bfa" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="66" cy="74" r="7"  fill="#a78bfa" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="94" cy="74" r="7"  fill="#a78bfa" stroke="#8b5cf6" stroke-width="1.5"/>
+              <text x="55" y="9"  text-anchor="middle" fill="#8b5cf6" font-size="7">bf=0</text>
+              <text x="30" y="41" text-anchor="middle" fill="#8b5cf6" font-size="6">bf=0</text>
+              <text x="80" y="41" text-anchor="middle" fill="#8b5cf6" font-size="6">bf=0</text>
+            </svg>
+            <div class="drop-zone" id="dz-avl" data-correct="avl" ondragover="dndOver(event)" ondragleave="dndLeave(event)" ondrop="dndDrop(event)">Drop description here</div>
+          </div>
+        </div>
+        <!-- Description bank -->
+        <div style="margin-top:18px;position:relative;z-index:2;">
+          <div style="font-size:13px;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Drag each description to the matching tree:</div>
+          <div id="dndBank" style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div class="desc-card" id="dc-avl"     draggable="true" ondragstart="dndStart(event,'avl')">Self-balancing; height difference ≤ 1 per node (balance factor)</div>
+            <div class="desc-card" id="dc-general" draggable="true" ondragstart="dndStart(event,'general')">Each node can have <em>any</em> number of children</div>
+            <div class="desc-card" id="dc-bst"     draggable="true" ondragstart="dndStart(event,'bst')">Left &lt; Root &lt; Right — ordering rule enforced at every node</div>
+            <div class="desc-card" id="dc-binary"  draggable="true" ondragstart="dndStart(event,'binary')">Each node has at most 2 children (left and right)</div>
+          </div>
+        </div>
+        <div id="dndWin" style="display:none;margin-top:10px;padding:10px 18px;background:#dcfce7;border-left:6px solid #16a34a;border-radius:14px;font-size:16px;font-weight:800;color:#166534;position:relative;z-index:2;">
+          All correct! You matched every tree type perfectly.
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Trees</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+      <!-- ═══ SLIDE 5 — Sorting Visualization ═══ -->
+
+      <section class="slide" id="slide-sortviz">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Sorting</div></div>
+          <span class="pill">Visualization</span>
+        </div>
+        <h2 style="margin-bottom:10px;">Sorting Step-by-Step — <code style="font-size:24px;background:#f0fdf4;color:#166534;border-color:#bbf7d0;">[5, 3, 7, 1, 4]</code></h2>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;z-index:2;">
+
+          <!-- ── Bubble Sort Panel ── -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr bubble">
+              <div>
+                <div class="sort-panel-title">Bubble Sort</div>
+                <div class="sort-panel-sub">Compare adjacent pairs — swap if out of order</div>
+              </div>
+              <div class="sort-badge" id="bubblePhase">Pass 1</div>
+            </div>
+            <div class="sort-panel-body">
+              <div id="bubbleBars" class="sort-bars"></div>
+              <div class="sort-legend">
+                <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dbeafe;border:2px solid #93c5fd;"></div>Unsorted</div>
+                <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3;border:2px solid #f59e0b;"></div>Comparing</div>
+                <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#ffedd5;border:2px solid #f97316;"></div>Swapped</div>
+                <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7;border:2px solid #16a34a;"></div>Settled</div>
+              </div>
+            </div>
+            <div class="sort-stats">
+              <div class="sort-stat"><div class="sort-stat-val" style="color:#dc2626;" id="bubbleCmp">0</div><div class="sort-stat-lbl">Comparisons</div></div>
+              <div class="sort-stat"><div class="sort-stat-val" style="color:#ea580c;" id="bubbleSwaps">0</div><div class="sort-stat-lbl">Swaps</div></div>
+              <div class="sort-stat-msg sort-stat"><div id="bubbleMsg" style="font-size:12px;color:var(--muted);font-weight:600;line-height:1.4;">Click Step to begin</div></div>
+            </div>
+          </div>
+
+          <!-- ── BST Sort Panel ── -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr bst">
+              <div>
+                <div class="sort-panel-title">Tree Sort (BST)</div>
+                <div class="sort-panel-sub">Insert all → read back via in-order traversal</div>
+              </div>
+              <div class="sort-badge" id="bstPhase">Phase: Insert</div>
+            </div>
+            <div class="sort-panel-body" style="padding:10px 12px 6px;">
+              <svg id="bstSortSVG" viewBox="0 0 320 175" style="width:100%;display:block;background:#fff;border-radius:10px;border:1px solid #e2e8f0;"></svg>
+            </div>
+            <div class="sort-stats">
+              <div class="sort-stat"><div class="sort-stat-val" style="color:#16a34a;" id="bstCmp">0</div><div class="sort-stat-lbl">Comparisons</div></div>
+              <div class="sort-stat"><div style="font-family:var(--mono);font-weight:800;color:#166534;font-size:13px;" id="bstOutput">—</div><div class="sort-stat-lbl">Output</div></div>
+              <div class="sort-stat-msg sort-stat"><div id="bstMsg" style="font-size:12px;color:var(--muted);font-weight:600;line-height:1.4;">Ready to build BST</div></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Controls -->
+        <div style="display:flex;gap:10px;margin-top:12px;position:relative;z-index:2;align-items:center;">
+          <button class="viz-btn" id="sortStepBtn" onclick="sortStep()">&#9197; Step</button>
+          <button class="viz-btn" id="sortPlayBtn" onclick="sortPlay()">&#9654; Play</button>
+          <button class="viz-btn" onclick="sortReset()" style="background:#374151;">&#8635; Reset</button>
+          <div style="margin-left:10px;font-size:12px;color:var(--muted);">
+            Step <strong id="sortStepNum">0</strong> / 10 &nbsp;·&nbsp;
+            <span style="color:#dc2626;font-weight:700;">Bubble: 10 comparisons</span>
+            &nbsp;vs&nbsp;
+            <span style="color:#16a34a;font-weight:700;">BST: 6 comparisons + traversal</span>
+          </div>
+        </div>
+
+        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 5 — Sorting Big-O ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Sorting</div></div>
+          <span class="pill">Big-O</span>
+        </div>
+        <h2>Sorting: Bubble Sort vs. Tree Sort</h2>
+        <div class="grid-2" style="gap:26px;align-items:start;">
+          <div>
+            <table>
+              <tr><th>Metric</th><th style="text-align:center;">Bubble Sort</th><th style="text-align:center;">Tree Sort (BST)</th></tr>
+              <tr><td><strong>Best Case</strong></td><td style="text-align:center;"><code style="background:#fef9c3;color:#92400e;">O(n)</code></td><td style="text-align:center;"><code style="background:#f0fdf4;color:#166534;">O(n log n)</code></td></tr>
+              <tr><td><strong>Average Case</strong></td><td style="text-align:center;"><code style="background:#fee2e2;color:#991b1b;">O(n²)</code></td><td style="text-align:center;"><code style="background:#f0fdf4;color:#166534;">O(n log n)</code></td></tr>
+              <tr><td><strong>Worst Case</strong></td><td style="text-align:center;"><code style="background:#fee2e2;color:#991b1b;">O(n²)</code></td><td style="text-align:center;"><code style="background:#fef9c3;color:#92400e;">O(n²)</code></td></tr>
+              <tr><td><strong>Space</strong></td><td style="text-align:center;"><code>O(1)</code></td><td style="text-align:center;"><code style="background:#fef9c3;color:#92400e;">O(n)</code></td></tr>
+              <tr><td><strong>In-place?</strong></td><td style="text-align:center;">Yes</td><td style="text-align:center;">No</td></tr>
+            </table>
+            <div class="callout" style="padding:12px 16px;margin-top:12px;">
+              <p style="margin:0;font-size:15px;"><strong>n = 1,000:</strong> Bubble ≈ <strong style="color:#dc2626;">1,000,000</strong> ops · Tree ≈ <strong style="color:#16a34a;">10,000</strong> ops — <em>100× faster!</em></p>
+            </div>
+          </div>
+          <div class="card" style="padding:16px;">
+            <div style="font-weight:800;font-size:14px;margin-bottom:10px;">Growth Rate</div>
+            <svg viewBox="0 0 340 220" style="width:100%;display:block;">
+              <line x1="40" y1="10" x2="40" y2="190" stroke="#cbd5e1" stroke-width="1.5"/>
+              <line x1="40" y1="190" x2="320" y2="190" stroke="#cbd5e1" stroke-width="1.5"/>
+              <line x1="40" y1="50"  x2="320" y2="50"  stroke="#f1f5f9" stroke-width="1"/>
+              <line x1="40" y1="100" x2="320" y2="100" stroke="#f1f5f9" stroke-width="1"/>
+              <line x1="40" y1="150" x2="320" y2="150" stroke="#f1f5f9" stroke-width="1"/>
+              <polyline points="40,190 80,185 120,175 160,157 200,130 240,95 280,52 310,18" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="40,190 80,182 120,172 160,160 200,147 240,133 280,118 310,106" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="40" y1="190" x2="310" y2="120" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,4"/>
+              <rect x="50" y="18" width="12" height="4" fill="#ef4444" rx="2"/>
+              <text x="66" y="24" fill="#0f172a" font-size="11">Bubble Sort O(n²)</text>
+              <rect x="50" y="32" width="12" height="4" fill="#16a34a" rx="2"/>
+              <text x="66" y="38" fill="#0f172a" font-size="11">Tree Sort O(n log n)</text>
+              <line x1="50" y1="48" x2="62" y2="48" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,3"/>
+              <text x="66" y="52" fill="#0f172a" font-size="11">O(n) reference</text>
+              <text x="180" y="208" text-anchor="middle" fill="#475569" font-size="11">n (input size) →</text>
+            </svg>
+          </div>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+<section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Linear Search</div></div>
+          <span class="pill">Code Walkthrough</span>
+        </div>
+        <h2>Linear Search — Code &amp; Memory</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;z-index:2;">
+
+          <!-- LEFT: Code panel -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div class="sort-panel-title">Java Pseudocode</div>
+              <span class="sort-badge">Searching for 60</span>
+            </div>
+            <div id="ls-code" style="padding:14px 10px;font-family:var(--mono);font-size:14px;line-height:2.1;background:#0f172a;border-radius:0 0 18px 18px;flex:1;"></div>
+          </div>
+
+          <!-- RIGHT: Array + Memory frame -->
+          <div style="display:flex;flex-direction:column;gap:12px;">
+
+            <!-- Array row -->
+            <div class="viz-panel" style="padding:14px;">
+              <div class="viz-label">Array Iteration</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">arr = [10, 20, 30, 40, 50, 60, 70] &nbsp;|&nbsp; target = <strong>60</strong></div>
+              <div id="ls-arr" style="display:flex;gap:6px;margin-bottom:6px;"></div>
+              <div id="ls-idx" style="display:flex;gap:6px;margin-bottom:8px;"></div>
+              <div id="ls-msg" style="font-size:13px;color:#374151;padding:8px 10px;background:#f8fafc;border-left:3px solid #94a3b8;border-radius:4px;min-height:34px;line-height:1.55;" id="ls-msg"></div>
+            </div>
+
+            <!-- Stack frame / memory -->
+            <div class="viz-panel" style="padding:14px;">
+              <div class="viz-label">Stack Frame — Active Variables</div>
+              <div id="ls-mem" style="display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px 14px;align-items:center;"></div>
+            </div>
+
+            <!-- Legend -->
+            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+              <span style="font-size:12px;font-weight:700;color:#f59e0b;">■ Current (arr[i])</span>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;">■ Checked — not a match</span>
+              <span style="font-size:12px;font-weight:700;color:#16a34a;">■ Found!</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;margin-top:8px;position:relative;z-index:2;">
+          <button class="viz-btn" id="ls-next-btn" onclick="lsStep()">Next Step →</button>
+          <button class="viz-btn" onclick="lsReset()" style="background:#374151;">Reset</button>
+          <span id="ls-step-lbl" style="font-size:13px;color:var(--muted);">Step 0 / 6</span>
+          <span style="font-size:13px;color:var(--muted);margin-left:8px;">Each step = one loop iteration — O(n) in the worst case</span>
+        </div>
+
+        <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 6 — Search Visualization ═══ -->
+      <section class="slide" id="slide-searchviz">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Searching</div></div>
+          <span class="pill">Visualization</span>
+        </div>
+        <h2>Search Step-by-Step — Looking for <span style="color:#16a34a;background:#f0fdf4;padding:2px 10px;border-radius:8px;font-size:28px;">60</span></h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;z-index:2;">
+          <!-- Linear Search -->
+          <div class="viz-panel">
+            <div class="viz-label" style="color:#dc2626;">Linear Search — O(n)</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Array: [10, 20, 30, 40, 50, 60, 70]</div>
+            <div id="linearArr" style="display:flex;gap:5px;margin-bottom:10px;"></div>
+            <div style="font-size:13px;min-height:32px;color:var(--muted);" id="linearMsg"></div>
+            <div style="margin-top:8px;font-size:13px;">Checks: <span class="cmp-counter" id="linearCmp" style="color:#dc2626;">0</span></div>
+          </div>
+          <!-- BST Search -->
+          <div class="viz-panel">
+            <div class="viz-label" style="color:#16a34a;">BST Search — O(log n)</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Pre-built balanced BST</div>
+            <svg id="bstSearchSVG" viewBox="0 0 340 190" style="width:100%;display:block;background:#fff;border-radius:10px;border:1px solid #e2e8f0;"></svg>
+            <div style="font-size:13px;min-height:32px;color:var(--muted);margin-top:6px;" id="bstSearchMsg"></div>
+            <div style="margin-top:4px;font-size:13px;">Checks: <span class="cmp-counter" id="bstSearchCmp" style="color:#16a34a;">0</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px;position:relative;z-index:2;align-items:center;">
+          <button class="viz-btn" id="searchStepBtn" onclick="searchStep()">Next Step</button>
+          <button class="viz-btn" id="searchPlayBtn" onclick="searchPlay()">Play</button>
+          <button class="viz-btn" onclick="searchReset()" style="background:#374151;">Reset</button>
+          <span style="font-size:13px;color:var(--muted);margin-left:8px;" id="searchStatus">Press Step or Play to begin</span>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 7 — Search Big-O ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Searching</div></div>
+          <span class="pill">Big-O</span>
+        </div>
+        <h2>Linear Search vs. BST Search</h2>
+        <div class="grid-2" style="gap:26px;align-items:start;">
+          <div>
+            <table>
+              <tr><th>Algorithm</th><th style="text-align:center;">Best</th><th style="text-align:center;">Average</th><th style="text-align:center;">Worst</th><th style="text-align:center;">n=1,000</th></tr>
+              <tr><td><strong>Linear Search</strong></td><td style="text-align:center;"><code>O(1)</code></td><td style="text-align:center;"><code style="background:#fef9c3;color:#92400e;">O(n)</code></td><td style="text-align:center;"><code style="background:#fee2e2;color:#991b1b;">O(n)</code></td><td style="text-align:center;color:#dc2626;font-weight:800;">~1,000 steps</td></tr>
+              <tr><td><strong>BST Search</strong></td><td style="text-align:center;"><code>O(1)</code></td><td style="text-align:center;"><code style="background:#f0fdf4;color:#166534;">O(log n)</code></td><td style="text-align:center;"><code style="background:#fef9c3;color:#92400e;">O(n)</code></td><td style="text-align:center;color:#16a34a;font-weight:800;">~10 steps</td></tr>
+            </table>
+            <div class="callout" style="padding:12px 16px;margin-top:12px;">
+              <p style="margin:0;font-size:15px;"><strong>Key:</strong> BST search eliminates half the remaining nodes at each step — like binary search, but on a tree structure.</p>
+            </div>
+          </div>
+          <div class="card" style="padding:16px;">
+            <div style="font-weight:800;font-size:14px;margin-bottom:8px;">Why BST is faster</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="info-card" style="padding:10px 12px;"><div style="font-size:12px;font-weight:800;color:#dc2626;">LINEAR</div><div style="font-size:13px;">Must check every element — no information about where the target is</div></div>
+              <div class="info-card" style="padding:10px 12px;border-left-color:#16a34a;"><div style="font-size:12px;font-weight:800;color:#16a34a;">BST</div><div style="font-size:13px;">Ordering rule means each comparison discards an entire subtree</div></div>
+              <div class="info-card" style="padding:10px 12px;border-left-color:#3b82f6;"><div style="font-size:12px;font-weight:800;color:#1d4ed8;">WORST CASE</div><div style="font-size:13px;">BST degrades to O(n) if the tree is unbalanced (like a linked list)</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 7b — Sorting ═══ -->
+      
+<section class="slide">
+  <div class="slide-top">
+    <div class="meta">
+      <div class="course">COIS 2020H</div>
+      <div class="sub">Algorithms — Data Organization</div>
+    </div>
+    <span class="pill">Foundations</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; margin-top: -20px;">
+    <h1 style="font-size: 48px; margin-bottom: 24px; color: #1e293b;">Sorting Algorithms</h1>
+    
+    <div class="card" style="padding: 24px; max-width: 80%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+      <div style="font-weight: 800; font-size: 14px; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Definition</div>
+      <p style="font-size: 20px; line-height: 1.6; color: #334155; margin: 0;">
+        A <strong>Sorting Algorithm</strong> is a step-by-step procedure used to rearrange a large number of items into a specific order—typically <strong>numerical</strong> or <strong>lexicographical</strong> (alphabetical).
+      </p>
+      
+      <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
+        <div class="info-card" style="padding: 8px 16px; border-left: 4px solid #16a34a; background: white;">
+          <div style="font-size: 12px; font-weight: 800; color: #16a34a;">ASCENDING</div>
+          <div style="font-size: 14px;">1, 2, 3, 4, 5</div>
+        </div>
+        <div class="info-card" style="padding: 8px 16px; border-left: 4px solid #dc2626; background: white;">
+          <div style="font-size: 12px; font-weight: 800; color: #dc2626;">DESCENDING</div>
+          <div style="font-size: 14px;">5, 4, 3, 2, 1</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="callout" style="margin-top: 24px; font-size: 14px; color: #64748b;">
+      <strong>Why it matters:</strong> Efficient sorting is fundamental for optimizing other algorithms (like Binary Search) that require input data to be in a predictable order.
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="muted">COIS 2020H — Sorting</div>
+    <div class="slide-no" data-slide-no></div>
+  </div>
+</section>
+      <!-- ═══ SLIDE 9a — In-Place vs Not In-Place ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting — Classification 1 of 3</div></div>
+          <span class="pill">Interactive</span>
+        </div>
+        <h2>In-Place vs Not In-Place</h2>
+        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
+          <span style="font-size:14px;color:#374151;">Does the algorithm need to <strong>allocate a new array</strong> to produce the sorted result, or does it sort within the original array?</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;z-index:2;">
+          <!-- In-Place panel -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div><div class="sort-panel-title">In-Place Sort</div><div class="sort-panel-sub">e.g. Bubble Sort, Insertion Sort</div></div>
+              <span class="sort-badge">Extra memory: O(1)</span>
+            </div>
+            <div class="sort-panel-body" style="padding:15px;">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Array in Memory</div>
+              <div id="ip-arr" style="display:flex;gap:8px;margin-bottom:14px;"></div>
+              <div style="display:flex;align-items:center;gap:10px;min-height:38px;margin-bottom:12px;">
+                <span style="font-size:12px;font-weight:700;color:var(--muted);">Only extra:</span>
+                <span style="font-size:12px;color:#64748b;">temp =</span>
+                <div id="ip-temp" style="width:40px;height:34px;border:1.5px dashed #94a3b8;border-radius:6px;display:grid;place-items:center;font-weight:900;font-size:15px;color:#64748b;font-family:var(--mono);transition:all .25s;">—</div>
+                <span style="font-size:11px;color:#94a3b8;">← one variable, always O(1)</span>
+              </div>
+              <div id="ip-msg" style="font-size:13px;color:#374151;padding:9px 12px;background:#f8fafc;border-left:3px solid var(--accent);border-radius:4px;min-height:44px;line-height:1.55;"></div>
+            </div>
+          </div>
+          <!-- Not In-Place panel -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div><div class="sort-panel-title">Not In-Place Sort</div><div class="sort-panel-sub">e.g. Merge Sort, Counting Sort</div></div>
+              <span class="sort-badge">Extra memory: O(n)</span>
+            </div>
+            <div class="sort-panel-body" style="padding:15px;">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Original Array (read only)</div>
+              <div id="nip-orig" style="display:flex;gap:8px;margin-bottom:14px;"></div>
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">New Output Array (allocated)</div>
+              <div id="nip-out" style="display:flex;gap:8px;align-items:center;min-height:44px;margin-bottom:12px;"></div>
+              <div id="nip-msg" style="font-size:13px;color:#374151;padding:9px 12px;background:#f8fafc;border-left:3px solid #94a3b8;border-radius:4px;min-height:44px;line-height:1.55;"></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:12px;position:relative;z-index:2;">
+          <button class="viz-btn" id="ip-next-btn" onclick="ipStep()">Next Step →</button>
+          <button class="viz-btn" onclick="ipReset()">Reset</button>
+          <span id="ip-step-lbl" style="font-size:13px;color:var(--muted);">Step 0 / 4</span>
+          <div style="flex:1;display:flex;gap:20px;justify-content:flex-end;">
+            <span style="font-size:12px;font-weight:700;color:var(--accent);">&#9632; In-Place: O(1) extra</span>
+            <span style="font-size:12px;font-weight:700;color:#64748b;">&#9632; Not In-Place: O(n) extra</span>
+          </div>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 9b — Internal vs External ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting — Classification 2 of 3</div></div>
+          <span class="pill">Interactive</span>
+        </div>
+        <h2>Internal vs External Sort</h2>
+        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
+          <span style="font-size:14px;color:#374151;">Is all the data being sorted held in <strong>RAM at once</strong>, or does the dataset <strong>overflow into secondary storage</strong>?</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:start;position:relative;z-index:2;">
+
+          <!-- Memory diagram -->
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="border:2px solid #1e293b;border-radius:12px;overflow:hidden;">
+              <div style="background:#1e293b;padding:9px 14px;font-size:13px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center;">
+                <span>RAM — Main Memory</span><span style="font-size:11px;font-weight:400;color:#94a3b8;">limited capacity (5 slots)</span>
+              </div>
+              <div id="ie-ram" style="padding:12px;display:flex;flex-wrap:wrap;gap:7px;min-height:72px;align-items:flex-start;background:#fff;"></div>
+            </div>
+            <div style="text-align:center;font-size:22px;color:#cbd5e1;">&#8597;</div>
+            <div style="border:2px solid #94a3b8;border-radius:12px;overflow:hidden;">
+              <div style="background:#94a3b8;padding:9px 14px;font-size:13px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center;">
+                <span>Secondary Storage — Disk</span><span style="font-size:11px;font-weight:400;color:#f1f5f9;">large capacity</span>
+              </div>
+              <div id="ie-disk" style="padding:12px;display:flex;flex-wrap:wrap;gap:7px;min-height:72px;align-items:flex-start;background:#f8fafc;"></div>
+            </div>
+          </div>
+
+          <!-- Controls + explanation -->
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;gap:10px;">
+              <button class="viz-btn" id="ie-small-btn" onclick="setIE('small')" style="flex:1;">Small Dataset (4 items)</button>
+              <button class="viz-btn" id="ie-large-btn" onclick="setIE('large')" style="flex:1;background:#374151;">Large Dataset (10 items)</button>
+            </div>
+            <div style="border:1px solid var(--soft);border-radius:12px;padding:16px;background:#fff;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                <div id="ie-verdict-badge" style="font-size:13px;font-weight:800;padding:4px 14px;border-radius:6px;border:1.5px solid var(--accent);background:#f0fdf4;color:#166534;">Internal Sort</div>
+              </div>
+              <div id="ie-desc" style="font-size:14px;color:#374151;line-height:1.6;"></div>
+            </div>
+            <div style="border:1px solid var(--soft);border-radius:12px;padding:14px;background:#fff;">
+              <div style="font-size:12px;font-weight:800;color:#0f172a;margin-bottom:6px;">Key Difference</div>
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="font-size:13px;color:#374151;padding-left:10px;border-left:3px solid var(--accent);"><strong>Internal:</strong> All data in RAM. Fast random access. Standard algorithms apply directly.</div>
+                <div style="font-size:13px;color:#374151;padding-left:10px;border-left:3px solid #94a3b8;"><strong>External:</strong> Sort small RAM-sized chunks, write sorted chunks to disk, then <em>merge</em> them. Used for databases, large files.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 9c — Stable vs Unstable Intro ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting — Classification 3 of 3</div></div>
+          <span class="pill">Interactive</span>
+        </div>
+        <h2>Stable vs Unstable Sort</h2>
+        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
+          <span style="font-size:14px;color:#374151;">When two elements have the <strong>same sort key</strong>, does the algorithm preserve their original relative order?</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;position:relative;z-index:2;">
+
+          <!-- Left: Input + buttons -->
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div><div class="sort-panel-title">Student Records — Sort by Grade</div><div class="sort-panel-sub">A comes before B alphabetically. Equal grades = tied keys.</div></div>
+              </div>
+              <div class="sort-panel-body" style="padding:14px;">
+                <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Original Input Order</div>
+                <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
+                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
+                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">1.</span>
+                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Sam</span>
+                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #0284c7;background:#eff6ff;color:#0284c7;">B</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
+                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">2.</span>
+                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Alex</span>
+                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #0284c7;background:#eff6ff;color:#0284c7;">B</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
+                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">3.</span>
+                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Jordan</span>
+                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #16a34a;background:#f0fdf4;color:#16a34a;">A</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
+                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">4.</span>
+                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Casey</span>
+                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #16a34a;background:#f0fdf4;color:#16a34a;">A</span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px;">
+                  <button class="viz-btn" onclick="suSort(true)" style="flex:1;">Sort — Stable</button>
+                  <button class="viz-btn" onclick="suSort(false)" style="flex:1;background:#374151;">Sort — Unstable</button>
+                </div>
+                <div style="font-size:11px;color:#94a3b8;margin-top:6px;text-align:center;">Click "Unstable" multiple times — observe what changes</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Result -->
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:10px;min-height:32px;">
+              <span style="font-size:13px;font-weight:700;color:#475569;">Result:</span>
+              <div id="su-badge" style="font-size:13px;font-weight:800;padding:4px 16px;border-radius:6px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#94a3b8;">—</div>
+            </div>
+            <div id="su-result" style="display:flex;flex-direction:column;gap:5px;"></div>
+            <div id="su-msg" style="font-size:13px;font-weight:500;padding:11px 14px;border-left:4px solid #e2e8f0;background:#f8fafc;border-radius:4px;color:#374151;line-height:1.55;min-height:52px;"></div>
+            <div class="callout" style="margin-top:0;">
+              <div style="font-size:13px;color:#14532d;">A detailed example with A, B, C, D is on the <strong>next slide</strong>.</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 10 — Sort Stability ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting Algorithms</div></div>
+          <span class="pill">Interactive</span>
+        </div>
+        <h2>Sort Stability</h2>
+        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:10px 16px;margin-bottom:14px;position:relative;z-index:2;">
+          <span style="font-size:14px;color:#374151;">Objects A, B, C, D have distances 1, 3, 3, 4. <strong>B and C share the same key (dist = 3).</strong> Watch what happens to them after each type of sort.</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;position:relative;z-index:2;margin-bottom:14px;">
+
+          <!-- Column 1: Unsorted -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div><div class="sort-panel-title">Original — Unsorted</div><div class="sort-panel-sub">Input order, no sort applied</div></div>
+            </div>
+            <div class="sort-panel-body" style="padding:14px;">
+              <div id="stab-orig" style="display:flex;flex-direction:column;gap:7px;"></div>
+              <div style="margin-top:12px;font-size:12px;color:#64748b;padding:8px 10px;background:#f8fafc;border-radius:6px;border:1px solid var(--soft);line-height:1.5;">B came <strong>before</strong> C in the original input. A stable sort must keep it that way.</div>
+            </div>
+          </div>
+
+          <!-- Column 2: Unstable -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div><div class="sort-panel-title">Unstable Sort</div><div class="sort-panel-sub">Equal keys may reorder on each run</div></div>
+              <button onclick="runUnstableSort()" style="background:#fff;color:#1e293b;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--mono);white-space:nowrap;flex-shrink:0;">Run Again &#8635;</button>
+            </div>
+            <div class="sort-panel-body" style="padding:14px;">
+              <div id="stab-unstable" style="display:flex;flex-direction:column;gap:7px;transition:opacity .28s;"></div>
+              <div id="stab-unstable-msg" style="margin-top:12px;font-size:12px;padding:8px 10px;border-left:3px solid #e2e8f0;background:#f8fafc;border-radius:4px;color:#374151;min-height:46px;line-height:1.5;"></div>
+            </div>
+          </div>
+
+          <!-- Column 3: Stable -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div><div class="sort-panel-title">Stable Sort</div><div class="sort-panel-sub">Equal keys always keep their input order</div></div>
+              <button onclick="runStableSort()" style="background:#fff;color:#1e293b;border:none;padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--mono);white-space:nowrap;flex-shrink:0;">Run &#10003;</button>
+            </div>
+            <div class="sort-panel-body" style="padding:14px;">
+              <div id="stab-stable" style="display:flex;flex-direction:column;gap:7px;transition:opacity .28s;"></div>
+              <div id="stab-stable-msg" style="margin-top:12px;font-size:12px;padding:8px 10px;border-left:3px solid var(--accent);background:#f8fafc;border-radius:4px;color:#374151;min-height:46px;line-height:1.5;"></div>
+            </div>
+          </div>
+
+        </div>
+        <div class="callout" style="position:relative;z-index:2;margin-top:0;">
+          <div style="font-size:14px;color:#14532d;line-height:1.6;"><strong>Key rule:</strong> Sort stability refers to the ability of keys to maintain their relative order in the list. A stable sort guarantees it — an unstable sort does not.</div>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+<section class="slide">
+        <style>
+          .cmp-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+          .cmp-row:last-child { margin-bottom: 0; }
+          .cmp-label { width: 110px; display: flex; flex-direction: column; font-weight: 800; font-size: 15px; color: var(--ink); }
+          .cmp-small { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1px; }
+          .bar-wrap { flex: 1; height: 20px; background: var(--soft2); border: 1px solid var(--soft); border-radius: 6px; overflow: hidden; }
+          .bar { height: 100%; transition: width 0.1s linear, background-color 0.3s; border-radius: 4px; }
+          .cmp-ops { width: 80px; text-align: right; font-family: var(--mono); font-size: 13px; font-weight: 800; color: var(--muted); }
+          
+          /* Bar Colors */
+          .bar.const  { background: #16a34a; } 
+          .bar.log    { background: #4ade80; } 
+          .bar.linear { background: #facc15; } 
+          .bar.quad   { background: #fb923c; } 
+          .bar.cubic  { background: #ef4444; } 
+          .bar.exp    { background: #991b1b; } 
+        </style>
+
+        <div class="slide-top">
+          <div class="meta"><div class="course">Analysis</div><div class="sub">Growth Classes</div></div>
+          <span class="pill">Comparison</span>
+        </div>
+        <h2>Interactive Comparison: All Growth Classes</h2>
+        <div class="card">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;">
+            <div style="font-weight:900;">Input Size (N): <span id="cmpNVal" class="pill">128</span></div>
+            <input id="cmpInput" type="range" min="2" max="256" step="1" value="128" style="flex:1;" oninput="updateGrowthComparison()" />
+          </div>
+  
+          <div class="card" style="background:#fff;">
+            <div class="cmp-row">
+              <div class="cmp-label"><span>\(O(1)\)</span><span class="cmp-small">Constant</span></div>
+              <div class="bar-wrap"><div id="cmpBarConst" class="bar const"></div></div>
+              <div id="cmpOpsConst" class="cmp-ops">1</div>
+            </div>
+            <div class="cmp-row">
+              <div class="cmp-label"><span>\(O(\log N)\)</span><span class="cmp-small">Logarithmic</span></div>
+              <div class="bar-wrap"><div id="cmpBarLog" class="bar log"></div></div>
+              <div id="cmpOpsLog" class="cmp-ops"></div>
+            </div>
+            <div class="cmp-row">
+              <div class="cmp-label"><span>\(O(N)\)</span><span class="cmp-small">Linear</span></div>
+              <div class="bar-wrap"><div id="cmpBarLin" class="bar linear"></div></div>
+              <div id="cmpOpsLin" class="cmp-ops"></div>
+            </div>
+            <div class="cmp-row">
+              <div class="cmp-label"><span>\(O(N^2)\)</span><span class="cmp-small">Quadratic</span></div>
+              <div class="bar-wrap"><div id="cmpBarQuad" class="bar quad"></div></div>
+              <div id="cmpOpsQuad" class="cmp-ops"></div>
+            </div>
+            <div class="cmp-row">
+              <div class="cmp-label"><span>\(O(N^3)\)</span><span class="cmp-small">Cubic</span></div>
+              <div class="bar-wrap"><div id="cmpBarCube" class="bar cubic"></div></div>
+              <div id="cmpOpsCube" class="cmp-ops"></div>
+            </div>
+            <div class="cmp-row">
+              <div class="cmp-label"><span>\(O(2^N)\)</span><span class="cmp-small">Exponential</span></div>
+              <div class="bar-wrap"><div id="cmpBarExp" class="bar exp"></div></div>
+              <div id="cmpOpsExp" class="cmp-ops"></div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-footer"><div class="muted">Bars use Logarithmic Scale for visibility</div><div class="slide-no" data-slide-no></div></div>
+
+        <script>
+          function formatOps(num) {
+            if (num > 1e15) return "Infinity";
+            return new Intl.NumberFormat('en-US', { notation: "compact", maximumFractionDigits: 1 }).format(num);
+          }
+
+          function updateGrowthComparison() {
+            const inputEl = document.getElementById('cmpInput');
+            if (!inputEl) return;
+
+            const n = parseInt(inputEl.value, 10);
+            document.getElementById('cmpNVal').textContent = n;
+
+            // Calculate raw values
+            const vConst = 1;
+            const vLog   = Math.max(1, Math.log2(n));
+            const vLin   = n;
+            const vQuad  = Math.pow(n, 2);
+            const vCube  = Math.pow(n, 3);
+            const vExp   = Math.pow(2, n);
+
+            // Update text labels
+            document.getElementById('cmpOpsConst').textContent = formatOps(vConst);
+            document.getElementById('cmpOpsLog').textContent   = formatOps(vLog);
+            document.getElementById('cmpOpsLin').textContent   = formatOps(vLin);
+            document.getElementById('cmpOpsQuad').textContent  = formatOps(vQuad);
+            document.getElementById('cmpOpsCube').textContent  = formatOps(vCube);
+            document.getElementById('cmpOpsExp').textContent   = formatOps(vExp);
+
+            // Calculate widths (Using a Log Base 10 scale for visual mapping)
+            const maxLog10 = 30; 
+            function getWidth(val) {
+              if (val <= 1) return 1;
+              if (val >= 1e30 || !isFinite(val)) return 100;
+              const logVal = Math.log10(val);
+              return Math.max(1, Math.min(100, (logVal / maxLog10) * 100));
+            }
+
+            // Apply widths
+            document.getElementById('cmpBarConst').style.width = getWidth(vConst) + '%';
+            document.getElementById('cmpBarLog').style.width   = getWidth(vLog) + '%';
+            document.getElementById('cmpBarLin').style.width   = getWidth(vLin) + '%';
+            document.getElementById('cmpBarQuad').style.width  = getWidth(vQuad) + '%';
+            document.getElementById('cmpBarCube').style.width  = getWidth(vCube) + '%';
+            document.getElementById('cmpBarExp').style.width   = getWidth(vExp) + '%';
+          }
+
+          // Run once on initialization to populate default values
+          setTimeout(updateGrowthComparison, 50);
+        </script>
+      </section>
+      
+<section class="slide" id="slide-bigo-builder">
+  <div class="slide-top">
+    <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Analysis — Time Complexity</div></div>
+    <span class="pill">Interactive Builder</span>
+  </div>
+  <h2>Big-O Equation Builder</h2>
+  <div style="background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #3b82f6;border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
+    <span style="font-size:14px;color:#1e3a8a;">Add code blocks to the program below to see how sequential and nested statements affect the total time complexity <strong>T(n)</strong> and the final Worst-Case <strong>Big-O</strong> classification.</span>
+  </div>
+  
+  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:20px;position:relative;z-index:2;">
+    
+    <div class="sort-panel">
+      <div class="sort-panel-hdr" style="background:#1e293b;">
+        <div><div class="sort-panel-title">Program Builder</div><div class="sort-panel-sub">Construct your algorithm</div></div>
+        <span class="sort-badge" id="bo-count">0 Blocks</span>
+      </div>
+      
+      <div id="bo-code" style="padding:14px; background:#0f172a; color:#e2e8f0; font-family:var(--mono); font-size:13px; line-height:1.5; min-height:180px; max-height:220px; overflow-y:auto; border-bottom:1px solid #334155;">
+        <span style="color:#64748b;">// Your code will appear here...</span>
+      </div>
+      
+      <div style="padding:12px; background:#f8fafc; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <button class="viz-btn" style="padding:6px 10px; font-size:11px;" onclick="addBoBlock('stmt')">+ Statement O(1)</button>
+        <button class="viz-btn" style="padding:6px 10px; font-size:11px;" onclick="addBoBlock('for')">+ For Loop O(n)</button>
+        <button class="viz-btn" style="padding:6px 10px; font-size:11px;" onclick="addBoBlock('nested')">+ Nested Loop O(n²)</button>
+        <button class="viz-btn" style="padding:6px 10px; font-size:11px;" onclick="addBoBlock('if')">+ If/Else O(n)</button>
+        <div style="flex:1;"></div>
+        <button class="viz-btn" style="padding:6px 10px; font-size:11px; background:#dc2626; border-color:#b91c1c;" onclick="resetBoBuilder()">Clear</button>
+      </div>
+    </div>
+
+    <div class="sort-panel">
+      <div class="sort-panel-hdr" style="background:#052e16;">
+        <div><div class="sort-panel-title">Complexity Analysis</div><div class="sort-panel-sub">Mathematical evaluation</div></div>
+      </div>
+      <div class="sort-panel-body" style="padding:20px 16px; display:flex; flex-direction:column; gap:16px;">
+        
+        <div style="background:#fff; border:2px dashed #cbd5e1; border-radius:12px; padding:16px; text-align:center;">
+          <div style="font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Exact Time Equation</div>
+          <div id="bo-math" style="font-family:var(--mono); font-size:20px; font-weight:700; color:#0f172a;">
+            T(n) = 0
+          </div>
+        </div>
+
+        <div style="background:#f0fdf4; border:2px solid #16a34a; border-radius:12px; padding:16px; text-align:center; box-shadow:0 4px 12px rgba(22,163,74,0.1);">
+          <div style="font-size:12px; font-weight:800; color:#166534; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Worst-Case Big-O</div>
+          <div id="bo-result" style="font-family:var(--mono); font-size:32px; font-weight:900; color:#16a34a;">
+            O(1)
+          </div>
+        </div>
+
+        <div id="bo-explain" style="font-size:13.5px; color:#374151; line-height:1.5; padding:8px 4px;">
+          Add blocks to see how the highest order term dominates the equation.
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <div class="slide-footer"><div class="muted">COIS 2020H — Time Complexity</div><div class="slide-no" data-slide-no></div></div>
+
+  <script>
+    let boBlocks = [];
+    const BO_DEFS = {
+      'stmt': { 
+        code: 'int x = 10;\nSystem.out.println("Processing...");', 
+        cost: 0, text: 'O(1)' 
+      },
+      'for': { 
+        code: 'for (int i = 0; i < n; i++) {\n  processItem(i);\n}', 
+        cost: 1, text: 'O(n)' 
+      },
+      'nested': { 
+        code: 'for (int i = 0; i < n; i++) {\n  for (int j = 0; j < n; j++) {\n    compare(i, j);\n  }\n}', 
+        cost: 2, text: 'O(n²)' 
+      },
+      'if': { 
+        code: 'if (data.isSorted()) {\n  fastLookup(); // O(1)\n} else {\n  for (int i=0; i<n; i++) {\n    slowLookup(i); // O(n)\n  }\n}', 
+        cost: 1, text: 'O(n) Worst-Case' 
+      }
+    };
+
+    function addBoBlock(type) {
+      if (boBlocks.length >= 5) {
+        alert("Maximum blocks reached for this visualization.");
+        return;
+      }
+      boBlocks.push(type);
+      updateBoBuilder();
+    }
+
+    function resetBoBuilder() {
+      boBlocks = [];
+      updateBoBuilder();
+    }
+
+    function updateBoBuilder() {
+      const codeEl = document.getElementById('bo-code');
+      const mathEl = document.getElementById('bo-math');
+      const resultEl = document.getElementById('bo-result');
+      const explainEl = document.getElementById('bo-explain');
+      const countEl = document.getElementById('bo-count');
+      
+      countEl.textContent = `${boBlocks.length} Block${boBlocks.length === 1 ? '' : 's'}`;
+
+      if (boBlocks.length === 0) {
+        codeEl.innerHTML = '<span style="color:#64748b;">// Your code will appear here...</span>';
+        mathEl.innerHTML = 'T(n) = 0';
+        resultEl.innerHTML = 'O(1)';
+        resultEl.style.color = '#16a34a';
+        explainEl.innerHTML = 'Empty program. The runtime is constant and unaffected by an input size <strong>n</strong>.';
+        return;
+      }
+
+      // 1. Render Code Blocks
+      let codeHtml = '';
+      let counts = {0: 0, 1: 0, 2: 0};
+      
+      boBlocks.forEach((b, idx) => {
+        const def = BO_DEFS[b];
+        counts[def.cost]++;
+        codeHtml += `<div style="margin-bottom:12px; padding-bottom:10px; border-bottom:1px dashed #334155;">` +
+                    `<div style="color:#94a3b8; font-size:10px; margin-bottom:6px; letter-spacing:0.05em;">// BLOCK ${idx+1} — ${def.text}</div>` +
+                    `<div style="color:#bae6fd;">${def.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div></div>`;
+      });
+      codeEl.innerHTML = codeHtml;
+      codeEl.scrollTop = codeEl.scrollHeight;
+
+      // 2. Compute Equation
+      let terms = [];
+      if (counts[2] > 0) terms.push(`${counts[2] === 1 ? '' : counts[2]}n&sup2;`);
+      if (counts[1] > 0) terms.push(`${counts[1] === 1 ? '' : counts[1]}n`);
+      if (counts[0] > 0) terms.push(`${counts[0]}`);
+      
+      mathEl.innerHTML = `T(n) = ${terms.join(' + ')}`;
+
+      // 3. Determine Big-O & Colors
+      let bigO = '';
+      let color = '';
+      let exp = `<strong>Why?</strong> In Big-O notation, we drop coefficients and focus strictly on the fastest growing term (the <em>dominant</em> term). `;
+
+      if (counts[2] > 0) {
+        bigO = 'O(n&sup2;)';
+        color = '#dc2626'; // Red for slow
+        exp += `Because n² grows so rapidly as input size increases, the linear (n) and constant terms become completely insignificant in the worst-case scenario.`;
+      } else if (counts[1] > 0) {
+        bigO = 'O(n)';
+        color = '#ea580c'; // Orange for medium
+        exp += `The loop creates a linear n relationship, which heavily dominates any O(1) constant operations taking place outside of it.`;
+      } else {
+        bigO = 'O(1)';
+        color = '#16a34a'; // Green for fast
+        exp += `There are no operations here that scale with the input size n. The execution time stays flat.`;
+      }
+
+      resultEl.innerHTML = bigO;
+      resultEl.style.color = color;
+      explainEl.innerHTML = exp;
+    }
+    
+    // Initialize on load
+    resetBoBuilder();
+  </script>
+</section>
+
+      <!-- ═══ SLIDE 12 — Thank You ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Wrap Up</div></div>
+          <span class="pill">End</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:62%;">
+          <h1>Thank You</h1>
+          <p class="muted">Questions?</p>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Trees</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+    </div><!-- end deck -->
+  </div>
+</div>
+
+<div class="controls">
+  <button class="iconbtn" id="prevBtn" onclick="go(-1)" title="Previous (←)"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="iconbtn" id="nextBtn" onclick="go(1)"  title="Next (→)"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  <button class="iconbtn" onclick="toggleFullScreen()" title="Fullscreen (F)"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  CORE ENGINE
+// ═══════════════════════════════════════════
+const slides = Array.from(document.querySelectorAll('.slide'));
+const progressBar = document.getElementById('progress-bar');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+let current = 0;
+
+function applyScale(){
+  const pad=24, w=window.innerWidth-pad*2, h=window.innerHeight-pad*2;
+  const s=Math.min(w/1600,h/900);
+  document.documentElement.style.setProperty('--scale',String(Math.max(0.3,Math.min(s,1.5))));
+}
+function updateSlideNumbers(){
+  slides.forEach((s,i)=>{ const h=s.querySelector('[data-slide-no]'); if(h) h.textContent=`${i+1} / ${slides.length}`; });
+}
+function updateUI(){
+  slides.forEach(s=>s.classList.remove('active'));
+  slides[current].classList.add('active');
+  progressBar.style.width=((current+1)/slides.length)*100+'%';
+  prevBtn.disabled=current===0;
+  nextBtn.disabled=current===slides.length-1;
+  if(window.MathJax) MathJax.typesetPromise();
+}
+function go(dir){
+  const n=current+dir;
+  if(n<0||n>=slides.length) return;
+  current=n; updateUI();
+}
+function toggleFullScreen(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='Enter'){ if(e.key===' ') e.preventDefault(); go(1); }
+  else if(e.key==='ArrowLeft') go(-1);
+  else if(e.key.toLowerCase()==='f') toggleFullScreen();
+});
+window.addEventListener('resize',applyScale);
+applyScale(); updateSlideNumbers(); updateUI();
+
+
+// ═══════════════════════════════════════════
+//  SLIDE 2 — TERMINOLOGY QUIZ
+// ═══════════════════════════════════════════
+const TERM_QS = [
+  { q:'What is the top-most node called — the one with no parent?',
+    hl:['tn-50'], opts:['Root','Leaf','Edge','Child'], ans:'Root',
+    exp:'The root is the starting point. Every tree has exactly one root.' },
+  { q:'A node with NO children is called a...?',
+    hl:['tn-10','tn-40','tn-60','tn-90'], opts:['Root','Parent','Leaf','Depth'], ans:'Leaf',
+    exp:'Leaf nodes sit at the bottom — they have no children.' },
+  { q:'What is the line connecting two nodes called?',
+    hl:['te-50-30'], opts:['Path','Edge','Link','Branch'], ans:'Edge',
+    exp:'An edge connects a parent to its child. A tree with n nodes has exactly n−1 edges.' },
+  { q:'Node 30 is directly above nodes 10 and 40. What is 30 called in relation to them?',
+    hl:['tn-30'], opts:['Root','Sibling','Parent','Ancestor'], ans:'Parent',
+    exp:'A parent node is one level above its children.' },
+  { q:'Node 10 is directly below node 30. What is 10 called in relation to 30?',
+    hl:['tn-10'], opts:['Child','Leaf','Sibling','Root'], ans:'Child',
+    exp:'A child is directly connected below its parent.' },
+  { q:'Node 30 is 1 edge away from the root. What term describes this distance?',
+    hl:['tn-50','tn-30','te-50-30'], opts:['Height = 1','Depth = 1','Level = 2','Size = 1'], ans:'Depth = 1',
+    exp:'Depth = number of edges from the root to that node.' },
+  { q:'The longest path from the root to any leaf is the tree\'s...?',
+    hl:['tn-50','te-50-30','tn-30','te-30-10','tn-10'], opts:['Width','Depth','Height','Size'], ans:'Height',
+    exp:'Height = length of the longest root-to-leaf path. This tree has height 2.' },
+  { q:'Node 30 together with all its descendants (10 and 40) form a...?',
+    hl:['tn-30','tn-10','tn-40','te-30-10','te-30-40'], opts:['Branch','Subtree','Cluster','Path'], ans:'Subtree',
+    exp:'A subtree is any node plus all nodes below it.' },
+];
+
+let qIdx=0, qScore=0, qActive=false, qAnswered=false;
+
+function quizReset(){
+  qIdx=0; qScore=0; qActive=false; qAnswered=false;
+  document.getElementById('qScore').textContent='0';
+  document.getElementById('qProgress').textContent='0 / 8';
+  document.getElementById('qProgressBar').style.width='0%';
+  document.getElementById('qQuestion').innerHTML='Click <strong>Start</strong> to test your tree vocabulary!';
+  document.getElementById('qOptions').innerHTML='';
+  document.getElementById('qFeedback').style.display='none';
+  document.getElementById('qStartBtn').style.display='';
+  document.getElementById('qNextBtn').style.display='none';
+  document.getElementById('term-hl').innerHTML='';
+}
+
+function quizStart(){
+  qIdx=0; qScore=0; qActive=true; qAnswered=false;
+  document.getElementById('qStartBtn').style.display='none';
+  renderQuestion();
+}
+
+function renderQuestion(){
+  if(qIdx>=TERM_QS.length){ quizFinish(); return; }
+  const q=TERM_QS[qIdx];
+  qAnswered=false;
+  document.getElementById('qQuestion').textContent=q.q;
+  document.getElementById('qFeedback').style.display='none';
+  document.getElementById('qNextBtn').style.display='none';
+  document.getElementById('qProgress').textContent=`${qIdx+1} / 8`;
+  document.getElementById('qProgressBar').style.width=((qIdx)/8*100)+'%';
+
+  // Shuffle options
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  document.getElementById('qOptions').innerHTML=opts.map(o=>
+    `<button class="quiz-opt" onclick="quizAnswer(this,'${o.replace(/'/g,"\\'")}','${q.ans.replace(/'/g,"\\'")}','${q.exp.replace(/'/g,"\\'")}')">${o}</button>`
+  ).join('');
+
+  // SVG highlight
+  highlightTerms(q.hl);
+}
+
+function highlightTerms(ids){
+  const hl=document.getElementById('term-hl');
+  const rings=ids.map(id=>{
+    const el=document.getElementById(id);
+    if(!el) return '';
+    if(el.tagName==='circle'){
+      const cx=parseFloat(el.getAttribute('cx'));
+      const cy=parseFloat(el.getAttribute('cy'));
+      const r=parseFloat(el.getAttribute('r'))+10;
+      return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f59e0b" stroke-width="4" class="hl-ring" opacity=".9"/>`;
+    }
+    if(el.tagName==='line'){
+      const x1=el.getAttribute('x1'),y1=el.getAttribute('y1'),x2=el.getAttribute('x2'),y2=el.getAttribute('y2');
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" opacity=".7" class="hl-ring"/>`;
+    }
+    return '';
+  });
+  hl.innerHTML=rings.join('');
+}
+
+function quizAnswer(btn, chosen, correct, exp){
+  if(qAnswered) return;
+  qAnswered=true;
+  const fb=document.getElementById('qFeedback');
+  if(chosen===correct){
+    btn.classList.add('correct');
+    qScore++;
+    document.getElementById('qScore').textContent=qScore;
+    fb.style.display='block';
+    fb.style.background='#dcfce7'; fb.style.color='#166534'; fb.style.borderLeft='4px solid #16a34a';
+    fb.textContent='Correct! '+exp;
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.quiz-opt').forEach(b=>{ if(b.textContent===correct) b.classList.add('reveal'); });
+    fb.style.display='block';
+    fb.style.background='#fee2e2'; fb.style.color='#991b1b'; fb.style.borderLeft='4px solid #ef4444';
+    fb.textContent='Not quite. '+exp;
+  }
+  document.getElementById('qNextBtn').style.display='';
+  document.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+}
+
+function quizNext(){
+  qIdx++;
+  if(qIdx>=TERM_QS.length){ quizFinish(); return; }
+  renderQuestion();
+}
+
+function quizFinish(){
+  document.getElementById('term-hl').innerHTML='';
+  document.getElementById('qOptions').innerHTML='';
+  document.getElementById('qNextBtn').style.display='none';
+  document.getElementById('qFeedback').style.display='none';
+  document.getElementById('qProgressBar').style.width='100%';
+  document.getElementById('qProgress').textContent='8 / 8';
+  const pct=Math.round(qScore/8*100);
+  const emoji=pct===100?'🌳':pct>=75?'':'';
+  document.getElementById('qQuestion').innerHTML=
+    `<span style="font-size:28px;">${emoji}</span> Quiz complete! Score: <strong style="color:var(--accent);">${qScore} / 8</strong> (${pct}%)
+    <div style="font-size:15px;font-weight:400;color:var(--muted);margin-top:6px;">${pct===100?'Perfect score!':pct>=75?'Great work!':'Keep practicing!'}</div>`;
+  document.getElementById('qStartBtn').textContent='Try Again';
+  document.getElementById('qStartBtn').style.display='';
+}
+
+
+// ═══════════════════════════════════════════
+//  SLIDE 3 — DRAG & DROP
+// ═══════════════════════════════════════════
+const DND_LABELS={
+  general:'Each node can have any number of children',
+  binary:'Each node has at most 2 children (left and right)',
+  bst:'Left < Root < Right — ordering rule enforced at every node',
+  avl:'Self-balancing; height difference ≤ 1 per node (balance factor)'
+};
+let dndDone=0;
+
+function dndStart(e, id){ e.dataTransfer.setData('text/plain', id); }
+function dndOver(e){ e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function dndLeave(e){ e.currentTarget.classList.remove('drag-over'); }
+function dndDrop(e){
+  e.preventDefault();
+  const dz=e.currentTarget;
+  dz.classList.remove('drag-over');
+  if(dz.classList.contains('locked')) return;
+  const id=e.dataTransfer.getData('text/plain');
+  const correct=dz.dataset.correct;
+  if(id===correct){
+    dz.textContent=DND_LABELS[id];
+    dz.classList.add('locked');
+    document.getElementById('dc-'+id).classList.add('used');
+    dndDone++;
+    if(dndDone===4) document.getElementById('dndWin').style.display='block';
+  } else {
+    dz.style.animation='wrong-flash .5s ease';
+    setTimeout(()=>dz.style.animation='',500);
+  }
+}
+
+
+// ═══════════════════════════════════════════
+//  SLIDE 4 — SORTING VISUALIZATION
+// ═══════════════════════════════════════════
+// Pre-computed bubble sort steps for [5,3,7,1,4]
+// Each step: {arr, cmpA, cmpB, swapped, settled}
+const BUBBLE=[
+  {arr:[5,3,7,1,4],a:0,b:1,sw:true, settled:[]},
+  {arr:[3,5,7,1,4],a:1,b:2,sw:false,settled:[]},
+  {arr:[3,5,7,1,4],a:2,b:3,sw:true, settled:[]},
+  {arr:[3,5,1,7,4],a:3,b:4,sw:true, settled:[4]},
+  {arr:[3,5,1,4,7],a:0,b:1,sw:false,settled:[4]},
+  {arr:[3,5,1,4,7],a:1,b:2,sw:true, settled:[4]},
+  {arr:[3,1,5,4,7],a:2,b:3,sw:true, settled:[3,4]},
+  {arr:[3,1,4,5,7],a:0,b:1,sw:true, settled:[2,3,4]},
+  {arr:[1,3,4,5,7],a:1,b:2,sw:false,settled:[1,2,3,4]},
+  {arr:[1,3,4,5,7],a:0,b:1,sw:false,settled:[0,1,2,3,4]},
+];
+// BST sort steps: phase='insert' or 'traverse'
+// Nodes: {v, x, y, parent, dir, visible}
+const BST_NODES=[
+  {v:5,  x:170, y:30,  px:null, py:null},
+  {v:3,  x:100, y:90,  px:170,  py:30},
+  {v:7,  x:240, y:90,  px:170,  py:30},
+  {v:1,  x:62,  y:150, px:100,  py:90},
+  {v:4,  x:138, y:150, px:100,  py:90},
+];
+const BST_TRAVERSE=[1,3,4,5,7]; // in-order
+const BST_TRAVERSE_IDX=[3,1,4,0,2]; // which node index gets visited
+const BST_INSERT_MSGS=[
+  'Insert 5 → becomes the root',
+  'Insert 3 → 3 < 5, go left → place at left of 5 (1 comparison)',
+  'Insert 7 → 7 > 5, go right → place at right of 5 (1 comparison)',
+  'Insert 1 → 1 < 5, left → 1 < 3, left → place at left of 3 (2 comparisons)',
+  'Insert 4 → 4 < 5, left → 4 > 3, right → place at right of 3 (2 comparisons)',
+];
+const BST_TRAV_MSGS=[
+  'In-order: visit left-most → output 1',
+  'In-order: backtrack → visit 3',
+  'In-order: right child of 3 → visit 4',
+  'In-order: backtrack to root → visit 5',
+  'In-order: right subtree → visit 7',
+];
+const BST_INSERT_CMPS=[0,1,1,2,2];
+// Path of node-index pairs [from, to] traversed while inserting each node
+const INSERT_PATHS=[
+  [],               // insert 5: root, no comparisons
+  [[0,1]],          // insert 3: 5→3
+  [[0,2]],          // insert 7: 5→7
+  [[0,1],[1,3]],    // insert 1: 5→3→1
+  [[0,1],[1,4]],    // insert 4: 5→3→4
+];
+
+let sortStepIdx=0, sortInterval=null;
+
+function sortReset(){
+  sortStepIdx=0;
+  if(sortInterval){clearInterval(sortInterval);sortInterval=null;}
+  document.getElementById('sortPlayBtn').textContent='Play';
+  document.getElementById('sortStepBtn').disabled=false;
+  renderSort();
+}
+
+function sortPlay(){
+  if(sortInterval){
+    clearInterval(sortInterval); sortInterval=null;
+    document.getElementById('sortPlayBtn').textContent='Play';
+    return;
+  }
+  document.getElementById('sortPlayBtn').textContent='Pause';
+  sortInterval=setInterval(()=>{ if(!sortStep()){ clearInterval(sortInterval); sortInterval=null; document.getElementById('sortPlayBtn').textContent='Play'; } },900);
+}
+
+function sortStep(){
+  if(sortStepIdx>=10){ document.getElementById('sortStepBtn').disabled=true; return false; }
+  sortStepIdx++;
+  renderSort();
+  if(sortStepIdx>=10){ document.getElementById('sortStepBtn').disabled=true; return false; }
+  return true;
+}
+
+function renderSort(){
+  document.getElementById('sortStepNum').textContent=sortStepIdx;
+  renderBubble();
+  renderBSTSort();
+}
+
+function renderBubble(){
+  const dispArr = sortStepIdx===0 ? [5,3,7,1,4] : getArrAfterStep(sortStepIdx-1);
+  const settled  = sortStepIdx===0 ? [] : BUBBLE[Math.min(sortStepIdx-1,9)].settled;
+  const prevStep = (sortStepIdx>0 && sortStepIdx<=10) ? BUBBLE[sortStepIdx-1] : null;
+  const cmpA = prevStep ? prevStep.a : -1;
+  const cmpB = prevStep ? prevStep.b : -1;
+  const justSwapped = prevStep ? prevStep.sw : false;
+
+  const maxVal=7, maxH=98;
+  const COL={
+    neutral:  {bg:'#dbeafe',border:'#93c5fd',text:'#1e40af',glow:''},
+    comparing:{bg:'#fef9c3',border:'#f59e0b',text:'#92400e',glow:'box-shadow:0 0 0 3px rgba(245,158,11,.30);'},
+    swapped:  {bg:'#ffedd5',border:'#f97316',text:'#9a3412',glow:'box-shadow:0 0 0 3px rgba(249,115,22,.30);'},
+    settled:  {bg:'#dcfce7',border:'#16a34a',text:'#166534',glow:''},
+  };
+
+  let html='';
+  for(let i=0;i<5;i++){
+    const h=Math.max(14,Math.round((dispArr[i]/maxVal)*maxH));
+    let st='neutral';
+    if(settled.includes(i)) st='settled';
+    else if((i===cmpA||i===cmpB) && justSwapped) st='swapped';
+    else if(i===cmpA||i===cmpB) st='comparing';
+    const c=COL[st];
+    html+=`<div class="sort-bar-wrap">
+      <div class="sort-bar" style="height:${h}px;background:${c.bg};border:2.5px solid ${c.border};${c.glow}"></div>
+      <div class="sort-bar-val" style="color:${c.text};">${dispArr[i]}</div>
+      <div class="sort-bar-idx">[${i}]</div>
+    </div>`;
+  }
+  document.getElementById('bubbleBars').innerHTML=html;
+
+  // Pass badge
+  const passMap=[1,1,1,1,2,2,2,3,3,4];
+  const passNum=sortStepIdx===0?1:(sortStepIdx<=10?passMap[sortStepIdx-1]:4);
+  const pb=document.getElementById('bubblePhase');
+  pb.textContent=sortStepIdx>=10?'✓ Sorted':`Pass ${passNum}`;
+  pb.style.background=sortStepIdx>=10?'rgba(134,239,172,.35)':'rgba(255,255,255,.18)';
+
+  // Message
+  let msg='Click Step to begin';
+  if(prevStep){
+    const bef=getArrBefore(sortStepIdx-1);
+    msg=`[${prevStep.a}] ${bef[prevStep.a]} ${prevStep.sw?'>':'≤'} ${bef[prevStep.b]} [${prevStep.b}]  →  ${prevStep.sw?'Swapped ↔':'No swap'}`;
+  }
+  if(sortStepIdx===10) msg='✓ Fully sorted: [1, 3, 4, 5, 7]';
+  document.getElementById('bubbleMsg').textContent=msg;
+
+  let swaps=0;
+  for(let i=0;i<Math.min(sortStepIdx,10);i++) if(BUBBLE[i].sw) swaps++;
+  document.getElementById('bubbleCmp').textContent=sortStepIdx;
+  document.getElementById('bubbleSwaps').textContent=swaps;
+}
+
+function getArrBefore(stepIdx){
+  if(stepIdx===0) return [5,3,7,1,4];
+  return getArrAfterStep(stepIdx-1);
+}
+function getArrAfterStep(stepIdx){
+  let arr=[5,3,7,1,4];
+  for(let i=0;i<=stepIdx;i++){
+    const s=BUBBLE[i];
+    if(s.sw){const t=arr[s.a];arr[s.a]=arr[s.b];arr[s.b]=t;}
+  }
+  return arr;
+}
+
+function renderBSTSort(){
+  const svg=document.getElementById('bstSortSVG');
+  const visibleCount=Math.min(sortStepIdx,5);
+  const traverseStep=sortStepIdx>5?sortStepIdx-5:0;
+  const inInsertPhase=sortStepIdx>=1&&sortStepIdx<=5;
+
+  let edgesHTML='', nodesHTML='', labelsHTML='';
+
+  // Solid base edges for all visible nodes
+  for(let i=1;i<visibleCount;i++){
+    const n=BST_NODES[i];
+    edgesHTML+=`<line x1="${n.px}" y1="${n.py}" x2="${n.x}" y2="${n.y}" stroke="#d1fae5" stroke-width="3"/>`;
+  }
+
+  // Dashed amber insert-path edges overlaid
+  if(inInsertPhase){
+    INSERT_PATHS[sortStepIdx-1].forEach(([ai,bi])=>{
+      const fr=BST_NODES[ai], to=BST_NODES[bi];
+      edgesHTML+=`<line x1="${fr.x}" y1="${fr.y}" x2="${to.x}" y2="${to.y}" stroke="#f59e0b" stroke-width="3.5" stroke-dasharray="7,4" stroke-linecap="round"/>`;
+    });
+    // Comparison labels along path
+    const insertVal=BST_NODES[sortStepIdx-1].v;
+    INSERT_PATHS[sortStepIdx-1].forEach(([ai])=>{
+      const n=BST_NODES[ai];
+      const dir=insertVal<n.v?`${insertVal}<${n.v} → left`:`${insertVal}>${n.v} → right`;
+      const lx=n.x+(insertVal<n.v?-42:42), ly=n.y-1;
+      labelsHTML+=`<rect x="${lx-30}" y="${ly-10}" width="60" height="18" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2"/>
+        <text x="${lx}" y="${ly+4}" text-anchor="middle" fill="#78350f" font-size="8.5" font-weight="800">${dir}</text>`;
+    });
+  }
+
+  // Traversal path edges
+  if(traverseStep>0){
+    const visitedIdxs=BST_TRAVERSE_IDX.slice(0,traverseStep);
+    for(let i=1;i<visibleCount;i++){
+      if(visitedIdxs.includes(i)){
+        const n=BST_NODES[i];
+        edgesHTML+=`<line x1="${n.px}" y1="${n.py}" x2="${n.x}" y2="${n.y}" stroke="#16a34a" stroke-width="3"/>`;
+      }
+    }
+  }
+
+  // Nodes
+  for(let i=0;i<visibleCount;i++){
+    const n=BST_NODES[i];
+    const isJustInserted  = inInsertPhase && i===visibleCount-1;
+    const pathNodeIdxs    = inInsertPhase ? INSERT_PATHS[sortStepIdx-1].map(([a])=>a) : [];
+    const isOnPath        = !isJustInserted && pathNodeIdxs.includes(i);
+    const isTraversed     = traverseStep>0 && BST_TRAVERSE_IDX.slice(0,traverseStep).includes(i);
+    const isCurTraverse   = traverseStep>0 && BST_TRAVERSE_IDX[traverseStep-1]===i;
+
+    let fill,stroke,tc,extra='';
+    if(isCurTraverse)    {fill='#fef9c3';stroke='#f59e0b';tc='#92400e';extra=' filter="url(#glow)"';}
+    else if(isTraversed) {fill='#dcfce7';stroke='#16a34a';tc='#166534';}
+    else if(isJustInserted){fill='#fef3c7';stroke='#d97706';tc='#78350f';}
+    else if(isOnPath)    {fill='#fff7ed';stroke='#fb923c';tc='#9a3412';}
+    else                 {fill='#16a34a';stroke='#22c55e';tc='white';}
+
+    nodesHTML+=`<circle cx="${n.x}" cy="${n.y}" r="21" fill="${fill}" stroke="${stroke}" stroke-width="2.5"${extra}/>
+      <text x="${n.x}" y="${n.y+5}" text-anchor="middle" fill="${tc}" font-size="13" font-weight="bold" font-family="monospace">${n.v}</text>`;
+  }
+
+  // SVG defs for glow filter
+  const defs=`<defs><filter id="glow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
+  svg.innerHTML=defs+edgesHTML+nodesHTML+labelsHTML;
+
+  // Phase badge
+  const bp=document.getElementById('bstPhase');
+  if(sortStepIdx===0)      {bp.textContent='Phase: Insert';}
+  else if(sortStepIdx<=5)  {bp.textContent=`Inserting ${sortStepIdx}/5`;}
+  else if(traverseStep<5)  {bp.textContent=`Traversing ${traverseStep}/5`;}
+  else                     {bp.textContent='✓ Complete'; bp.style.background='rgba(134,239,172,.35)';}
+
+  // Message & counters
+  let msg='Ready to build BST';
+  if(sortStepIdx>=1&&sortStepIdx<=5) msg=BST_INSERT_MSGS[sortStepIdx-1];
+  else if(sortStepIdx>5)             msg=BST_TRAV_MSGS[traverseStep-1];
+  document.getElementById('bstMsg').textContent=msg;
+
+  let cumCmp=0;
+  for(let i=0;i<visibleCount;i++) cumCmp+=BST_INSERT_CMPS[i];
+  document.getElementById('bstCmp').textContent=cumCmp;
+
+  const output=BST_TRAVERSE.slice(0,traverseStep);
+  document.getElementById('bstOutput').textContent=output.length?'['+output.join(', ')+']':'—';
+}
+
+
+// ═══════════════════════════════════════════
+//  SLIDE 6 — SEARCH VISUALIZATION
+// ═══════════════════════════════════════════
+// Array: [10, 20, 30, 40, 50, 60, 70], target: 60
+// Linear: 6 steps to find 60 (index 5)
+// BST:       40
+//           /  \
+//          20   60   ← found here
+//         / \   \
+//        10  30  70
+// Search path: 40 → 60 (2 steps!)
+const SEARCH_ARR=[10,20,30,40,50,60,70];
+const SEARCH_TARGET=60;
+
+// BST nodes for search: {v, x, y, px, py}
+const BSTS_NODES=[
+  {v:40, x:170, y:25,  px:null, py:null},   // 0 root
+  {v:20, x:95,  y:85,  px:170,  py:25},     // 1 left
+  {v:60, x:245, y:85,  px:170,  py:25},     // 2 right  ← target
+  {v:10, x:55,  y:150, px:95,   py:85},     // 3 ll
+  {v:30, x:135, y:150, px:95,   py:85},     // 4 lr
+  {v:70, x:285, y:150, px:245,  py:85},     // 5 rr
+];
+// BST search steps: which node index to visit and the decision
+const BSTS_STEPS=[
+  {nodeIdx:0, msg:'Check 40. Is 60 > 40? Yes → go right', found:false},
+  {nodeIdx:2, msg:'Check 60. Is 60 === 60? Yes → Found! 🎉', found:true},
+];
+
+let searchStepIdx=0, searchLinearDone=false, searchBSTDone=false, searchInterval=null;
+
+function searchReset(){
+  searchStepIdx=0; searchLinearDone=false; searchBSTDone=false;
+  if(searchInterval){clearInterval(searchInterval);searchInterval=null;}
+  document.getElementById('searchPlayBtn').textContent='Play';
+  document.getElementById('searchStepBtn').disabled=false;
+  document.getElementById('searchStatus').textContent='Press Step or Play to begin';
+  renderSearch();
+}
+
+function searchPlay(){
+  if(searchInterval){
+    clearInterval(searchInterval); searchInterval=null;
+    document.getElementById('searchPlayBtn').textContent='Play'; return;
+  }
+  document.getElementById('searchPlayBtn').textContent='Pause';
+  searchInterval=setInterval(()=>{
+    if(!searchStep()){ clearInterval(searchInterval); searchInterval=null; document.getElementById('searchPlayBtn').textContent='Play'; }
+  }, 900);
+}
+
+function searchStep(){
+  const maxSteps=Math.max(SEARCH_TARGET/10, BSTS_STEPS.length); // 6 linear steps, 2 BST steps, max=6
+  if(searchStepIdx>=6){ document.getElementById('searchStepBtn').disabled=true; return false; }
+  searchStepIdx++;
+  renderSearch();
+  if(searchStepIdx>=6){ document.getElementById('searchStepBtn').disabled=true; return false; }
+  return true;
+}
+
+function renderSearch(){
+  renderLinearSearch();
+  renderBSTSearch();
+  // update status
+  if(searchStepIdx===0) document.getElementById('searchStatus').textContent='Press Step or Play to begin';
+  else if(searchStepIdx<6) document.getElementById('searchStatus').textContent=`Step ${searchStepIdx} of 6`;
+  else document.getElementById('searchStatus').textContent='Both searches complete — compare the check counts!';
+}
+
+function renderLinearSearch(){
+  const target=SEARCH_TARGET;
+  let html='';
+  for(let i=0;i<SEARCH_ARR.length;i++){
+    let cls='arr-box';
+    if(i<searchStepIdx-1) cls+=' checked';
+    else if(i===searchStepIdx-1){
+      cls+= SEARCH_ARR[i]===target ? ' found' : ' current';
+    }
+    html+=`<div class="${cls}">${SEARCH_ARR[i]}</div>`;
+  }
+  document.getElementById('linearArr').innerHTML=html;
+
+  let msg='';
+  if(searchStepIdx===0) msg='Ready to search';
+  else if(searchStepIdx<=6){
+    const val=SEARCH_ARR[searchStepIdx-1];
+    if(val===target) msg=`Check ${val} → Found! ✓`;
+    else msg=`Check ${val} → ${val} ≠ ${target}, continue...`;
+  }
+  document.getElementById('linearMsg').textContent=msg;
+  document.getElementById('linearCmp').textContent=Math.min(searchStepIdx, 6);
+}
+
+function renderBSTSearch(){
+  const svg=document.getElementById('bstSearchSVG');
+  const visitedUpTo = Math.min(searchStepIdx, BSTS_STEPS.length);
+  const visitedIdxs = BSTS_STEPS.slice(0, visitedUpTo).map(s=>s.nodeIdx);
+
+  let edgesHTML='', nodesHTML='';
+  BSTS_NODES.forEach((n,i)=>{
+    if(n.px!==null){
+      const isActivePath = visitedIdxs.includes(i) || visitedIdxs.some(vi=>vi===i);
+      edgesHTML+=`<line x1="${n.px}" y1="${n.py}" x2="${n.x}" y2="${n.y}" stroke="${isActivePath?'#16a34a':'#cbd5e1'}" stroke-width="${isActivePath?3:2}"/>`;
+    }
+  });
+  BSTS_NODES.forEach((n,i)=>{
+    const stepForNode = BSTS_STEPS.findIndex(s=>s.nodeIdx===i);
+    const isVisited = visitedIdxs.includes(i);
+    const isCurrent = visitedUpTo>0 && BSTS_STEPS[visitedUpTo-1].nodeIdx===i;
+    const isFound = isCurrent && BSTS_STEPS[visitedUpTo-1].found;
+    const isFaded = !isVisited && visitedUpTo>0;
+
+    let fill='#16a34a', stroke='#22c55e', tcolor='white';
+    if(isFound){ fill='#dcfce7'; stroke='#16a34a'; tcolor='#166534'; }
+    else if(isCurrent){ fill='#fef9c3'; stroke='#f59e0b'; tcolor='#92400e'; }
+    else if(isVisited){ fill='#fed7aa'; stroke='#ea580c'; tcolor='#9a3412'; }
+    else if(isFaded){ fill='#f1f5f9'; stroke='#cbd5e1'; tcolor='#94a3b8'; }
+
+    nodesHTML+=`<circle cx="${n.x}" cy="${n.y}" r="22" fill="${fill}" stroke="${stroke}" stroke-width="2.5" ${isFaded?'opacity=".5"':''}/>
+      <text x="${n.x}" y="${n.y+5}" text-anchor="middle" fill="${tcolor}" font-size="14" font-weight="bold" font-family="monospace" ${isFaded?'opacity=".5"':''}>${n.v}</text>`;
+  });
+
+  // Check/arrow annotations for current step
+  let annotations='';
+  if(visitedUpTo===1){
+    annotations+=`<text x="170" y="16" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">60 &gt; 40 → go right</text>`;
+  }
+  if(visitedUpTo===2){
+    annotations+=`<text x="245" y="74" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="bold">60 = 60 → Found!</text>`;
+  }
+  svg.innerHTML=edgesHTML+nodesHTML+annotations;
+
+  let msg='';
+  if(searchStepIdx===0) msg='Ready — BST is pre-built';
+  else if(visitedUpTo>0 && visitedUpTo<=BSTS_STEPS.length) msg=BSTS_STEPS[visitedUpTo-1].msg;
+  else if(visitedUpTo>=BSTS_STEPS.length) msg=BSTS_STEPS[BSTS_STEPS.length-1].msg;
+  else msg='Waiting...';
+  document.getElementById('bstSearchMsg').textContent=msg;
+  document.getElementById('bstSearchCmp').textContent=Math.min(visitedUpTo, BSTS_STEPS.length);
+}
+
+// ═══════════════════════════════════════════
+//  SLIDE 9a — In-Place vs Not In-Place
+// ═══════════════════════════════════════════
+const IP_STATES=[
+  {arr:[5,3,1],hl:[],       temp:null, ip:'Array [5, 3, 1] before sorting. No extra memory allocated yet.'},
+  {arr:[5,3,1],hl:[0,1],    temp:null, ip:'Compare arr[0]=5 and arr[1]=3. Since 5 > 3, a swap is needed.'},
+  {arr:[3,5,1],hl:[0,1],    temp:'5',  ip:'Swap in-place: temp=5, place 3 at index 0. Only one variable used — O(1).'},
+  {arr:[3,5,1],hl:[1,2],    temp:null, ip:'Compare arr[1]=5 and arr[2]=1. Since 5 > 1, a swap is needed.'},
+  {arr:[3,1,5],hl:[1,2],    temp:'5',  ip:'Swap in-place again. Array continues to sort without any extra array — always O(1) space.'},
+];
+const NIP_STATES=[
+  {out:[],    nip:'To sort [5, 3, 1], a brand-new output array of size n=3 must be allocated first.'},
+  {out:[],    nip:'Output array allocated. This costs O(n) memory — n=3 extra slots reserved on the heap.'},
+  {out:[1],   nip:'Merge step: find smallest (1), copy to output[0]. Extra array is growing.'},
+  {out:[1,3], nip:'Copy next smallest (3) to output[1]. Two of three extra slots are now in use.'},
+  {out:[1,3,5],nip:'Sorted output complete. Used n=3 extra slots. Total extra memory: O(n).'},
+];
+let ipIdx=0;
+
+function ipBox(v,hi){
+  const bg=hi?'#f0fdf4':'#fff', bdr=hi?'var(--accent)':'#e2e8f0', tc=hi?'#166534':'#0f172a';
+  return `<div style="flex:1;height:46px;border:1.5px solid ${bdr};border-radius:8px;background:${bg};display:grid;place-items:center;font-weight:900;font-size:20px;font-family:var(--mono);color:${tc};transition:all .3s;">${v}</div>`;
+}
+function renderIP(){
+  const s=IP_STATES[ipIdx], n=NIP_STATES[ipIdx];
+  document.getElementById('ip-arr').innerHTML=s.arr.map((v,i)=>ipBox(v,s.hl.includes(i))).join('');
+  const t=document.getElementById('ip-temp');
+  if(s.temp){t.textContent=s.temp;t.style.borderColor='#0f172a';t.style.color='#0f172a';t.style.borderStyle='solid';}
+  else{t.textContent='—';t.style.borderColor='#94a3b8';t.style.color='#64748b';t.style.borderStyle='dashed';}
+  document.getElementById('ip-msg').textContent=s.ip;
+  // Original frozen array (not in-place side)
+  document.getElementById('nip-orig').innerHTML=[5,3,1].map(v=>`<div style="flex:1;height:46px;border:1.5px solid #e2e8f0;border-radius:8px;background:#f8fafc;display:grid;place-items:center;font-weight:900;font-size:20px;font-family:var(--mono);color:#94a3b8;">${v}</div>`).join('');
+  // Output array slots
+  let out='';
+  n.out.forEach(v=>{out+=`<div style="width:46px;height:46px;border:1.5px solid var(--accent);border-radius:8px;background:#f0fdf4;display:grid;place-items:center;font-weight:900;font-size:20px;font-family:var(--mono);color:#166534;">${v}</div>`;});
+  for(let i=n.out.length;i<3;i++) out+=`<div style="width:46px;height:46px;border:1.5px dashed #cbd5e1;border-radius:8px;background:#f8fafc;display:grid;place-items:center;font-size:11px;color:#cbd5e1;">[ ]</div>`;
+  document.getElementById('nip-out').innerHTML=out;
+  document.getElementById('nip-msg').textContent=n.nip;
+  document.getElementById('ip-step-lbl').textContent=`Step ${ipIdx} / ${IP_STATES.length-1}`;
+  document.getElementById('ip-next-btn').disabled=ipIdx>=IP_STATES.length-1;
+}
+function ipStep(){if(ipIdx<IP_STATES.length-1){ipIdx++;renderIP();}}
+function ipReset(){ipIdx=0;renderIP();}
+
+// ═══════════════════════════════════════════
+//  SLIDE 9b — Internal vs External
+// ═══════════════════════════════════════════
+function ieBlock(label,inRam){
+  const bg=inRam?'#f0fdf4':'#fff5f5', bdr=inRam?'var(--accent)':'#dc2626', tc=inRam?'#166534':'#dc2626';
+  return `<div style="width:36px;height:36px;border:1.5px solid ${bdr};border-radius:6px;background:${bg};display:grid;place-items:center;font-size:10px;font-weight:700;color:${tc};font-family:var(--mono);">${label}</div>`;
+}
+function setIE(mode){
+  const ramEl=document.getElementById('ie-ram');
+  const diskEl=document.getElementById('ie-disk');
+  const badge=document.getElementById('ie-verdict-badge');
+  const desc=document.getElementById('ie-desc');
+  const sb=document.getElementById('ie-small-btn');
+  const lb=document.getElementById('ie-large-btn');
+  if(mode==='small'){
+    sb.style.background='#0f1a2e'; lb.style.background='#374151';
+    ramEl.innerHTML=['D1','D2','D3','D4'].map(l=>ieBlock(l,true)).join('');
+    diskEl.innerHTML='<div style="font-size:12px;color:#94a3b8;font-style:italic;padding:4px;">empty — all data fits in RAM</div>';
+    badge.textContent='Internal Sort';badge.style.borderColor='var(--accent)';badge.style.background='#f0fdf4';badge.style.color='#166534';
+    desc.textContent='All 4 data items fit in RAM. The sort operates entirely in main memory — fast access, no disk I/O required.';
+  } else {
+    sb.style.background='#374151'; lb.style.background='#0f1a2e';
+    ramEl.innerHTML=['D1','D2','D3','D4','D5'].map(l=>ieBlock(l,true)).join('')+'<div style="font-size:11px;font-weight:700;color:#dc2626;align-self:center;padding:2px 6px;border-radius:4px;background:#fff5f5;border:1px solid #dc2626;">RAM FULL</div>';
+    diskEl.innerHTML=['D6','D7','D8','D9','D10'].map(l=>ieBlock(l,false)).join('');
+    badge.textContent='External Sort';badge.style.borderColor='#dc2626';badge.style.background='#fff5f5';badge.style.color='#dc2626';
+    desc.textContent='Dataset has 10 items but RAM holds only 5. Items D6–D10 must wait on disk. The algorithm sorts RAM-sized chunks, writes them to disk, then merges the sorted chunks.';
+  }
+}
+
+// ═══════════════════════════════════════════
+//  SLIDE 9c — Stable vs Unstable Intro
+// ═══════════════════════════════════════════
+const SU_STABLE=[
+  {name:'Jordan',grade:'A'},{name:'Casey',grade:'A'},
+  {name:'Sam',grade:'B'},{name:'Alex',grade:'B'},
+];
+const SU_UNSTABLE=[
+  [{name:'Jordan',grade:'A'},{name:'Casey',grade:'A'},{name:'Sam',grade:'B'},{name:'Alex',grade:'B'}],
+  [{name:'Casey',grade:'A'},{name:'Jordan',grade:'A'},{name:'Alex',grade:'B'},{name:'Sam',grade:'B'}],
+  [{name:'Jordan',grade:'A'},{name:'Casey',grade:'A'},{name:'Alex',grade:'B'},{name:'Sam',grade:'B'}],
+  [{name:'Casey',grade:'A'},{name:'Jordan',grade:'A'},{name:'Sam',grade:'B'},{name:'Alex',grade:'B'}],
+];
+let suUIdx=0;
+function suRow(item,i){
+  const gc=item.grade==='A'?'#16a34a':'#0284c7', gbg=item.grade==='A'?'#f0fdf4':'#eff6ff', gbdr=item.grade==='A'?'#16a34a':'#0284c7';
+  return `<div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;"><span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:18px;">${i+1}.</span><span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">${item.name}</span><span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid ${gbdr};background:${gbg};color:${gc};">${item.grade}</span></div>`;
+}
+function suSort(stable){
+  const badge=document.getElementById('su-badge');
+  const msg=document.getElementById('su-msg');
+  let result;
+  if(stable){
+    result=SU_STABLE;
+    badge.textContent='Stable Sort';badge.style.borderColor='var(--accent)';badge.style.background='#f0fdf4';badge.style.color='#166634';
+    msg.textContent='Jordan always precedes Casey (both grade A); Sam always precedes Alex (both grade B). Relative input order is preserved.';
+    msg.style.borderLeftColor='var(--accent)';
+  } else {
+    result=SU_UNSTABLE[suUIdx%SU_UNSTABLE.length]; suUIdx++;
+    badge.textContent='Unstable Sort';badge.style.borderColor='#dc2626';badge.style.background='#fff5f5';badge.style.color='#dc2626';
+    msg.textContent='Click again — the equal-grade students may appear in a different order. The relative order of tied keys is non-deterministic.';
+    msg.style.borderLeftColor='#dc2626';
+  }
+  document.getElementById('su-result').innerHTML=result.map((r,i)=>suRow(r,i)).join('');
+}
+
+// ═══════════════════════════════════════════
+//  Slide 10 — Sort Stability (3-column)
+// ═══════════════════════════════════════════
+const STAB_DATA=[
+  {l:'A',d:1,tied:false},
+  {l:'B',d:3,tied:true},
+  {l:'C',d:3,tied:true},
+  {l:'D',d:4,tied:false},
+];
+const STAB_STABLE_RESULT=[
+  {l:'A',d:1,tied:false},{l:'B',d:3,tied:true},{l:'C',d:3,tied:true},{l:'D',d:4,tied:false},
+];
+const STAB_UNSTABLE_RUNS=[
+  [{l:'A',d:1,tied:false},{l:'B',d:3,tied:true}, {l:'C',d:3,tied:true}, {l:'D',d:4,tied:false}],
+  [{l:'A',d:1,tied:false},{l:'C',d:3,tied:true}, {l:'B',d:3,tied:true}, {l:'D',d:4,tied:false}],
+  [{l:'A',d:1,tied:false},{l:'B',d:3,tied:true}, {l:'C',d:3,tied:true}, {l:'D',d:4,tied:false}],
+  [{l:'A',d:1,tied:false},{l:'C',d:3,tied:true}, {l:'B',d:3,tied:true}, {l:'D',d:4,tied:false}],
+];
+let stabUnstableIdx=0, stabRunCount=0;
+
+function stabCard(item, mode){
+  // mode: 'input' | 'unstable-ok' | 'unstable-swap' | 'stable'
+  const tiedBadge=item.tied?`<span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;background:#fef9c3;border:1px solid #d97706;color:#92400e;margin-left:auto;flex-shrink:0;">tied</span>`:'';
+  let bg='#fff', bdr='#e2e8f0', tc='#0f172a', dc='#64748b';
+  if(item.tied){
+    if(mode==='unstable-swap'){bg='#fff5f5';bdr='#dc2626';tc='#dc2626';dc='#dc2626';}
+    else if(mode==='stable'){bg='#f0fdf4';bdr='#16a34a';tc='#166534';dc='#16a34a';}
+    else{bdr='#b45309';}
+  }
+  return `<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;background:${bg};border:1.5px solid ${bdr};border-radius:8px;transition:all .32s;">
+    <div style="font-size:20px;font-weight:900;color:${tc};font-family:var(--mono);width:24px;">${item.l}</div>
+    <div style="font-size:13px;color:${dc};">dist = ${item.d}</div>
+    ${tiedBadge}
+  </div>`;
+}
+
+function stabInitOrig(){
+  document.getElementById('stab-orig').innerHTML=STAB_DATA.map(i=>stabCard(i,'input')).join('');
+}
+
+function runUnstableSort(){
+  stabRunCount++;
+  stabUnstableIdx=(stabUnstableIdx+1)%STAB_UNSTABLE_RUNS.length;
+  const run=STAB_UNSTABLE_RUNS[stabUnstableIdx];
+  const bPos=run.findIndex(x=>x.l==='B'), cPos=run.findIndex(x=>x.l==='C');
+  const swapped=bPos>cPos;
+  const container=document.getElementById('stab-unstable');
+  const msg=document.getElementById('stab-unstable-msg');
+  container.style.opacity='0.25';
+  setTimeout(()=>{
+    container.innerHTML=run.map(i=>stabCard(i,swapped&&i.tied?'unstable-swap':'input')).join('');
+    container.style.opacity='1';
+  },200);
+  if(swapped){
+    msg.innerHTML=`<strong>Run ${stabRunCount}:</strong> C appears before B — the relative order of tied keys changed.`;
+    msg.style.borderLeftColor='#dc2626';
+  } else {
+    msg.innerHTML=`<strong>Run ${stabRunCount}:</strong> B before C — same as input order this time. Click again to see it change.`;
+    msg.style.borderLeftColor='#94a3b8';
+  }
+}
+
+function runStableSort(){
+  const container=document.getElementById('stab-stable');
+  const msg=document.getElementById('stab-stable-msg');
+  container.style.opacity='0.25';
+  setTimeout(()=>{
+    container.innerHTML=STAB_STABLE_RESULT.map(i=>stabCard(i,i.tied?'stable':'input')).join('');
+    container.style.opacity='1';
+  },200);
+  msg.innerHTML='<strong>Every run:</strong> B always before C. Relative order of tied keys is guaranteed.';
+  msg.style.borderLeftColor='#16a34a';
+}
+
+// ═══════════════════════════════════════════
+//  SLIDE 7b — Linear Search Code + Memory
+// ═══════════════════════════════════════════
+const LS_ARR=[10,20,30,40,50,60,70];
+const LS_CODE_LINES=[
+  {ln:1, code:'int linearSearch(int[] arr, int target) {'},
+  {ln:2, code:'  for (int i = 0; i < arr.length; i++) {'},
+  {ln:3, code:'    if (arr[i] == target) {'},
+  {ln:4, code:'      return i;   // ✓ found at index i'},
+  {ln:5, code:'    }'},
+  {ln:6, code:'  }'},
+  {ln:7, code:'  return -1;      // not found'},
+  {ln:8, code:'}'},
+];
+const LS_STEPS=[
+  {i:-1, activeLine:1,  match:null,  msg:'Function called with target = 60. Stack frame created. i will start at 0.'},
+  {i:0,  activeLine:3,  match:false, msg:'Iteration 1 — i=0: Check arr[0]=10. Is 10 == 60?  No. Increment i.'},
+  {i:1,  activeLine:3,  match:false, msg:'Iteration 2 — i=1: Check arr[1]=20. Is 20 == 60?  No. Increment i.'},
+  {i:2,  activeLine:3,  match:false, msg:'Iteration 3 — i=2: Check arr[2]=30. Is 30 == 60?  No. Increment i.'},
+  {i:3,  activeLine:3,  match:false, msg:'Iteration 4 — i=3: Check arr[3]=40. Is 40 == 60?  No. Increment i.'},
+  {i:4,  activeLine:3,  match:false, msg:'Iteration 5 — i=4: Check arr[4]=50. Is 50 == 60?  No. Increment i.'},
+  {i:5,  activeLine:4,  match:true,  msg:'Iteration 6 — i=5: Check arr[5]=60. Is 60 == 60?  YES! Return index 5. Search complete.'},
+];
+let lsIdx=0;
+
+function lsEsc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function lsMemCell(val, highlight, color){
+  const bg=highlight?'#f0fdf4':'#f8fafc', bdr=highlight?color:'#e2e8f0';
+  return `<div style="font-size:13px;font-weight:800;padding:3px 12px;border-radius:6px;background:${bg};border:1.5px solid ${bdr};color:${color};font-family:var(--mono);">${val}</div>`;
+}
+
+function renderLS(){
+  const step=LS_STEPS[lsIdx];
+
+  // Code panel — highlight active line
+  document.getElementById('ls-code').innerHTML=LS_CODE_LINES.map(row=>{
+    const active=row.ln===step.activeLine;
+    let bg='transparent', bl='transparent', tc='#94a3b8';
+    if(active && step.match===true){bg='#14532d';bl='#16a34a';tc='#bbf7d0';}
+    else if(active){bg='#1e3a5f';bl='#3b82f6';tc='#bae6fd';}
+    return `<div style="padding:1px 8px;border-left:3px solid ${bl};background:${bg};border-radius:0 4px 4px 0;color:${tc};white-space:pre;">${lsEsc(row.code)}</div>`;
+  }).join('');
+
+  // Array boxes
+  document.getElementById('ls-arr').innerHTML=LS_ARR.map((v,i)=>{
+    let cls='arr-box';
+    if(step.i<0){}
+    else if(i<step.i) cls='arr-box checked';
+    else if(i===step.i) cls=step.match?'arr-box found':'arr-box current';
+    return `<div class="${cls}">${v}</div>`;
+  }).join('');
+
+  // Index labels with pointer arrow
+  document.getElementById('ls-idx').innerHTML=LS_ARR.map((_,i)=>{
+    const isPtr=i===step.i;
+    return `<div style="width:46px;text-align:center;font-size:11px;font-family:var(--mono);color:${isPtr?'#f59e0b':'#94a3b8'};font-weight:${isPtr?'900':'400'};">[${i}]${isPtr?' ↑':''}</div>`;
+  }).join('');
+
+  // Step message
+  document.getElementById('ls-msg').textContent=step.msg;
+  document.getElementById('ls-msg').style.borderLeftColor=step.match?'#16a34a':step.match===false?'#dc2626':'#94a3b8';
+
+  // Memory frame — 4-column grid: label, value, label, value
+  const iVal=step.i<0?'—':String(step.i);
+  const arrIVal=step.i<0?'—':String(LS_ARR[step.i]);
+  const matchVal=step.match===null?'—':step.match?'true  ✓':'false  ✗';
+  const matchColor=step.match===null?'#64748b':step.match?'#16a34a':'#dc2626';
+  const iActive=step.i>=0, arrActive=step.i>=0, matchActive=step.match!==null;
+  document.getElementById('ls-mem').innerHTML=
+    `<div style="font-size:12px;font-weight:700;color:#0f172a;font-family:var(--mono);">target</div>`+
+    lsMemCell('60','true','#0f172a')+
+    `<div style="font-size:12px;font-weight:700;color:#0f172a;font-family:var(--mono);">i</div>`+
+    lsMemCell(iVal,iActive,'#b45309')+
+    `<div style="font-size:12px;font-weight:700;color:#0f172a;font-family:var(--mono);">arr[i]</div>`+
+    lsMemCell(arrIVal,arrActive,'#0f172a')+
+    `<div style="font-size:12px;font-weight:700;color:#0f172a;font-family:var(--mono);">match?</div>`+
+    lsMemCell(matchVal,matchActive,matchColor);
+
+  document.getElementById('ls-step-lbl').textContent=`Step ${lsIdx} / ${LS_STEPS.length-1}`;
+  document.getElementById('ls-next-btn').disabled=lsIdx>=LS_STEPS.length-1;
+}
+
+function lsStep(){if(lsIdx<LS_STEPS.length-1){lsIdx++;renderLS();}}
+function lsReset(){lsIdx=0;renderLS();}
+
+// Initialize visualizations when slides become visible
+updateUI();
+sortReset();
+searchReset();
+renderIP();
+setIE('small');
+stabInitOrig();
+renderLS();
+</script>
+</body>
+</html>

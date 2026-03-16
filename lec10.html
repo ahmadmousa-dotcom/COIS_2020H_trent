@@ -418,13 +418,10 @@
         <line x1="180" y1="160" x2="220" y2="220" stroke="#fca5a5" stroke-width="2" stroke-dasharray="4,3"/>
         <circle cx="60" cy="40" r="22" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5"/>
         <text x="60" y="45" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="monospace">10</text>
-        <text x="60" y="18" text-anchor="middle" font-size="11" fill="#ef4444" font-weight="700">insert 10</text>
         <circle cx="120" cy="100" r="22" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5"/>
         <text x="120" y="105" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="monospace">20</text>
-        <text x="155" y="98" text-anchor="start" font-size="11" fill="#ef4444" font-weight="700">&#8594; insert 20</text>
         <circle cx="180" cy="160" r="22" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5"/>
         <text x="180" y="165" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="monospace">30</text>
-        <text x="210" y="158" text-anchor="start" font-size="11" fill="#ef4444" font-weight="700">&#8594; insert 30</text>
         <circle cx="220" cy="220" r="22" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5"/>
         <text x="220" y="225" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="monospace">40</text>
         <line x1="20" y1="40" x2="20" y2="220" stroke="#ef4444" stroke-width="2"/>
@@ -441,150 +438,11 @@
 </section>
 
 <!-- SLIDE 8: AVL & BALANCE FACTORS -->
-<section class="slide" id="s8">
-  <div class="slide-top">
-    <div class="meta"><div class="course">The Solution</div><div class="sub">Self-Balancing Trees</div></div>
-    <span class="pill">AVL Trees</span>
-  </div>
-  <h2>AVL Tree &amp; Balance Factors</h2>
-  <div class="card" style="text-align:center;padding:14px 20px;margin-bottom:12px;">
-    <h3 style="margin:0 0 6px;">The Balance Factor Formula</h3>
-    <p style="font-size:20px;margin:8px 0;">$$ \text{BF} = \text{Height}(\text{Left}) - \text{Height}(\text{Right}) $$</p>
-    <p style="color:var(--accent);font-weight:700;margin:0;font-size:15px;">Golden Rule: Every node's BF must be in {-1, 0, 1}</p>
-  </div>
-  <div class="grid-2">
-    <div>
-      <p style="font-size:15px;"><strong>Click any node</strong> in the tree to see its balance factor computed live.</p>
-      <div id="bf-callout" class="callout" style="background:#eff6ff;border-color:#3b82f6;min-height:80px;">
-        <p style="font-size:14px;color:#1e3a8a;">Click a node to inspect its balance factor.</p>
-      </div>
-      <div class="callout" style="margin-top:8px;">
-        <p style="font-size:14px;"><strong>Height of a node</strong> = length of longest path from that node to a leaf. Height of null = -1.</p>
-      </div>
-      <div class="prof-note">
-        <div class="callout-label">&#x1F4CC; Professor's Note</div>
-        <p style="font-size:14px;">AVL stands for Adelson-Velsky and Landis &mdash; the Soviet mathematicians who invented it in 1962.</p>
-      </div>
-    </div>
-    <div>
-      <div class="svg-wrap">
-        <svg id="bfSvg" viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" style="cursor:pointer;">
-          <line x1="160" y1="40" x2="90" y2="105" stroke="#cbd5e1" stroke-width="2"/>
-          <line x1="160" y1="40" x2="230" y2="105" stroke="#cbd5e1" stroke-width="2"/>
-          <line x1="90" y1="105" x2="50" y2="175" stroke="#cbd5e1" stroke-width="2"/>
-          <line x1="230" y1="105" x2="270" y2="175" stroke="#cbd5e1" stroke-width="2"/>
-          <circle id="bfn30" cx="160" cy="40" r="22" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.5" data-val="30"/>
-          <text x="160" y="45" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="ui-monospace,monospace" pointer-events="none">30</text>
-          <text id="bfl30" x="160" y="20" text-anchor="middle" font-size="11" fill="#64748b" pointer-events="none">BF=?</text>
-          <circle id="bfn20" cx="90" cy="105" r="22" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.5" data-val="20"/>
-          <text x="90" y="110" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="ui-monospace,monospace" pointer-events="none">20</text>
-          <text id="bfl20" x="90" y="84" text-anchor="middle" font-size="11" fill="#64748b" pointer-events="none">BF=?</text>
-          <circle id="bfn40" cx="230" cy="105" r="22" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.5" data-val="40"/>
-          <text x="230" y="110" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="ui-monospace,monospace" pointer-events="none">40</text>
-          <text id="bfl40" x="230" y="84" text-anchor="middle" font-size="11" fill="#64748b" pointer-events="none">BF=?</text>
-          <circle id="bfn10" cx="50" cy="175" r="22" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.5" data-val="10"/>
-          <text x="50" y="180" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="ui-monospace,monospace" pointer-events="none">10</text>
-          <text id="bfl10" x="50" y="154" text-anchor="middle" font-size="11" fill="#64748b" pointer-events="none">BF=?</text>
-          <circle id="bfn50" cx="270" cy="175" r="22" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.5" data-val="50"/>
-          <text x="270" y="180" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a" font-family="ui-monospace,monospace" pointer-events="none">50</text>
-          <text id="bfl50" x="270" y="154" text-anchor="middle" font-size="11" fill="#64748b" pointer-events="none">BF=?</text>
-          <text x="160" y="230" text-anchor="middle" font-size="12" fill="#94a3b8">Tree: 30(root), 20(L), 40(R), 10(LL), 50(RR)</text>
-        </svg>
-      </div>
-    </div>
-  </div>
-  <div class="slide-footer"><div class="muted">Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</section>
 
 <!-- SLIDE 9: AVL ROTATIONS -->
  
 
-<!-- SLIDE 10: ROTATION QUIZ -->
-<section class="slide" id="s10">
-  <div class="slide-top">
-    <div class="meta"><div class="course">AVL Trees</div><div class="sub">Identify the Fix</div></div>
-    <span class="knowledge-pill">Knowledge Check</span>
-  </div>
-  <h2>Which Rotation?</h2>
-  <div id="rqContainer">
-    <div class="rquiz-block" id="rq0">
-      <p style="font-weight:700;margin:0 0 6px;">Q1: Insert 10, 20, 30 into an empty BST. What rotation restores balance?</p>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <svg viewBox="0 0 120 130" width="100" xmlns="http://www.w3.org/2000/svg">
-          <line x1="40" y1="30" x2="70" y2="70" stroke="#fca5a5" stroke-width="2"/>
-          <line x1="70" y1="70" x2="95" y2="110" stroke="#fca5a5" stroke-width="2"/>
-          <circle cx="40" cy="30" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-          <text x="40" y="35" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">10</text>
-          <circle cx="70" cy="70" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-          <text x="70" y="75" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">20</text>
-          <circle cx="95" cy="110" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-          <text x="95" y="115" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">30</text>
-          <text x="40" y="128" font-size="9" fill="#ef4444" font-weight="700">BF=-2!</text>
-        </svg>
-        <div class="quiz-opts" id="rqopts0">
-          <button class="quiz-opt" onclick="rotQuiz(0,'LL')">LL</button>
-          <button class="quiz-opt" onclick="rotQuiz(0,'RR')">RR</button>
-          <button class="quiz-opt" onclick="rotQuiz(0,'LR')">LR</button>
-          <button class="quiz-opt" onclick="rotQuiz(0,'RL')">RL</button>
-        </div>
-      </div>
-      <div class="quiz-feedback" id="rqfb0"></div>
-    </div>
-    <div class="rquiz-block" id="rq1">
-      <p style="font-weight:700;margin:0 0 6px;">Q2: Insert 30, 20, 10 into an empty BST. What rotation restores balance?</p>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <svg viewBox="0 0 120 130" width="100" xmlns="http://www.w3.org/2000/svg">
-          <line x1="90" y1="30" x2="60" y2="70" stroke="#fca5a5" stroke-width="2"/>
-          <line x1="60" y1="70" x2="35" y2="110" stroke="#fca5a5" stroke-width="2"/>
-          <circle cx="90" cy="30" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-          <text x="90" y="35" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">30</text>
-          <circle cx="60" cy="70" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-          <text x="60" y="75" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">20</text>
-          <circle cx="35" cy="110" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-          <text x="35" y="115" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">10</text>
-          <text x="90" y="128" font-size="9" fill="#ef4444" font-weight="700">BF=+2!</text>
-        </svg>
-        <div class="quiz-opts" id="rqopts1">
-          <button class="quiz-opt" onclick="rotQuiz(1,'LL')">LL</button>
-          <button class="quiz-opt" onclick="rotQuiz(1,'RR')">RR</button>
-          <button class="quiz-opt" onclick="rotQuiz(1,'LR')">LR</button>
-          <button class="quiz-opt" onclick="rotQuiz(1,'RL')">RL</button>
-        </div>
-      </div>
-      <div class="quiz-feedback" id="rqfb1"></div>
-    </div>
-    <div class="rquiz-block" id="rq2">
-      <p style="font-weight:700;margin:0 0 6px;">Q3: Insert 30, 10, 20 &mdash; zig-zag pattern. What rotation?</p>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <svg viewBox="0 0 120 130" width="100" xmlns="http://www.w3.org/2000/svg">
-          <line x1="80" y1="30" x2="40" y2="70" stroke="#fca5a5" stroke-width="2"/>
-          <line x1="40" y1="70" x2="65" y2="110" stroke="#fca5a5" stroke-width="2"/>
-          <circle cx="80" cy="30" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-          <text x="80" y="35" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">30</text>
-          <circle cx="40" cy="70" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-          <text x="40" y="75" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">10</text>
-          <circle cx="65" cy="110" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
-          <text x="65" y="115" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">20</text>
-          <text x="80" y="128" font-size="9" fill="#ef4444" font-weight="700">BF=+2!</text>
-        </svg>
-        <div class="quiz-opts" id="rqopts2">
-          <button class="quiz-opt" onclick="rotQuiz(2,'LL')">LL</button>
-          <button class="quiz-opt" onclick="rotQuiz(2,'RR')">RR</button>
-          <button class="quiz-opt" onclick="rotQuiz(2,'LR')">LR</button>
-          <button class="quiz-opt" onclick="rotQuiz(2,'RL')">RL</button>
-        </div>
-      </div>
-      <div class="quiz-feedback" id="rqfb2"></div>
-    </div>
-  </div>
-  <div style="margin-top:10px;display:flex;align-items:center;gap:14px;position:relative;z-index:2;">
-    <span class="score-badge" id="rotQuizScore">0 / 3 correct</span>
-  </div>
-
-  <div class="slide-footer"><div class="muted">Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</section>
-
-<!-- SLIDE 11: BIG O -->
+<!-- SLIDE 10: ROTATION QUIZ --><!-- SLIDE 11: BIG O -->
 <section class="slide" id="s11">
   <div class="slide-top">
     <div class="meta"><div class="course">Summary</div><div class="sub">Performance Breakdown</div></div>
@@ -1312,58 +1170,6 @@
   <div class="slide-footer"><div class="muted">Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
 </section>
 
-<!-- SLIDE 25: SELF-BALANCING -->
-<section class="slide" id="s25">
-  <div class="slide-top">
-    <div class="meta"><div class="course">The Solution</div><div class="sub">Advanced Structures</div></div>
-    <span class="pill">Self-Balancing</span>
-  </div>
-  <h2>Making a Tree Self-Balancing</h2>
-  <p>To solve the $O(n)$ worst-case issue, advanced structures establish a <strong>core rule</strong> that governs their shape during every insert and delete.</p>
-  <div class="grid-3" style="margin-top:10px;">
-    <div class="info-card">
-      <h3 style="font-size:18px;">AVL Tree</h3>
-      <p style="font-size:14px;">Balance Factor = Height(L) &minus; Height(R) must be in {&minus;1, 0, 1} at every node. Violations trigger rotations immediately.</p>
-      <p style="font-size:13px;color:var(--accent);font-weight:700;">Guarantee: O(log n) always</p>
-    </div>
-    <div class="info-card">
-      <h3 style="font-size:18px;">2-3-4 Tree</h3>
-      <p style="font-size:14px;">Nodes can hold 1, 2, or 3 keys. All leaves are at the same depth &mdash; perfect balance by definition.</p>
-      <p style="font-size:13px;color:var(--accent);font-weight:700;">Guarantee: O(log n) always</p>
-    </div>
-    <div class="info-card">
-      <h3 style="font-size:18px;">AA Tree</h3>
-      <p style="font-size:14px;">Variant of red-black tree. Only allows right-leaning red links &mdash; simpler rotations, easier to implement.</p>
-      <p style="font-size:13px;color:var(--accent);font-weight:700;">Guarantee: O(log n) always</p>
-    </div>
-  </div>
-  <div class="callout" style="margin-top:14px;">
-    <p><strong>The Trade-off:</strong> Once a balancing rule is established, the algorithm must do extra work (rotations/splits) on every insert and delete to enforce it. This overhead is worth it for systems that perform millions of searches.</p>
-  </div>
-  <div class="slide-footer"><div class="muted">Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</section>
-
-<!-- SLIDE 26: FINAL REVIEW QUIZ -->
-<section class="slide" id="s26">
-  <div class="slide-top">
-    <div class="meta"><div class="course">Review</div><div class="sub">Test Your Understanding</div></div>
-    <span class="assessment-pill">Assessment</span>
-  </div>
-  <h2>Final Review Quiz</h2>
-  <div id="fqContainer">
-    <div id="fqQuestion" style="position:relative;z-index:2;"></div>
-    <div class="mc-opts" id="fqOpts" style="margin-top:12px;"></div>
-    <div class="quiz-feedback" id="fqFb" style="margin-top:10px;"></div>
-    <div style="margin-top:12px;display:flex;align-items:center;gap:14px;position:relative;z-index:2;">
-      <span class="score-badge" id="fqScore">0 / 5</span>
-      <button class="btn btn-sm" id="fqNext" onclick="fqNext()" style="display:none;">Next Question &rarr;</button>
-      <button class="btn btn-sm btn-red" id="fqRetry" onclick="fqReset()" style="display:none;">Retry</button>
-    </div>
-    <div id="fqFinal" style="display:none;margin-top:10px;position:relative;z-index:2;"></div>
-  </div>
-  <div class="slide-footer"><div class="muted">Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</section>
-
 <!-- SLIDE 27: KEY TAKEAWAYS -->
 <section class="slide" id="s27">
   <div class="slide-top">
@@ -1401,9 +1207,7 @@
   <div class="slide-footer"><div class="muted">Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
 </section>
 
-
-
-<div class="slide" id="s28">
+<section class="slide" id="s28">
 <canvas id="avlCanvas"></canvas>
 <div class="slide-header"><div><div class="course">Data Structures</div><div class="topic">Why BSTs Aren't Enough</div></div><div class="pills"><span class="pill standard">Lecture 10 &mdash; Part 5</span></div></div>
 <div class="slide-body">
@@ -1467,10 +1271,10 @@
 <div class="prof-note"><strong>&#128218; Prof Note:</strong> Named after Soviet mathematicians Adelson-Velsky and Landis &mdash; proposed 1962. First self-balancing BST ever devised.</div>
 <div class="student-task"><strong>&#128101; Pair Activity:</strong> Turn to your neighbor &mdash; what real-world data, if inserted in sorted order, would destroy a plain BST? (Think: timestamps, auto-increment IDs, alphabetical names)</div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s29">
+<section class="slide" id="s29">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">The Core Formula</div></div><div class="pills"><span class="pill knowledge">Core Concept</span></div></div>
 <div class="slide-body">
 <h2>The Balance Factor</h2>
@@ -1522,10 +1326,10 @@
 <div class="prof-note"><strong>&#128218; Key Rule:</strong> Height of a null pointer = &minus;1. This base case makes every formula consistent, including leaf nodes (H_L = H_R = &minus;1, so BF = 0).</div>
 <div class="student-task"><strong>&#128101; Pair Activity:</strong> Draw any 4-node BST on paper. Calculate BF at every node. Is it a valid AVL tree? Label each node LH (Left-Heavy), EH (Even), or RH (Right-Heavy).</div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s30">
+<section class="slide" id="s30">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Seeing the Difference</div></div><div class="pills"><span class="pill standard">Visual</span></div></div>
 <div class="slide-body">
 <h2>Balanced vs. Unbalanced BSTs</h2>
@@ -1589,10 +1393,10 @@
 <div class="callout-red">&#9888; BF = +3 at root after sorted insertion &rarr; rotation required immediately!</div>
 </div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s31">
+<section class="slide" id="s31">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Spot the Imbalance</div></div><div class="pills"><span class="pill activity">Interactive</span></div></div>
 <div class="slide-body">
 <h2>Find the AVL Violation</h2>
@@ -1645,10 +1449,10 @@
 </div>
 </div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s32">
+<section class="slide" id="s32">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Step-by-Step</div></div><div class="pills"><span class="pill knowledge">Deep Dive</span></div></div>
 <div class="slide-body">
 <h2>Calculating H<sub>L</sub> and H<sub>R</sub></h2>
@@ -1702,10 +1506,10 @@
 <div class="prof-note"><strong>&#128218; Algorithm:</strong> Start from LEAVES, work up. Leaf height=0, null height=&minus;1. The imbalance at node 25 (BF=+2) is where a rotation is needed.</div>
 <div class="student-task"><strong>&#9203; 3-min Task:</strong> Label every node in the right SVG as LH (Left-Heavy), EH (Even), or RH (Right-Heavy). Which one triggers a rotation?</div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s33">
+<section class="slide" id="s33">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">What Changes?</div></div><div class="pills"><span class="pill standard">Overview</span></div></div>
 <div class="slide-body">
 <h2>AVL Operations</h2>
@@ -1736,10 +1540,10 @@
 <div class="prof-note"><strong>&#128218; Efficiency:</strong> Rotations are O(1) &mdash; they only reassign a constant number of pointers. Insert/delete stays O(log n) total even with rebalancing.</div>
 <div class="student-task"><strong>&#9997; Challenge:</strong> Write pseudocode for <code>updateBalance(node)</code> using <code>node.left.height</code> and <code>node.right.height</code>. What is the base case?</div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s34">
+<section class="slide" id="s34">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">The Code</div></div><div class="pills"><span class="pill knowledge">Implementation</span></div></div>
 <div class="slide-body">
 <h2>AVL Node Structure</h2>
@@ -1747,23 +1551,23 @@
 <div style="height:100%;display:flex;flex-direction:column;gap:10px;">
 <pre class="code-block" style="flex:1;"><span class="cm">// AVL Node structure in C/C++</span>
 <span class="kw">struct</span> <span class="fn">AVLNode</span> {
-    <span class="kw">int</span>      data;      <span class="cm">// stored value</span>
-    AVLNode* left;     <span class="cm">// left child ptr</span>
-    AVLNode* right;    <span class="cm">// right child ptr</span>
-    <span class="kw">short</span>    balance;   <span class="cm">// BF: -1, 0, or +1</span>
+    <span class="kw">int</span>      data;      <span class="cm">// stored value</span>
+    AVLNode* left;     <span class="cm">// left child ptr</span>
+    AVLNode* right;    <span class="cm">// right child ptr</span>
+    <span class="kw">short</span>    balance;   <span class="cm">// BF: -1, 0, or +1</span>
 };
 
 <span class="cm">// Height helper (null-safe)</span>
 <span class="kw">int</span> <span class="fn">height</span>(AVLNode* n) {
-    <span class="kw">if</span> (n == <span class="kw">nullptr</span>) <span class="kw">return</span> -<span class="num">1</span>;
-    <span class="kw">return</span> <span class="num">1</span> + max(<span class="fn">height</span>(n->left),
-                      <span class="fn">height</span>(n->right));
+    <span class="kw">if</span> (n == <span class="kw">nullptr</span>) <span class="kw">return</span> -<span class="num">1</span>;
+    <span class="kw">return</span> <span class="num">1</span> + max(<span class="fn">height</span>(n->left),
+                      <span class="fn">height</span>(n->right));
 }
 
 <span class="cm">// Update BF at one node</span>
 <span class="kw">void</span> <span class="fn">updateBalance</span>(AVLNode* n) {
-    n->balance = <span class="fn">height</span>(n->left)
-               - <span class="fn">height</span>(n->right);
+    n->balance = <span class="fn">height</span>(n->left)
+               - <span class="fn">height</span>(n->right);
 }</pre>
 </div>
 <div style="display:flex;flex-direction:column;gap:10px;height:100%;">
@@ -1784,10 +1588,10 @@
 </div>
 <div class="student-task"><strong>&#9997; Write Pseudocode:</strong> Implement <code>updateBalance(node)</code> — it should set <code>node.balance = height(node.left) &minus; height(node.right)</code>. Handle null children correctly using H(null) = &minus;1.</div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s35">
+<section class="slide" id="s35">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Cases of Imbalance</div></div><div class="pills"><span class="pill standard">Case 1 of 4</span></div></div>
 <div class="slide-body">
 <h2>Case 1: Left of Left (LL)</h2>
@@ -1832,10 +1636,10 @@
 </div>
 </div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s36">
+<section class="slide" id="s36">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Cases of Imbalance</div></div><div class="pills"><span class="pill standard">Case 2 of 4</span></div></div>
 <div class="slide-body">
 <h2>Case 2: Right of Right (RR)</h2>
@@ -1880,10 +1684,10 @@
 </div>
 </div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s37">
+<section class="slide" id="s37">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Complex Cases</div></div><div class="pills"><span class="pill activity">Voting Quiz</span></div></div>
 <div class="slide-body" style="gap:8px;">
 <h2>Cases 3 &amp; 4: RL and LR</h2>
@@ -1927,55 +1731,98 @@
 </svg>
 </div>
 </div>
-<div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:2px;">&#128286; Quick Quiz: Identify the imbalance case. Click your answer!</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-<div class="vote-card" id="vq0">
-<div class="q-text">Q1: New node is the <strong>Right child of Left child</strong></div>
-<div class="btn-row">
-<button class="vote-btn" data-ans="LL" onclick="voteCase(0,'LL')">LL</button>
-<button class="vote-btn" data-ans="RR" onclick="voteCase(0,'RR')">RR</button>
-<button class="vote-btn" data-ans="RL" onclick="voteCase(0,'RL')">RL</button>
-<button class="vote-btn" data-ans="LR" onclick="voteCase(0,'LR')">LR</button>
-</div>
-<div class="quiz-feedback" id="vfb0"></div>
-</div>
-<div class="vote-card" id="vq1">
-<div class="q-text">Q2: New node is the <strong>Left child of Left child</strong></div>
-<div class="btn-row">
-<button class="vote-btn" data-ans="LL" onclick="voteCase(1,'LL')">LL</button>
-<button class="vote-btn" data-ans="RR" onclick="voteCase(1,'RR')">RR</button>
-<button class="vote-btn" data-ans="RL" onclick="voteCase(1,'RL')">RL</button>
-<button class="vote-btn" data-ans="LR" onclick="voteCase(1,'LR')">LR</button>
-</div>
-<div class="quiz-feedback" id="vfb1"></div>
-</div>
-<div class="vote-card" id="vq2">
-<div class="q-text">Q3: New node is the <strong>Left child of Right child</strong></div>
-<div class="btn-row">
-<button class="vote-btn" data-ans="LL" onclick="voteCase(2,'LL')">LL</button>
-<button class="vote-btn" data-ans="RR" onclick="voteCase(2,'RR')">RR</button>
-<button class="vote-btn" data-ans="RL" onclick="voteCase(2,'RL')">RL</button>
-<button class="vote-btn" data-ans="LR" onclick="voteCase(2,'LR')">LR</button>
-</div>
-<div class="quiz-feedback" id="vfb2"></div>
-</div>
-<div class="vote-card" id="vq3">
-<div class="q-text">Q4: New node is the <strong>Right child of Right child</strong></div>
-<div class="btn-row">
-<button class="vote-btn" data-ans="LL" onclick="voteCase(3,'LL')">LL</button>
-<button class="vote-btn" data-ans="RR" onclick="voteCase(3,'RR')">RR</button>
-<button class="vote-btn" data-ans="RL" onclick="voteCase(3,'RL')">RL</button>
-<button class="vote-btn" data-ans="LR" onclick="voteCase(3,'LR')">LR</button>
-</div>
-<div class="quiz-feedback" id="vfb3"></div>
-</div>
-</div>
-<div style="text-align:center;margin-top:4px;">Score: <span class="score-badge" id="voteScore">0 / 4 correct</span></div>
-</div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
 
-<div class="slide" id="s38">
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
+
+
+<section class="slide" id="s10">
+  <div class="slide-top">
+    <div class="meta"><div class="course">AVL Trees</div><div class="sub">Identify the Fix</div></div>
+    <span class="knowledge-pill">Knowledge Check</span>
+  </div>
+  <h2>Which Rotation?</h2>
+  <div id="rqContainer">
+    <div class="rquiz-block" id="rq0">
+      <p style="font-weight:700;margin:0 0 6px;">Q1: Insert 10, 20, 30 into an empty BST. What rotation restores balance?</p>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <svg viewBox="0 0 120 130" width="100" xmlns="http://www.w3.org/2000/svg">
+          <line x1="40" y1="30" x2="70" y2="70" stroke="#fca5a5" stroke-width="2"/>
+          <line x1="70" y1="70" x2="95" y2="110" stroke="#fca5a5" stroke-width="2"/>
+          <circle cx="40" cy="30" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+          <text x="40" y="35" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">10</text>
+          <circle cx="70" cy="70" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+          <text x="70" y="75" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">20</text>
+          <circle cx="95" cy="110" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+          <text x="95" y="115" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">30</text>
+          <text x="40" y="128" font-size="9" fill="#ef4444" font-weight="700">BF=-2!</text>
+        </svg>
+        <div class="quiz-opts" id="rqopts0">
+          <button class="quiz-opt" onclick="rotQuiz(0,'LL')">LL</button>
+          <button class="quiz-opt" onclick="rotQuiz(0,'RR')">RR</button>
+          <button class="quiz-opt" onclick="rotQuiz(0,'LR')">LR</button>
+          <button class="quiz-opt" onclick="rotQuiz(0,'RL')">RL</button>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="rqfb0"></div>
+    </div>
+    <div class="rquiz-block" id="rq1">
+      <p style="font-weight:700;margin:0 0 6px;">Q2: Insert 30, 20, 10 into an empty BST. What rotation restores balance?</p>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <svg viewBox="0 0 120 130" width="100" xmlns="http://www.w3.org/2000/svg">
+          <line x1="90" y1="30" x2="60" y2="70" stroke="#fca5a5" stroke-width="2"/>
+          <line x1="60" y1="70" x2="35" y2="110" stroke="#fca5a5" stroke-width="2"/>
+          <circle cx="90" cy="30" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+          <text x="90" y="35" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">30</text>
+          <circle cx="60" cy="70" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+          <text x="60" y="75" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">20</text>
+          <circle cx="35" cy="110" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+          <text x="35" y="115" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">10</text>
+          <text x="90" y="128" font-size="9" fill="#ef4444" font-weight="700">BF=+2!</text>
+        </svg>
+        <div class="quiz-opts" id="rqopts1">
+          <button class="quiz-opt" onclick="rotQuiz(1,'LL')">LL</button>
+          <button class="quiz-opt" onclick="rotQuiz(1,'RR')">RR</button>
+          <button class="quiz-opt" onclick="rotQuiz(1,'LR')">LR</button>
+          <button class="quiz-opt" onclick="rotQuiz(1,'RL')">RL</button>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="rqfb1"></div>
+    </div>
+    <div class="rquiz-block" id="rq2">
+      <p style="font-weight:700;margin:0 0 6px;">Q3: Insert 30, 10, 20 &mdash; zig-zag pattern. What rotation?</p>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <svg viewBox="0 0 120 130" width="100" xmlns="http://www.w3.org/2000/svg">
+          <line x1="80" y1="30" x2="40" y2="70" stroke="#fca5a5" stroke-width="2"/>
+          <line x1="40" y1="70" x2="65" y2="110" stroke="#fca5a5" stroke-width="2"/>
+          <circle cx="80" cy="30" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+          <text x="80" y="35" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">30</text>
+          <circle cx="40" cy="70" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+          <text x="40" y="75" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">10</text>
+          <circle cx="65" cy="110" r="16" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+          <text x="65" y="115" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a" font-family="monospace">20</text>
+          <text x="80" y="128" font-size="9" fill="#ef4444" font-weight="700">BF=+2!</text>
+        </svg>
+        <div class="quiz-opts" id="rqopts2">
+          <button class="quiz-opt" onclick="rotQuiz(2,'LL')">LL</button>
+          <button class="quiz-opt" onclick="rotQuiz(2,'RR')">RR</button>
+          <button class="quiz-opt" onclick="rotQuiz(2,'LR')">LR</button>
+          <button class="quiz-opt" onclick="rotQuiz(2,'RL')">RL</button>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="rqfb2"></div>
+    </div>
+  </div>
+  <div style="margin-top:10px;display:flex;align-items:center;gap:14px;position:relative;z-index:2;">
+    <span class="score-badge" id="rotQuizScore">0 / 3 correct</span>
+  </div>
+
+  <div class="slide-footer"><div class="muted">Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
+
+
+
+<section class="slide" id="s38">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">The Fix</div></div><div class="pills"><span class="pill standard">Rotations</span></div></div>
 <div class="slide-body">
 <h2>Restoring Balance: Rotations</h2>
@@ -2035,10 +1882,10 @@
 <div class="prof-note"><strong>&#128218; Analogy:</strong> Think of lifting the middle node up like adjusting a mobile sculpture. The subtrees hang naturally into place.</div>
 <div class="student-task"><strong>&#127829; Roleplay:</strong> 3 students stand up &mdash; Root / tempPtr / Right Child. Act out <code>rotateLeft</code> pointer changes step by step.</div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted"> . Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s39">
+<section class="slide" id="s39">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">The Algorithm</div></div><div class="pills"><span class="pill knowledge">rotateRight</span></div></div>
 <div class="slide-body">
 <h2>rotateRight &mdash; Step by Step</h2>
@@ -2047,22 +1894,22 @@
 <pre class="code-block"><span class="cm">// rotateRight: LL fix</span>
 <span class="cm">// Returns new root of subtree</span>
 AVLNode* <span class="fn">rotateRight</span>(AVLNode* root) {
-  <span class="cm">// Step 1: Save left child</span>
-  AVLNode* tempPtr = root->left;
+  <span class="cm">// Step 1: Save left child</span>
+  AVLNode* tempPtr = root->left;
 
-  <span class="cm">// Step 2: Move tempPtr's right to root's left</span>
-  root->left = tempPtr->right;
+  <span class="cm">// Step 2: Move tempPtr's right to root's left</span>
+  root->left = tempPtr->right;
 
-  <span class="cm">// Step 3: Make root the right child of tempPtr</span>
-  tempPtr->right = root;
+  <span class="cm">// Step 3: Make root the right child of tempPtr</span>
+  tempPtr->right = root;
 
-  <span class="cm">// Step 4: Recalculate balance factors</span>
-  <span class="cm">// (root first! It is now LOWER in the tree)</span>
-  <span class="fn">updateBalance</span>(root);
-  <span class="fn">updateBalance</span>(tempPtr);
+  <span class="cm">// Step 4: Recalculate balance factors</span>
+  <span class="cm">// (root first! It is now LOWER in the tree)</span>
+  <span class="fn">updateBalance</span>(root);
+  <span class="fn">updateBalance</span>(tempPtr);
 
-  <span class="cm">// Step 5: Return new root</span>
-  <span class="kw">return</span> tempPtr;
+  <span class="cm">// Step 5: Return new root</span>
+  <span class="kw">return</span> tempPtr;
 }
 </pre>
 </div>
@@ -2076,10 +1923,10 @@ AVLNode* <span class="fn">rotateRight</span>(AVLNode* root) {
 </div>
 </div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted"> . Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s40">
+<section class="slide" id="s40">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">The Algorithm</div></div><div class="pills"><span class="pill knowledge">rotateLeft</span></div></div>
 <div class="slide-body">
 <h2>rotateLeft &mdash; Step by Step</h2>
@@ -2088,22 +1935,20 @@ AVLNode* <span class="fn">rotateRight</span>(AVLNode* root) {
 <pre class="code-block"><span class="cm">// rotateLeft: RR fix</span>
 <span class="cm">// Returns new root of subtree</span>
 AVLNode* <span class="fn">rotateLeft</span>(AVLNode* root) {
-  <span class="cm">// Step 1: Save right child</span>
-  AVLNode* tempPtr = root->right;
+  <span class="cm">// Step 1: Save right child</span>
+  AVLNode* tempPtr = root->right;
 
-  <span class="cm">// Step 2: Move tempPtr's left to root's right</span>
-  root->right = tempPtr->left;
+  <span class="cm">// Step 2: Move tempPtr's left to root's right</span>
+  <span class="cm">// Step 3: Make root the left child of tempPtr</span>
+  tempPtr->left = root;
 
-  <span class="cm">// Step 3: Make root the left child of tempPtr</span>
-  tempPtr->left = root;
+  <span class="cm">// Step 4: Recalculate balance factors</span>
+  <span class="cm">// (root first! It is now LOWER in the tree)</span>
+  <span class="fn">updateBalance</span>(root);
+  <span class="fn">updateBalance</span>(tempPtr);
 
-  <span class="cm">// Step 4: Recalculate balance factors</span>
-  <span class="cm">// (root first! It is now LOWER in the tree)</span>
-  <span class="fn">updateBalance</span>(root);
-  <span class="fn">updateBalance</span>(tempPtr);
-
-  <span class="cm">// Step 5: Return new root</span>
-  <span class="kw">return</span> tempPtr;
+  <span class="cm">// Step 5: Return new root</span>
+  <span class="kw">return</span> tempPtr;
 }
 </pre>
 </div>
@@ -2123,10 +1968,10 @@ AVLNode* <span class="fn">rotateLeft</span>(AVLNode* root) {
 </div>
 </div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s41">
+<section class="slide" id="s41">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Single Rotation</div></div><div class="pills"><span class="pill standard">LL Demo</span></div></div>
 <div class="slide-body">
 <h2>LL Imbalance &rarr; Single rotateRight</h2>
@@ -2174,10 +2019,10 @@ AVLNode* <span class="fn">rotateLeft</span>(AVLNode* root) {
 </div>
 <div class="prof-note"><strong>&#9733; Elegant:</strong> One rotation, middle node (7) becomes new root. Tree height decreased by 1. All BFs reset to 0. O(1) pointer operations!</div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s42">
+<section class="slide" id="s42">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Single Rotation</div></div><div class="pills"><span class="pill activity">Try It!</span></div></div>
 <div class="slide-body">
 <h2>RR Imbalance &rarr; Single rotateLeft</h2>
@@ -2241,10 +2086,10 @@ AVLNode* <span class="fn">rotateLeft</span>(AVLNode* root) {
 </div>
 </div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s43">
+<section class="slide" id="s43">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Double Rotation</div></div><div class="pills"><span class="pill standard">RL Case</span></div></div>
 <div class="slide-body" style="gap:10px;">
 <h2>RL Imbalance &rarr; rotateLeft then rotateRight</h2>
@@ -2308,10 +2153,10 @@ AVLNode* <span class="fn">rotateLeft</span>(AVLNode* root) {
 </div>
 <div class="prof-note"><strong>Key Insight:</strong> Double rotation = two singles in sequence. Step 1 converts RL into LL, then Step 2 is the standard LL fix.</div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s44">
+<section class="slide" id="s44">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Double Rotation</div></div><div class="pills"><span class="pill activity">LR Challenge</span></div></div>
 <div class="slide-body" style="gap:10px;">
 <h2>LR Imbalance &rarr; rotateRight then rotateLeft</h2>
@@ -2371,10 +2216,10 @@ AVLNode* <span class="fn">rotateLeft</span>(AVLNode* root) {
 </div>
 <div class="student-task"><strong>&#9997; Your Turn (2 steps):</strong><br>1. Sketch the INTERMEDIATE tree after rotateRight(22). What is 19's BF? What is 14's BF?<br>2. Sketch the FINAL tree after rotateLeft(14). Compare answers with your neighbor.</div>
 </div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s45">
+<section class="slide" id="s45">
 <div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Putting It All Together</div></div><div class="pills"><span class="pill knowledge">Full Algorithm</span></div></div>
 <div class="slide-body">
 <h2>Complete AVL Insert Process</h2>
@@ -2392,154 +2237,269 @@ AVLNode* <span class="fn">rotateLeft</span>(AVLNode* root) {
 <div style="height:100%;">
 <pre class="code-block"><span class="cm">// Recursive AVL Insert</span>
 AVLNode* <span class="fn">AVLInsert</span>(AVLNode* root, <span class="kw">int</span> val) {
-  <span class="kw">if</span> (root == <span class="kw">nullptr</span>)  <span class="cm">// Base case</span>
-    <span class="kw">return new</span> AVLNode(val);
+  <span class="kw">if</span> (root == <span class="kw">nullptr</span>)  <span class="cm">// Base case</span>
+    <span class="kw">return new</span> AVLNode(val);
 
-  <span class="kw">if</span> (val < root->data)
-    root->left = <span class="fn">AVLInsert</span>(root->left, val);
-  <span class="kw">else if</span> (val > root->data)
-    root->right = <span class="fn">AVLInsert</span>(root->right, val);
-  <span class="kw">else return</span> root; <span class="cm">// duplicate</span>
+  <span class="kw">if</span> (val < root->data)
+    root->left = <span class="fn">AVLInsert</span>(root->left, val);
+  <span class="kw">else if</span> (val > root->data)
+    root->right = <span class="fn">AVLInsert</span>(root->right, val);
+  <span class="kw">else return</span> root; <span class="cm">// duplicate</span>
 
-  <span class="fn">updateBalance</span>(root); <span class="cm">// recalculate BF</span>
+  <span class="fn">updateBalance</span>(root); <span class="cm">// recalculate BF</span>
 
-  <span class="kw">if</span> (root->balance == +<span class="num">2</span>) { <span class="cm">// Left heavy</span>
-    <span class="kw">if</span> (root->left->balance >= <span class="num">0</span>)  <span class="cm">// LL</span>
-      <span class="kw">return</span> <span class="fn">rotateRight</span>(root);
-    <span class="kw">else</span> {                             <span class="cm">// RL</span>
-      root->left = <span class="fn">rotateLeft</span>(root->left);
-      <span class="kw">return</span> <span class="fn">rotateRight</span>(root);
-    }
-  }
-  <span class="kw">if</span> (root->balance == -<span class="num">2</span>) { <span class="cm">// Right heavy</span>
-    <span class="kw">if</span> (root->right->balance <= <span class="num">0</span>) <span class="cm">// RR</span>
-      <span class="kw">return</span> <span class="fn">rotateLeft</span>(root);
-    <span class="kw">else</span> {                             <span class="cm">// LR</span>
-      root->right = <span class="fn">rotateRight</span>(root->right);
-      <span class="kw">return</span> <span class="fn">rotateLeft</span>(root);
-    }
-  }
-  <span class="kw">return</span> root;
+  <span class="kw">if</span> (root->balance == +<span class="num">2</span>) { <span class="cm">// Left heavy</span>
+    <span class="kw">if</span> (root->left->balance >= <span class="num">0</span>)  <span class="cm">// LL</span>
+      <span class="kw">return</span> <span class="fn">rotateRight</span>(root);
+    <span class="kw">else</span> {                             <span class="cm">// RL</span>
+      root->left = <span class="fn">rotateLeft</span>(root->left);
+      <span class="kw">return</span> <span class="fn">rotateRight</span>(root);
+    }
+  }
+  <span class="kw">if</span> (root->balance == -<span class="num">2</span>) { <span class="cm">// Right heavy</span>
+    <span class="kw">if</span> (root->right->balance <= <span class="num">0</span>) <span class="cm">// RR</span>
+      <span class="kw">return</span> <span class="fn">rotateLeft</span>(root);
+    <span class="kw">else</span> {                             <span class="cm">// LR</span>
+      root->right = <span class="fn">rotateRight</span>(root->right);
+      <span class="kw">return</span> <span class="fn">rotateLeft</span>(root);
+    }
+  }
+  <span class="kw">return</span> root;
 }
 </pre>
 </div>
 </div>
-<div class="prof-note"><strong>&#128218; Recursion Magic:</strong> The recursive call naturally unwinds back up to the root. Each call returns the (possibly rotated) subtree root, updating parent pointers automatically.</div>
-</div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-</div>
+<div class="slide-footer"><div class="muted">  Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
-<div class="slide" id="s46">
-<div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Full Worked Example</div></div><div class="pills"><span class="pill activity">Activity</span><span class="pill assessment">Exam-Style</span></div></div>
+
+<section class="slide" id="s46">
+<style>
+  /* Fixed wrapper heights prevent layout jumping when toggling steps */
+  .interactive-wrapper { height: 230px; width: 100%; position: relative; }
+  .interactive-step { display: none; flex-direction: column; align-items: center; justify-content: flex-start; animation: fadeIn 0.25s ease-in-out; width: 100%; height: 100%; }
+  .interactive-step.active { display: flex; }
+  
+  /* Lock the text height so 1-line and 2-line descriptions don't shift the SVGs */
+  .step-caption { font-size: 13px; font-weight: 700; text-align: center; height: 34px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 8px; }
+  
+  .step-controls { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; height: 32px; }
+  .step-btn { cursor: pointer; padding: 4px 12px; border-radius: 6px; border: 2px solid #ccc; background: #fff; font-weight: 700; font-size: 13px; transition: all 0.2s; min-width: 80px; }
+  .step-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: #cbd5e1 !important; color: #94a3b8 !important; background: #f8fafc !important; }
+  
+  .step-btn-a { border-color: var(--amber); color: #92400e; }
+  .step-btn-a:not(:disabled):hover { background: var(--amber); color: #fff; }
+  
+  .step-btn-b { border-color: var(--purple); color: #4c1d95; }
+  .step-btn-b:not(:disabled):hover { background: var(--purple); color: #fff; }
+  
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="slide-header"><div><div class="course">AVL Trees</div><div class="topic">Full Worked Example</div></div><div class="pills"><span class="pill activity">Interactive Activity</span><span class="pill assessment">Exam-Style</span></div></div>
 <div class="slide-body" style="gap:10px;">
 <h2>Worked Example: Inserting 15 and 55</h2>
-<div class="grid-2-eq">
-<div style="background:#fffbeb;border:2px solid var(--amber);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;">
-<div style="font-weight:700;color:#92400e;font-size:15px;">Part A: Insert 15 &mdash; RL Imbalance at node 18</div>
-<div style="display:flex;align-items:center;justify-content:center;gap:12px;">
-<div style="text-align:center;">
-<div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">BEFORE (insert 15)</div>
-<svg width="190" height="170" viewBox="0 0 190 170">
-<line x1="95" y1="28" x2="45" y2="82" stroke="#94a3b8" stroke-width="2"/>
-<line x1="95" y1="28" x2="155" y2="82" stroke="#94a3b8" stroke-width="2"/>
-<line x1="45" y1="82" x2="20" y2="138" stroke="#94a3b8" stroke-width="2"/>
-<line x1="45" y1="82" x2="75" y2="138" stroke="#94a3b8" stroke-width="2"/>
-<circle cx="95" cy="28" r="21" fill="#fecaca" stroke="#ef4444" stroke-width="2.5"/>
-<text x="95" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#7f1d1d">18</text>
-<text x="120" y="20" font-size="9" font-weight="700" fill="#ef4444">BF=+2</text>
-<circle cx="45" cy="82" r="19" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
-<text x="45" y="87" text-anchor="middle" font-size="12" font-weight="700" fill="#78350f">12</text>
-<text x="18" y="80" font-size="9" fill="#f59e0b">BF=&minus;1</text>
-<circle cx="20" cy="138" r="17" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-<text x="20" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="#475569">8</text>
-<circle cx="75" cy="138" r="17" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-<text x="75" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="#475569">14</text>
-<text x="90" y="160" font-size="9" fill="#2563eb">+insert 15</text>
-<circle cx="155" cy="82" r="19" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-<text x="155" y="87" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">22</text>
-</svg>
+<div class="grid-2-eq" style="align-items: stretch;">
+
+<div style="background:#fffbeb;border:2px solid var(--amber);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;height:100%;">
+  <div style="font-weight:700;color:#92400e;font-size:15px;text-align:center;margin-bottom:4px;">Part A: Insert 15 &mdash; RL Imbalance</div>
+  
+  <div class="step-controls">
+    <button class="step-btn step-btn-a" id="btn-prev-a" onclick="changeStepA(-1)" disabled>&#8592; Prev</button>
+    <button class="step-btn step-btn-a" onclick="resetStepA()">Reset</button>
+    <button class="step-btn step-btn-a" id="btn-next-a" onclick="changeStepA(1)">Next &#8594;</button>
+  </div>
+
+  <div class="interactive-wrapper">
+    <div id="partA-step1" class="interactive-step active">
+      <div class="step-caption" style="color:#ef4444;">Step 1: Violation at 18 (BF=+2). Child 12 is (BF=-1)</div>
+      <svg width="200" height="170" viewBox="0 0 200 170">
+        <line x1="100" y1="28" x2="50" y2="82" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="100" y1="28" x2="160" y2="82" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="50" y1="82" x2="25" y2="138" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="50" y1="82" x2="80" y2="138" stroke="#94a3b8" stroke-width="2"/>
+        <circle cx="100" cy="28" r="21" fill="#fecaca" stroke="#ef4444" stroke-width="2.5"/>
+        <text x="100" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#7f1d1d">18</text>
+        <text x="125" y="20" font-size="9" font-weight="700" fill="#ef4444">BF=+2</text>
+        <circle cx="50" cy="82" r="19" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+        <text x="50" y="87" text-anchor="middle" font-size="12" font-weight="700" fill="#78350f">12</text>
+        <text x="23" y="80" font-size="9" fill="#f59e0b">BF=&minus;1</text>
+        <circle cx="25" cy="138" r="17" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <text x="25" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="#475569">8</text>
+        <circle cx="80" cy="138" r="17" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+        <text x="80" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">14</text>
+        <text x="105" y="160" font-size="9" font-weight="700" fill="#2563eb">+NEW: 15</text>
+        <circle cx="160" cy="82" r="19" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <text x="160" y="87" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">22</text>
+      </svg>
+    </div>
+
+    <div id="partA-step2" class="interactive-step">
+      <div class="step-caption" style="color:#f59e0b;">Step 2: rotateLeft(12) converts RL to LL pattern</div>
+      <svg width="200" height="170" viewBox="0 0 200 170">
+        <line x1="120" y1="28" x2="80" y2="82" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="120" y1="28" x2="170" y2="82" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="80" y1="82" x2="40" y2="138" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="80" y1="82" x2="120" y2="138" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="40" y1="138" x2="20" y2="170" stroke="#94a3b8" stroke-width="2"/>
+        <circle cx="120" cy="28" r="21" fill="#fecaca" stroke="#ef4444" stroke-width="2.5"/>
+        <text x="120" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#7f1d1d">18</text>
+        <text x="145" y="20" font-size="9" font-weight="700" fill="#ef4444">BF=+2</text>
+        <circle cx="80" cy="82" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="80" y="87" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">14</text>
+        <text x="105" y="80" font-size="9" fill="#16a34a">BF=+1</text>
+        <circle cx="40" cy="138" r="17" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+        <text x="40" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="#78350f">12</text>
+        <circle cx="20" cy="170" r="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <text x="20" y="174" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">8</text>
+        <circle cx="120" cy="138" r="17" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <text x="120" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="#475569">15</text>
+        <circle cx="170" cy="82" r="19" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <text x="170" y="87" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">22</text>
+      </svg>
+    </div>
+
+    <div id="partA-step3" class="interactive-step">
+      <div class="step-caption" style="color:#16a34a;">Step 3: rotateRight(18). Tree is balanced!</div>
+      <svg width="200" height="170" viewBox="0 0 200 170">
+        <line x1="100" y1="28" x2="50" y2="85" stroke="#16a34a" stroke-width="2"/>
+        <line x1="100" y1="28" x2="155" y2="85" stroke="#16a34a" stroke-width="2"/>
+        <line x1="50" y1="85" x2="25" y2="145" stroke="#16a34a" stroke-width="2"/>
+        <line x1="155" y1="85" x2="125" y2="145" stroke="#16a34a" stroke-width="2"/>
+        <line x1="155" y1="85" x2="180" y2="145" stroke="#16a34a" stroke-width="2"/>
+        <circle cx="100" cy="28" r="21" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+        <text x="100" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">14</text>
+        <text x="124" y="20" font-size="9" font-weight="700" fill="#16a34a">BF=0</text>
+        <circle cx="50" cy="85" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="50" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">12</text>
+        <text x="22" y="88" font-size="9" fill="#16a34a">BF=0</text>
+        <circle cx="155" cy="85" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="155" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">18</text>
+        <text x="176" y="88" font-size="9" fill="#16a34a">BF=0</text>
+        <circle cx="25" cy="145" r="17" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="25" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#14532d">8</text>
+        <circle cx="125" cy="145" r="17" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="125" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#14532d">15</text>
+        <circle cx="180" cy="145" r="17" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="180" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#14532d">22</text>
+      </svg>
+    </div>
+  </div>
 </div>
-<div style="font-size:24px;color:var(--green);">&#8594;</div>
-<div style="text-align:center;">
-<div style="font-size:11px;font-weight:700;color:#16a34a;margin-bottom:4px;">AFTER (rotateLeft(12) + rotateRight(18))</div>
-<svg width="200" height="170" viewBox="0 0 200 170">
-<line x1="100" y1="28" x2="50" y2="85" stroke="#16a34a" stroke-width="2"/>
-<line x1="100" y1="28" x2="155" y2="85" stroke="#16a34a" stroke-width="2"/>
-<line x1="50" y1="85" x2="25" y2="145" stroke="#16a34a" stroke-width="2"/>
-<line x1="155" y1="85" x2="125" y2="145" stroke="#16a34a" stroke-width="2"/>
-<line x1="155" y1="85" x2="180" y2="145" stroke="#16a34a" stroke-width="2"/>
-<circle cx="100" cy="28" r="21" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
-<text x="100" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">14</text>
-<text x="124" y="20" font-size="9" font-weight="700" fill="#16a34a">BF=0</text>
-<circle cx="50" cy="85" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
-<text x="50" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">12</text>
-<text x="22" y="88" font-size="9" fill="#16a34a">BF=0</text>
-<circle cx="155" cy="85" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
-<text x="155" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">18</text>
-<text x="176" y="88" font-size="9" fill="#16a34a">BF=0</text>
-<circle cx="25" cy="145" r="17" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
-<text x="25" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#14532d">8</text>
-<circle cx="125" cy="145" r="17" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
-<text x="125" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#14532d">15</text>
-<circle cx="180" cy="145" r="17" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
-<text x="180" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#14532d">22</text>
-</svg>
-</div>
-</div>
-<div style="font-size:12px;color:#78350f;"><strong>Steps:</strong> rotateLeft(12) converts RL to LL &rarr; then rotateRight(18) completes the fix</div>
-</div>
-<div style="background:#f5f3ff;border:2px solid var(--purple);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;">
-<div style="font-weight:700;color:#4c1d95;font-size:15px;">Part B: Insert 55 into tree 44&#8594;60&#8594;70</div>
-<div style="display:flex;align-items:center;justify-content:center;gap:10px;">
-<div style="text-align:center;">
-<div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">BEFORE (insert 55)</div>
-<svg width="180" height="165" viewBox="0 0 180 165">
-<line x1="55" y1="30" x2="120" y2="90" stroke="#94a3b8" stroke-width="2"/>
-<line x1="120" y1="90" x2="155" y2="145" stroke="#94a3b8" stroke-width="2"/>
-<circle cx="55" cy="30" r="21" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5"/>
-<text x="55" y="35" text-anchor="middle" font-size="13" font-weight="700" fill="#7f1d1d">44</text>
-<text x="8" y="22" font-size="9" font-weight="700" fill="#ef4444">BF=&minus;1</text>
-<circle cx="120" cy="90" r="19" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-<text x="120" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">60</text>
-<text x="140" y="88" font-size="9" fill="#94a3b8">BF=&minus;1</text>
-<circle cx="155" cy="145" r="17" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-<text x="155" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#475569">70</text>
-<text x="115" y="158" font-size="9" fill="#2563eb">insert 55 here</text>
-</svg>
-</div>
-<div style="font-size:22px;color:var(--green);">&#8594;</div>
-<div style="text-align:center;">
-<div style="font-size:11px;font-weight:700;color:#16a34a;margin-bottom:4px;">AFTER rotateLeft(44)</div>
-<svg width="180" height="165" viewBox="0 0 180 165">
-<line x1="90" y1="28" x2="40" y2="90" stroke="#16a34a" stroke-width="2"/>
-<line x1="90" y1="28" x2="145" y2="90" stroke="#16a34a" stroke-width="2"/>
-<line x1="145" y1="90" x2="170" y2="148" stroke="#16a34a" stroke-width="2"/>
-<circle cx="90" cy="28" r="21" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
-<text x="90" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">60</text>
-<text x="113" y="20" font-size="9" font-weight="700" fill="#16a34a">BF=0</text>
-<circle cx="40" cy="90" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
-<text x="40" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">44</text>
-<text x="10" y="88" font-size="9" fill="#16a34a">BF=0</text>
-<circle cx="145" cy="90" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
-<text x="145" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">70</text>
-<text x="165" y="88" font-size="9" fill="#16a34a">BF=0</text>
-<circle cx="170" cy="148" r="17" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
-<text x="170" y="153" text-anchor="middle" font-size="10" font-weight="700" fill="#14532d">55</text>
-</svg>
-</div>
-</div>
-<div style="font-size:12px;color:#4c1d95;"><strong>Analysis:</strong> After inserting 55 as left of 60: 44 BF=&minus;2, 60 BF=0 &rarr; RR case &rarr; single rotateLeft(44). 60 becomes root.</div>
-<div class="student-task" style="font-size:13px;"><strong>&#128394; Board Activity:</strong> Come to the board &mdash; draw the final tree after inserting 55. Verify all BFs are valid.</div>
-</div>
-</div>
-</div>
-<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+
+<div style="background:#f5f3ff;border:2px solid var(--purple);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;height:100%;">
+  <div style="font-weight:700;color:#4c1d95;font-size:15px;text-align:center;margin-bottom:4px;">Part B: Insert 55 &mdash; RR Imbalance</div>
+  
+  <div class="step-controls">
+    <button class="step-btn step-btn-b" id="btn-prev-b" onclick="changeStepB(-1)" disabled>&#8592; Prev</button>
+    <button class="step-btn step-btn-b" onclick="resetStepB()">Reset</button>
+    <button class="step-btn step-btn-b" id="btn-next-b" onclick="changeStepB(1)">Next &#8594;</button>
+  </div>
+
+  <div class="interactive-wrapper">
+    <div id="partB-step1" class="interactive-step active">
+      <div class="step-caption" style="color:#ef4444;">Step 1: Violation at 44 (BF=-2). Child 60 is (BF=-1)</div>
+      <svg width="200" height="170" viewBox="-10 -2 200 170">
+        <line x1="55" y1="30" x2="120" y2="90" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="120" y1="90" x2="155" y2="145" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="120" y1="90" x2="85" y2="145" stroke="#94a3b8" stroke-width="2"/>
+        <circle cx="55" cy="30" r="21" fill="#fecaca" stroke="#ef4444" stroke-width="2.5"/>
+        <text x="55" y="35" text-anchor="middle" font-size="13" font-weight="700" fill="#7f1d1d">44</text>
+        <text x="8" y="22" font-size="9" font-weight="700" fill="#ef4444">BF=&minus;2</text>
+        <circle cx="120" cy="90" r="19" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <text x="120" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">60</text>
+        <text x="145" y="85" font-size="9" fill="#94a3b8">BF=&minus;1</text>
+        <circle cx="155" cy="145" r="17" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <text x="155" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#475569">70</text>
+        <circle cx="85" cy="145" r="17" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+        <text x="85" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">55</text>
+        <text x="85" y="172" text-anchor="middle" font-size="9" font-weight="700" fill="#2563eb">NEW</text>
+      </svg>
+    </div>
+
+    <div id="partB-step2" class="interactive-step">
+      <div class="step-caption" style="color:#16a34a;">Step 2: rotateLeft(44). Tree is balanced!</div>
+      <svg width="200" height="170" viewBox="-10 -2 200 170">
+        <line x1="90" y1="28" x2="40" y2="90" stroke="#16a34a" stroke-width="2"/>
+        <line x1="90" y1="28" x2="145" y2="90" stroke="#16a34a" stroke-width="2"/>
+        <line x1="40" y1="90" x2="65" y2="148" stroke="#16a34a" stroke-width="2"/>
+        <circle cx="90" cy="28" r="21" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+        <text x="90" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#14532d">60</text>
+        <text x="113" y="20" font-size="9" font-weight="700" fill="#16a34a">BF=0</text>
+        <circle cx="40" cy="90" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="40" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">44</text>
+        <text x="10" y="88" font-size="9" fill="#16a34a">BF=&minus;1</text>
+        <circle cx="145" cy="90" r="19" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="145" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#14532d">70</text>
+        <text x="165" y="88" font-size="9" fill="#16a34a">BF=0</text>
+        <circle cx="65" cy="148" r="17" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <text x="65" y="153" text-anchor="middle" font-size="10" font-weight="700" fill="#14532d">55</text>
+      </svg>
+    </div>
+  </div>
 </div>
 
 </div>
-</div><!-- /deck -->
-</div><!-- /deck-wrap -->
-</div><!-- /stage -->
+<div class="student-task" style="font-size:13px; margin-top: 15px;"><strong>&#128394; Board Activity:</strong> Use the Next/Prev buttons. Discuss with your neighbor what pointer reassignments happen between each step.</div>
+</div>
+<div class="slide-footer"><div class="muted">Prof. Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+
+<script>
+  // State for Part A (Steps 1 to 3)
+  let currentStepA = 1;
+  const maxStepA = 3;
+
+  function updateViewA() {
+    // Hide all A steps
+    document.querySelectorAll('[id^="partA-step"]').forEach(el => el.classList.remove('active'));
+    // Show current step
+    document.getElementById('partA-step' + currentStepA).classList.add('active');
+    
+    // Update button disabled states
+    document.getElementById('btn-prev-a').disabled = (currentStepA === 1);
+    document.getElementById('btn-next-a').disabled = (currentStepA === maxStepA);
+  }
+
+  function changeStepA(delta) {
+    currentStepA += delta;
+    if (currentStepA < 1) currentStepA = 1;
+    if (currentStepA > maxStepA) currentStepA = maxStepA;
+    updateViewA();
+  }
+
+  function resetStepA() {
+    currentStepA = 1;
+    updateViewA();
+  }
+
+  // State for Part B (Steps 1 to 2)
+  let currentStepB = 1;
+  const maxStepB = 2;
+
+  function updateViewB() {
+    // Hide all B steps
+    document.querySelectorAll('[id^="partB-step"]').forEach(el => el.classList.remove('active'));
+    // Show current step
+    document.getElementById('partB-step' + currentStepB).classList.add('active');
+    
+    // Update button disabled states
+    document.getElementById('btn-prev-b').disabled = (currentStepB === 1);
+    document.getElementById('btn-next-b').disabled = (currentStepB === maxStepB);
+  }
+
+  function changeStepB(delta) {
+    currentStepB += delta;
+    if (currentStepB < 1) currentStepB = 1;
+    if (currentStepB > maxStepB) currentStepB = maxStepB;
+    updateViewB();
+  }
+
+  function resetStepB() {
+    currentStepB = 1;
+    updateViewB();
+  }
+</script>
+</section>
 
 <!-- CONTROLS -->
 <div class="controls">
