@@ -332,6 +332,247 @@
         <div class="slide-footer"><div class="muted">COIS 2020H — Trees</div><div class="slide-no" data-slide-no></div></div>
       </section>
 
+      <section class="slide" id="s17">
+  <div class="slide-top">
+    <div class="meta"><div class="course">Interactive</div><div class="sub">BST Playground</div></div>
+    <span class="pill">Full Playground</span>
+  </div>
+  <h2>BST Playground</h2>
+  
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;position:relative;z-index:2;margin-bottom:8px;">
+    <input class="ipt" id="s13ins-inp" type="number" placeholder="value" min="1" max="999"/>
+    <button class="btn btn-sm" onclick="s13Insert()">Insert</button>
+    <input class="ipt" id="s13srch-inp" type="number" placeholder="search" min="1" max="999" style="margin-left:8px;"/>
+    <button class="btn btn-sm btn-blue" onclick="s13Search()">Search</button>
+    <input class="ipt" id="s13del-inp" type="number" placeholder="delete" min="1" max="999" style="margin-left:8px;"/>
+    <button class="btn btn-sm btn-red" onclick="s13Delete()">Delete</button>
+    <button class="btn btn-sm" style="margin-left:8px;" onclick="s13Reset()">Reset</button>
+    <button class="btn btn-sm btn-red" onclick="s13Clear()">Clear All</button>
+  </div>
+  
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:14px;position:relative;z-index:2;">
+    <div class="svg-wrap" id="s13svg" style="min-height:360px;background:#f8fafc;border-radius:14px;border:1px solid var(--soft);"></div>
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;">Operation Log</div>
+      <div class="msg-log" id="s13log" style="max-height:340px;overflow-y:auto;background:#fff;padding:8px;border:1px solid #e2e8f0;border-radius:8px;font-family:monospace;font-size:13px;"></div>
+    </div>
+  </div>
+  
+  <div class="slide-footer"><div class="muted">Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+
+  <script>
+    // --- 1. MISSING BST LOGIC ADDED HERE ---
+    class Node {
+      constructor(val) {
+        this.val = val;
+        this.left = null;
+        this.right = null;
+      }
+    }
+
+    class BST {
+      constructor() {
+        this.root = null;
+      }
+      
+      clear() {
+        this.root = null;
+      }
+
+      insert(v) {
+        const path = [];
+        if (!this.root) {
+          this.root = new Node(v);
+          path.push(v);
+          return path;
+        }
+        let curr = this.root;
+        while (true) {
+          path.push(curr.val);
+          if (v < curr.val) {
+            if (!curr.left) { curr.left = new Node(v); path.push(v); return path; }
+            curr = curr.left;
+          } else if (v > curr.val) {
+            if (!curr.right) { curr.right = new Node(v); path.push(v); return path; }
+            curr = curr.right;
+          } else {
+            return path; // Duplicate found, stop.
+          }
+        }
+      }
+
+      search(v) {
+        const path = [];
+        let curr = this.root;
+        while (curr) {
+          path.push(curr.val);
+          if (v === curr.val) return { found: true, path };
+          if (v < curr.val) curr = curr.left;
+          else curr = curr.right;
+        }
+        return { found: false, path };
+      }
+
+      delete(v) {
+        let curr = this.root;
+        let parent = null;
+        
+        while (curr && curr.val !== v) {
+          parent = curr;
+          if (v < curr.val) curr = curr.left;
+          else curr = curr.right;
+        }
+        
+        if (!curr) return null; // Node not found
+
+        let caseType = '';
+        if (!curr.left && !curr.right) caseType = 'A'; // Leaf
+        else if (!curr.left) caseType = 'B'; // Right subtree only
+        else if (!curr.right) caseType = 'C'; // Left subtree only
+        else caseType = 'D'; // Two subtrees
+
+        if (caseType === 'A') {
+          if (!parent) this.root = null;
+          else if (parent.left === curr) parent.left = null;
+          else parent.right = null;
+        } else if (caseType === 'B') {
+          if (!parent) this.root = curr.right;
+          else if (parent.left === curr) parent.left = curr.right;
+          else parent.right = curr.right;
+        } else if (caseType === 'C') {
+          if (!parent) this.root = curr.left;
+          else if (parent.left === curr) parent.left = curr.left;
+          else parent.right = curr.left;
+        } else if (caseType === 'D') {
+          let successorParent = curr;
+          let successor = curr.right;
+          while (successor.left) {
+            successorParent = successor;
+            successor = successor.left;
+          }
+          curr.val = successor.val;
+          if (successorParent.left === successor) successorParent.left = successor.right;
+          else successorParent.right = successor.right;
+        }
+        return caseType;
+      }
+    }
+
+    // --- 2. MISSING SVG RENDERING LOGIC ADDED HERE ---
+    function renderSVG(root, w, h, opts) {
+      if (!root) return `<svg viewBox="0 0 ${w} ${h}" style="width:100%; height:100%;"></svg>`;
+      
+      const r = opts.r || 18;
+      let nodesStr = '';
+      let edgesStr = '';
+
+      // Recursive function to draw lines and circles
+      function traverse(node, x, y, dx) {
+        if (node.left) {
+          const nx = x - dx;
+          const ny = y + 50;
+          edgesStr += `<line x1="${x}" y1="${y}" x2="${nx}" y2="${ny}" stroke="#94a3b8" stroke-width="2"/>`;
+          traverse(node.left, nx, ny, dx / 1.8);
+        }
+        if (node.right) {
+          const nx = x + dx;
+          const ny = y + 50;
+          edgesStr += `<line x1="${x}" y1="${y}" x2="${nx}" y2="${ny}" stroke="#94a3b8" stroke-width="2"/>`;
+          traverse(node.right, nx, ny, dx / 1.8);
+        }
+
+        // Determine node color based on search/insert operations
+        let fill = "#ffffff";
+        let stroke = "#3b82f6"; // default blue
+        if (opts.found === node.val || opts.newVal === node.val) {
+          fill = "#bfdbfe"; // highlight color
+          stroke = "#2563eb";
+        } else if (opts.path && opts.path.includes(node.val)) {
+          fill = "#f1f5f9"; // path color
+        }
+
+        nodesStr += `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`;
+        nodesStr += `<text x="${x}" y="${y}" text-anchor="middle" dy=".3em" font-family="sans-serif" font-size="12" font-weight="bold" fill="#0f172a">${node.val}</text>`;
+      }
+
+      traverse(root, w / 2, 30, w / 4);
+
+      return `<svg viewBox="0 0 ${w} ${h}" style="width:100%; height:100%;">
+                ${edgesStr}${nodesStr}
+              </svg>`;
+    }
+
+
+    // --- 3. YOUR ORIGINAL UI LOGIC (UPDATED TO RENDER ON LOAD) ---
+    const playBST = (() => {
+      const t = new BST();
+      [50, 25, 75, 10, 35, 60, 90, 5, 15].forEach(v => t.insert(v));
+      return t;
+    })();
+
+    function s13Log(msg) {
+      const l = document.getElementById('s13log'); if (!l) return;
+      const d = document.createElement('div');
+      d.style.marginBottom = '4px';
+      d.textContent = '› ' + msg; 
+      l.prepend(d);
+      if (l.children.length > 30) l.removeChild(l.lastChild);
+    }
+
+    function s13Render(opts) {
+      const el = document.getElementById('s13svg'); if (!el) return;
+      el.innerHTML = renderSVG(playBST.root, 560, 340, Object.assign({r: 18}, opts || {}));
+    }
+
+    function s13Insert() {
+      const inp = document.getElementById('s13ins-inp'); if (!inp) return;
+      const v = parseInt(inp.value);
+      if (isNaN(v) || v < 1) { s13Log('Enter valid number.'); return; }
+      if (playBST.search(v).found) { s13Log(`${v} already in tree — duplicates not inserted.`); inp.value = ''; return; }
+      const path = playBST.insert(v);
+      s13Render({ path, newVal: v });
+      s13Log(`Inserted ${v} — path: ${path.join(' → ')}`);
+      inp.value = '';
+    }
+
+    function s13Search() {
+      const inp = document.getElementById('s13srch-inp'); if (!inp) return;
+      const v = parseInt(inp.value);
+      if (isNaN(v)) { s13Log('Enter valid number.'); return; }
+      const res = playBST.search(v);
+      s13Render({ path: res.path, found: res.found ? v : null });
+      s13Log(res.found ? `Found ${v} in ${res.path.length} comparison(s).` : `${v} not found (${res.path.length} comparisons).`);
+      inp.value = '';
+    }
+
+    function s13Delete() {
+      const inp = document.getElementById('s13del-inp'); if (!inp) return;
+      const v = parseInt(inp.value);
+      if (isNaN(v)) { s13Log('Enter valid number.'); return; }
+      if (!playBST.search(v).found) { s13Log(`${v} not in tree.`); inp.value = ''; return; }
+      const c = playBST.delete(v);
+      s13Render({});
+      const names = { A: 'Leaf', B: 'Only right subtree', C: 'Only left subtree', D: 'Two subtrees' };
+      s13Log(`Deleted ${v} — Case ${c}: ${names[c] || '?'}`);
+      inp.value = '';
+    }
+
+    function s13Reset() {
+      playBST.clear();
+      [50, 25, 75, 10, 35, 60, 90, 5, 15].forEach(v => playBST.insert(v));
+      s13Render({});
+      s13Log('Reset to default [50, 25, 75, 10, 35, 60, 90, 5, 15].');
+    }
+
+    function s13Clear() { playBST.clear(); s13Render({}); s13Log('Tree cleared.'); }
+
+    // Render the default tree immediately when the page loads
+    window.onload = () => {
+      s13Render({});
+      s13Log('Playground initialized.');
+    };
+  </script>
+</section>
       <!-- ═══ SLIDE 5 — Sorting Visualization ═══ -->
 
       <section class="slide" id="slide-sortviz">
