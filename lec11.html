@@ -1946,8 +1946,7 @@
         </div>
       </section>
 
-
-      <section class="slide">
+<section class="slide">
         <div class="slide-top">
           <div class="meta">
             <div class="course">Insertion Sort</div>
@@ -1961,12 +1960,12 @@
         <div class="viz-panel" id="ins-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
           <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;" id="ins-viz-pass">Press Play to begin</div>
           
-          <div id="ins-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:16px;">
+          <div id="ins-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:16px; position:relative;">
             </div>
           
           <div id="ins-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
           
-          <div id="ins-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+          <div id="ins-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center; flex-wrap:wrap;">
             <button class="viz-btn" onclick="insVizPlay()">▶ Play</button>
             <button class="viz-btn" onclick="insVizPause()" style="background:#374151;">⏸ Pause</button>
             <button class="viz-btn" onclick="insVizStep()">⏭ Step</button>
@@ -1983,8 +1982,9 @@
         <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unsorted</div>
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Sorted Portion</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Active Key (arr[i])</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#ffedd5; border:2px solid #f97316;"></div>Shifting Right</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Key (in hand)</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dbeafe; border:2px solid #3b82f6;"></div>Comparing</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:repeating-linear-gradient(45deg,#fff,#fff 3px,#f1f5f9 3px,#f1f5f9 6px); border:2px dashed #94a3b8;"></div>Empty Gap</div>
         </div>
 
         <div class="slide-footer">
@@ -2000,92 +2000,214 @@
             let vizTimer = null;
             let vizSpeed = 500;
 
+            /*
+             *  STEP GENERATOR
+             *
+             *  Core fix: when the key is picked out, its slot becomes
+             *  null (a visible gap). Shifting moves a value INTO the
+             *  gap, and the gap slides left. This guarantees every
+             *  value appears exactly once — no duplicates ever.
+             */
             function generateInsertionSortSteps(initialArr) {
               let arr = [...initialArr];
               let steps = [];
               let n = arr.length;
-              
-              // Index 0 is initially "sorted"
-              steps.push({ arr: [...arr], sorted: [0], keyIdx: -1, shiftIdx: -1, msg: 'Initial state: first element is sorted', pass: 0 });
+
+              // -- initial state --
+              steps.push({
+                display: [...arr],
+                sorted: [0],
+                keyVal: null,
+                keyIdx: -1,
+                compareIdx: -1,
+                gapIdx: -1,
+                msg: 'Initial state: first element is trivially sorted.',
+                pass: 0
+              });
 
               for (let i = 1; i < n; i++) {
                 let key = arr[i];
+                let sortedBefore = Array.from({ length: i }, (_, k) => k);
+
+                // 1 ─ highlight the key before pulling it out
+                steps.push({
+                  display: [...arr],
+                  sorted: [...sortedBefore],
+                  keyVal: key,
+                  keyIdx: i,
+                  compareIdx: -1,
+                  gapIdx: -1,
+                  msg: `Pass ${i}: pick key = ${key} at index ${i}`,
+                  pass: i
+                });
+
+                // pull the key out → gap at position i
+                let disp = [...arr];
+                disp[i] = null;
+                let gapPos = i;
+
                 let j = i - 1;
-                
-                // Select Key
-                let currentSorted = Array.from({length: i}, (_, idx) => idx);
-                steps.push({ arr: [...arr], sorted: [...currentSorted], keyIdx: i, shiftIdx: -1, msg: `Select key = ${key}`, pass: i });
 
                 while (j >= 0 && arr[j] > key) {
-                  // Comparison & Shift
-                  steps.push({ arr: [...arr], sorted: [...currentSorted], keyIdx: j+1, shiftIdx: j, msg: `${arr[j]} > ${key}, shifting ${arr[j]} right`, pass: i });
+                  // 2 ─ compare key with arr[j]
+                  steps.push({
+                    display: [...disp],
+                    sorted: [...sortedBefore],
+                    keyVal: key,
+                    keyIdx: -1,
+                    compareIdx: j,
+                    gapIdx: gapPos,
+                    msg: `Compare: arr[${j}] = ${arr[j]}  >  key ${key}  →  shift right`,
+                    pass: i
+                  });
+
+                  // shift arr[j] into the gap
+                  disp[gapPos] = disp[j];
+                  gapPos = j;
+                  disp[gapPos] = null;
+
                   arr[j + 1] = arr[j];
-                  j = j - 1;
-                  
-                  // Show the shifted state
-                  let tempArr = [...arr];
-                  tempArr[j+1] = key; // temp placement for visualizer
-                  steps.push({ arr: [...tempArr], sorted: [...currentSorted], keyIdx: j+1, shiftIdx: -1, msg: `Space created`, pass: i });
+
+                  // 3 ─ show after shift
+                  steps.push({
+                    display: [...disp],
+                    sorted: [...sortedBefore],
+                    keyVal: key,
+                    keyIdx: -1,
+                    compareIdx: -1,
+                    gapIdx: gapPos,
+                    msg: `Shifted → gap now at index ${gapPos}`,
+                    pass: i
+                  });
+
+                  j--;
                 }
-                
+
+                // show the comparison that stops the loop
+                if (j >= 0) {
+                  steps.push({
+                    display: [...disp],
+                    sorted: [...sortedBefore],
+                    keyVal: key,
+                    keyIdx: -1,
+                    compareIdx: j,
+                    gapIdx: gapPos,
+                    msg: `Compare: arr[${j}] = ${arr[j]}  ≤  key ${key}  →  stop`,
+                    pass: i
+                  });
+                }
+
+                // 4 ─ insert key into gap
                 arr[j + 1] = key;
-                currentSorted.push(i);
-                steps.push({ arr: [...arr], sorted: [...currentSorted], keyIdx: j+1, shiftIdx: -1, msg: `Inserted ${key} into correct position`, pass: i });
+                let sortedAfter = Array.from({ length: i + 1 }, (_, k) => k);
+
+                steps.push({
+                  display: [...arr],
+                  sorted: [...sortedAfter],
+                  keyVal: key,
+                  keyIdx: j + 1,
+                  compareIdx: -1,
+                  gapIdx: -1,
+                  msg: `Inserted key ${key} at index ${j + 1}.  Sorted: [0…${i}]`,
+                  pass: i
+                });
               }
-              
-              let finalSorted = Array.from({length: n}, (_, idx) => idx);
-              steps.push({ arr: [...arr], sorted: [...finalSorted], keyIdx: -1, shiftIdx: -1, msg: `Array is fully sorted!`, pass: n-1 });
+
+              // -- done --
+              steps.push({
+                display: [...arr],
+                sorted: Array.from({ length: n }, (_, k) => k),
+                keyVal: null,
+                keyIdx: -1,
+                compareIdx: -1,
+                gapIdx: -1,
+                msg: 'Array is fully sorted!',
+                pass: n - 1
+              });
+
               return steps;
             }
 
+            /*
+             *  RENDERER
+             */
             function renderVizStep(stepIndex) {
               if (vizSteps.length === 0) return;
               const step = vizSteps[stepIndex];
               const container = document.getElementById('ins-viz-array');
-              if (!container) return; 
-              
+              if (!container) return;
+
+              const vals = step.display.filter(v => v !== null);
+              const maxVal = Math.max(...vals, 1);
+
               let html = '';
-              const maxVal = Math.max(...step.arr);
-              
-              step.arr.forEach((val, idx) => {
-                const barHeight = Math.max(10, (val / maxVal) * 80); 
-                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
-                let transform = '';
+
+              step.display.forEach((val, idx) => {
+                // ── empty gap slot ──
+                if (val === null) {
+                  html += `
+                    <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease;">
+                      <div style="width:100%; height:14px; background:transparent;"></div>
+                      <div style="width:100%; height:46px; background:repeating-linear-gradient(45deg,#fff,#fff 3px,#f1f5f9 3px,#f1f5f9 6px); border:2.5px dashed #94a3b8; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; color:#94a3b8; transition:all 0.3s;">gap</div>
+                    </div>`;
+                  return;
+                }
+
+                const barHeight = Math.max(14, (val / maxVal) * 80);
+                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a';
+                let extra = '';
 
                 if (idx === step.keyIdx) {
-                  // Active key
+                  // the key — just picked or just inserted
                   bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e';
-                  transform = 'transform: translateY(-8px); box-shadow: 0 4px 10px rgba(245,158,11,0.2);';
-                } else if (idx === step.shiftIdx) {
-                  // Element being shifted
-                  bg = '#ffedd5'; border = '#f97316'; textColor = '#9a3412'; 
+                  extra = 'transform:translateY(-10px); box-shadow:0 6px 14px rgba(245,158,11,0.25);';
+                } else if (idx === step.compareIdx) {
+                  // element being compared against the key
+                  bg = '#dbeafe'; border = '#3b82f6'; textColor = '#1e40af';
+                  extra = 'transform:translateY(-4px); box-shadow:0 3px 8px rgba(59,130,246,0.18);';
                 } else if (step.sorted.includes(idx)) {
-                  // Sorted area
-                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; 
+                  // sorted portion
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534';
                 }
 
                 html += `
-                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
-                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.2s;"></div>
-                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; transition:all 0.2s; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${extra}">
+                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.25s;"></div>
+                    <div style="width:100%; height:46px; background:${bg}; border:2.5px solid ${border}; border-top:none; color:${textColor}; transition:all 0.25s; border-radius:0 0 6px 6px; margin:0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px;">${val}</div>
                   </div>`;
               });
 
+              // floating key badge when key is "in hand" (not in the array)
+              if (step.keyVal !== null && step.keyIdx === -1) {
+                html += `
+                  <div style="position:absolute; top:-2px; right:0; background:#fef9c3; border:2.5px solid #f59e0b; color:#92400e; font-weight:800; font-size:13px; padding:4px 14px; border-radius:8px; box-shadow:0 4px 12px rgba(245,158,11,0.22); letter-spacing:.02em;">
+                    key = ${step.keyVal}
+                  </div>`;
+              }
+
               container.innerHTML = html;
               document.getElementById('ins-viz-status').textContent = step.msg;
-              document.getElementById('ins-viz-pass').textContent = step.pass === 0 ? 'Press Play to begin' : `Iteration ${step.pass}`;
+              document.getElementById('ins-viz-pass').textContent =
+                step.pass === 0 && stepIndex === 0 ? 'Press Play to begin' : `Iteration ${step.pass} of ${vizArr.length - 1}`;
             }
 
+            /*
+             *  CONTROLS
+             */
             window.insVizInit = function(arr) {
               vizArr = arr || [8, 4, 6, 2, 7, 3, 1, 5];
-              vizSteps = generateInsertionSortSteps(vizArr);
+              vizSteps = generateInsertionSortSteps([...vizArr]);
               vizCurrentStep = 0;
               renderVizStep(0);
             };
 
             window.insVizPlay = function() {
               if (vizTimer) return;
-              const delay = 1000 - vizSpeed; 
+              if (vizCurrentStep >= vizSteps.length - 1) {
+                vizCurrentStep = 0;
+                renderVizStep(0);
+              }
+              const delay = 1000 - vizSpeed;
               vizTimer = setInterval(() => {
                 if (vizCurrentStep < vizSteps.length - 1) {
                   vizCurrentStep++;
@@ -2113,12 +2235,16 @@
 
             window.insVizReset = function() {
               window.insVizPause();
-              window.insVizInit([8, 4, 6, 2, 7, 3, 1, 5]); 
+              window.insVizInit([8, 4, 6, 2, 7, 3, 1, 5]);
             };
 
             window.insVizShuffle = function() {
               window.insVizPause();
-              let newArr = [...vizArr].sort(() => Math.random() - 0.5);
+              let newArr = Array.from({ length: vizArr.length }, (_, i) => i + 1);
+              for (let i = newArr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+              }
               window.insVizInit(newArr);
             };
 
@@ -2126,7 +2252,7 @@
               vizSpeed = parseInt(val);
               if (vizTimer) {
                 window.insVizPause();
-                window.insVizPlay(); 
+                window.insVizPlay();
               }
             };
 
@@ -2427,7 +2553,7 @@
       </section>
 
 
-      <section class="slide">
+<section class="slide">
         <div class="slide-top">
           <div class="meta">
             <div class="course">Selection Sort</div>
@@ -2446,7 +2572,7 @@
           
           <div id="sel-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
           
-          <div id="sel-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+          <div id="sel-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center; flex-wrap:wrap;">
             <button class="viz-btn" onclick="selVizPlay()">▶ Play</button>
             <button class="viz-btn" onclick="selVizPause()" style="background:#374151;">⏸ Pause</button>
             <button class="viz-btn" onclick="selVizStep()">⏭ Step</button>
@@ -2463,8 +2589,9 @@
         <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unsorted</div>
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Sorted</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Scanning Array[j]</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fee2e2; border:2px solid #ef4444;"></div>Current pos_min</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#e0e7ff; border:2px solid #6366f1;"></div>Current Position (i)</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Scanning (j)</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fee2e2; border:2px solid #ef4444;"></div>Current min</div>
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#ffedd5; border:2px solid #f97316;"></div>Swapping</div>
         </div>
 
@@ -2481,94 +2608,192 @@
             let vizTimer = null;
             let vizSpeed = 500;
 
+            /*
+             *  STEP GENERATOR
+             *
+             *  Each step snapshot stores the FULL array plus metadata
+             *  so rendering is stateless — just read one step object.
+             *
+             *  Roles:  iIdx      = the position we're filling (left wall)
+             *          scanIdx   = j — the element we're currently looking at
+             *          minIdx    = pos_min — best candidate so far
+             *          swapPair  = [a,b] during the swap animation
+             *          sorted[]  = indices already locked in place
+             */
             function generateSelectionSortSteps(initialArr) {
               let arr = [...initialArr];
               let steps = [];
               let n = arr.length;
               let sorted = [];
 
-              steps.push({ arr: [...arr], sorted: [], scan: -1, min: -1, swp: [], msg: 'Initial state', pass: 0 });
+              // -- initial state --
+              steps.push({
+                arr: [...arr], sorted: [], iIdx: -1,
+                scanIdx: -1, minIdx: -1, swapPair: [],
+                msg: 'Initial state: nothing is sorted yet.',
+                pass: 0
+              });
 
               for (let i = 0; i < n - 1; i++) {
                 let pos_min = i;
-                steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: pos_min, swp: [], msg: `Assume min is at index ${i} (value: ${arr[i]})`, pass: i+1 });
 
+                // 1 ─ start of pass: assume arr[i] is the minimum
+                steps.push({
+                  arr: [...arr], sorted: [...sorted], iIdx: i,
+                  scanIdx: -1, minIdx: pos_min, swapPair: [],
+                  msg: `Pass ${i + 1}: assume min = ${arr[i]} at index ${i}`,
+                  pass: i + 1
+                });
+
+                // 2 ─ scan j = i+1 … n-1
                 for (let j = i + 1; j < n; j++) {
-                  steps.push({ arr: [...arr], sorted: [...sorted], scan: j, min: pos_min, swp: [], msg: `Scanning index ${j}. Current min is ${arr[pos_min]}`, pass: i+1 });
+                  // show the comparison
+                  steps.push({
+                    arr: [...arr], sorted: [...sorted], iIdx: i,
+                    scanIdx: j, minIdx: pos_min, swapPair: [],
+                    msg: `Compare arr[${j}] = ${arr[j]} with min = ${arr[pos_min]}`,
+                    pass: i + 1
+                  });
+
                   if (arr[j] < arr[pos_min]) {
                     pos_min = j;
-                    steps.push({ arr: [...arr], sorted: [...sorted], scan: j, min: pos_min, swp: [], msg: `New minimum found: ${arr[j]} at index ${j}`, pass: i+1 });
+                    // new min found
+                    steps.push({
+                      arr: [...arr], sorted: [...sorted], iIdx: i,
+                      scanIdx: j, minIdx: pos_min, swapPair: [],
+                      msg: `New min found! ${arr[j]} at index ${j}`,
+                      pass: i + 1
+                    });
                   }
                 }
 
+                // 3 ─ scan complete — show result
                 if (pos_min !== i) {
-                  steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: pos_min, swp: [i, pos_min], msg: `Swapping ${arr[i]} with min ${arr[pos_min]}`, pass: i+1 });
+                  // highlight both elements about to swap
+                  steps.push({
+                    arr: [...arr], sorted: [...sorted], iIdx: i,
+                    scanIdx: -1, minIdx: pos_min, swapPair: [i, pos_min],
+                    msg: `Swap arr[${i}] = ${arr[i]}  ↔  arr[${pos_min}] = ${arr[pos_min]}`,
+                    pass: i + 1
+                  });
+
+                  // perform swap
                   let temp = arr[i];
                   arr[i] = arr[pos_min];
                   arr[pos_min] = temp;
-                  steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: -1, swp: [i, pos_min], msg: `Swap complete.`, pass: i+1 });
+
+                  // show after swap
+                  sorted.push(i);
+                  steps.push({
+                    arr: [...arr], sorted: [...sorted], iIdx: -1,
+                    scanIdx: -1, minIdx: -1, swapPair: [i, pos_min],
+                    msg: `Swapped! ${arr[i]} is now locked at index ${i}.`,
+                    pass: i + 1
+                  });
                 } else {
-                  steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: pos_min, swp: [], msg: `${arr[i]} is already the minimum. No swap needed.`, pass: i+1 });
+                  // already in place
+                  sorted.push(i);
+                  steps.push({
+                    arr: [...arr], sorted: [...sorted], iIdx: -1,
+                    scanIdx: -1, minIdx: pos_min, swapPair: [],
+                    msg: `${arr[i]} is already the minimum — no swap needed. Locked at index ${i}.`,
+                    pass: i + 1
+                  });
                 }
-                sorted.push(i);
               }
-              
+
+              // -- done --
               sorted.push(n - 1);
-              steps.push({ arr: [...arr], sorted: [...sorted], scan: -1, min: -1, swp: [], msg: `Array is fully sorted!`, pass: n-1 });
+              steps.push({
+                arr: [...arr], sorted: [...sorted], iIdx: -1,
+                scanIdx: -1, minIdx: -1, swapPair: [],
+                msg: 'Array is fully sorted!',
+                pass: n - 1
+              });
+
               return steps;
             }
 
+            /*
+             *  RENDERER
+             */
             function renderVizStep(stepIndex) {
               if (vizSteps.length === 0) return;
               const step = vizSteps[stepIndex];
               const container = document.getElementById('sel-viz-array');
-              if (!container) return; 
-              
-              let html = '';
-              const maxVal = Math.max(...step.arr);
-              
-              step.arr.forEach((val, idx) => {
-                const barHeight = Math.max(10, (val / maxVal) * 80); 
-                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
-                let transform = '';
+              if (!container) return;
 
-                if (step.swp.includes(idx)) {
-                  // Swapping
+              const maxVal = Math.max(...step.arr, 1);
+              let html = '';
+
+              step.arr.forEach((val, idx) => {
+                const barHeight = Math.max(14, (val / maxVal) * 80);
+                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a';
+                let extra = '';
+
+                /*
+                 *  Colour priority (highest → lowest):
+                 *    swapPair  >  minIdx  >  scanIdx  >  iIdx  >  sorted  >  unsorted
+                 */
+                if (step.swapPair.includes(idx)) {
                   bg = '#ffedd5'; border = '#f97316'; textColor = '#9a3412';
-                } else if (idx === step.min) {
-                  // Minimum found
+                  extra = 'transform:translateY(-8px); box-shadow:0 6px 14px rgba(249,115,22,0.25);';
+                } else if (idx === step.minIdx && idx !== step.iIdx) {
+                  // current min (only when it's NOT also iIdx — avoids double-meaning)
                   bg = '#fee2e2'; border = '#ef4444'; textColor = '#991b1b';
-                  transform = 'transform: translateY(-5px); box-shadow: 0 4px 10px rgba(239,68,68,0.2);';
-                } else if (idx === step.scan) {
-                  // Currently scanning
+                  extra = 'transform:translateY(-6px); box-shadow:0 4px 10px rgba(239,68,68,0.2);';
+                } else if (idx === step.scanIdx) {
                   bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e';
+                  extra = 'transform:translateY(-4px); box-shadow:0 3px 8px rgba(245,158,11,0.18);';
+                } else if (idx === step.iIdx) {
+                  // the position we're trying to fill
+                  bg = '#e0e7ff'; border = '#6366f1'; textColor = '#3730a3';
+                  extra = 'transform:translateY(-4px); box-shadow:0 3px 8px rgba(99,102,241,0.18);';
                 } else if (step.sorted.includes(idx)) {
-                  // Sorted area
-                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; 
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534';
                 }
 
+                // when iIdx IS the min (initial assumption), blend both colours
+                if (idx === step.iIdx && idx === step.minIdx && step.swapPair.length === 0) {
+                  bg = 'linear-gradient(135deg, #e0e7ff 40%, #fee2e2 100%)';
+                  border = '#6366f1'; textColor = '#3730a3';
+                  extra = 'transform:translateY(-6px); box-shadow:0 4px 10px rgba(99,102,241,0.22);';
+                }
+
+                const bgProp = bg.includes('gradient') ? `background:${bg}` : `background:${bg}`;
+
                 html += `
-                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
-                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.2s;"></div>
-                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; transition:all 0.2s; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${extra}">
+                    <div style="width:100%; height:${barHeight}px; ${bgProp}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.25s;"></div>
+                    <div style="width:100%; height:46px; ${bgProp}; border:2.5px solid ${border}; border-top:none; color:${textColor}; transition:all 0.25s; border-radius:0 0 6px 6px; margin:0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px;">${val}</div>
                   </div>`;
               });
 
               container.innerHTML = html;
               document.getElementById('sel-viz-status').textContent = step.msg;
-              document.getElementById('sel-viz-pass').textContent = step.pass === 0 ? 'Press Play to begin' : `Pass ${step.pass}`;
+              document.getElementById('sel-viz-pass').textContent =
+                step.pass === 0 && stepIndex === 0
+                  ? 'Press Play to begin'
+                  : `Pass ${step.pass} of ${vizArr.length - 1}`;
             }
 
+            /*
+             *  CONTROLS
+             */
             window.selVizInit = function(arr) {
               vizArr = arr || [9, 3, 5, 15, 7, 8, 2, 11];
-              vizSteps = generateSelectionSortSteps(vizArr);
+              vizSteps = generateSelectionSortSteps([...vizArr]);
               vizCurrentStep = 0;
               renderVizStep(0);
             };
 
             window.selVizPlay = function() {
               if (vizTimer) return;
-              const delay = 1000 - vizSpeed; 
+              if (vizCurrentStep >= vizSteps.length - 1) {
+                vizCurrentStep = 0;
+                renderVizStep(0);
+              }
+              const delay = 1000 - vizSpeed;
               vizTimer = setInterval(() => {
                 if (vizCurrentStep < vizSteps.length - 1) {
                   vizCurrentStep++;
@@ -2596,12 +2821,17 @@
 
             window.selVizReset = function() {
               window.selVizPause();
-              window.selVizInit([9, 3, 5, 15, 7, 8, 2, 11]); 
+              window.selVizInit([9, 3, 5, 15, 7, 8, 2, 11]);
             };
 
             window.selVizShuffle = function() {
               window.selVizPause();
-              let newArr = [...vizArr].sort(() => Math.random() - 0.5);
+              let newArr = Array.from({ length: vizArr.length }, (_, i) => i + 1);
+              // Fisher-Yates — unbiased
+              for (let i = newArr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+              }
               window.selVizInit(newArr);
             };
 
@@ -2609,7 +2839,7 @@
               vizSpeed = parseInt(val);
               if (vizTimer) {
                 window.selVizPause();
-                window.selVizPlay(); 
+                window.selVizPlay();
               }
             };
 
@@ -2619,7 +2849,6 @@
           })();
         </script>
       </section>
-
 
       <section class="slide">
         <style>
@@ -2894,7 +3123,7 @@
       </section>
 
 
-      <section class="slide">
+<section class="slide">
         <div class="slide-top">
           <div class="meta">
             <div class="course">Merge Sort</div>
@@ -2906,20 +3135,20 @@
         <h2>Live Merge Sort Visualiser</h2>
 
         <div class="viz-panel" id="merge-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
-          <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;" id="merge-viz-pass">Press Play to begin</div>
-          
-          <div id="merge-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:16px;">
-            </div>
-          
-          <div id="merge-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
-          
-          <div id="merge-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+          <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px;" id="merge-viz-pass">Press Play to begin</div>
+
+          <!-- TREE CONTAINER -->
+          <div id="merge-tree" style="position:relative; overflow:visible;"></div>
+          <svg id="merge-lines" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></svg>
+
+          <div id="merge-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600; margin-top:10px;">Ready...</div>
+
+          <div id="merge-viz-controls" style="display:flex; gap:10px; margin-top:16px; align-items:center; flex-wrap:wrap;">
             <button class="viz-btn" onclick="mergeVizPlay()">▶ Play</button>
             <button class="viz-btn" onclick="mergeVizPause()" style="background:#374151;">⏸ Pause</button>
             <button class="viz-btn" onclick="mergeVizStep()">⏭ Step</button>
             <button class="viz-btn" onclick="mergeVizReset()" style="background:#374151;">↺ Reset</button>
             <button class="viz-btn" onclick="mergeVizShuffle()" style="background:#374151;">🔀 Shuffle</button>
-            
             <div style="display:flex; align-items:center; gap:8px; margin-left:14px;">
               <span style="font-size:12px; font-weight:700; color:var(--muted);">Speed:</span>
               <input type="range" id="merge-viz-speed" min="100" max="900" value="500" style="width:100px;" oninput="mergeVizSetSpeed(this.value)">
@@ -2929,9 +3158,10 @@
 
         <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Waiting</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dbeafe; border:2px solid #3b82f6;"></div>Active Sublists</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Comparing</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Writing / Sorted</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dbeafe; border:2px solid #3b82f6;"></div>Left Sublist</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#e0e7ff; border:2px solid #6366f1;"></div>Right Sublist</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Active / Splitting</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Merged / Sorted</div>
         </div>
 
         <div class="slide-footer">
@@ -2947,111 +3177,384 @@
             let vizTimer = null;
             let vizSpeed = 500;
 
-            function generateMergeSortSteps(initialArr) {
-              let arr = [...initialArr];
+            /*
+             *  BUILD THE FULL TREE DATA
+             *
+             *  For 8 elements the tree has 7 visual rows:
+             *    Divide rows 0–3 (top → atoms)
+             *    Merge  rows 4–6 (atoms → sorted)
+             *
+             *  Each row has N nodes; each node has an array of values.
+             */
+            function buildTree(arr) {
+              let n = arr.length; // 8
+              let rows = [];
+
+              // ── divide rows ──
+              rows[0] = [arr.slice()];
+              rows[1] = [arr.slice(0, 4), arr.slice(4, 8)];
+              rows[2] = [arr.slice(0, 2), arr.slice(2, 4), arr.slice(4, 6), arr.slice(6, 8)];
+              rows[3] = arr.map(v => [v]);
+
+              // ── merge rows (sorted results) ──
+              // merge pairs from row 3
+              rows[4] = [];
+              for (let i = 0; i < n; i += 2) {
+                rows[4].push(mergeTwoSorted([arr[i]], [arr[i + 1]]));
+              }
+              // merge pairs from row 4
+              rows[5] = [];
+              for (let i = 0; i < rows[4].length; i += 2) {
+                rows[5].push(mergeTwoSorted(rows[4][i], rows[4][i + 1]));
+              }
+              // final merge
+              rows[6] = [mergeTwoSorted(rows[5][0], rows[5][1])];
+
+              return rows;
+            }
+
+            function mergeTwoSorted(a, b) {
+              let result = [], i = 0, j = 0;
+              while (i < a.length && j < b.length) {
+                if (a[i] <= b[j]) result.push(a[i++]);
+                else result.push(b[j++]);
+              }
+              while (i < a.length) result.push(a[i++]);
+              while (j < b.length) result.push(b[j++]);
+              return result;
+            }
+
+            /*
+             *  GENERATE ANIMATION STEPS
+             *
+             *  Each step: { visibleRows, nodeStates, msg, label }
+             *  nodeStates[row][nodeIdx] = 'hidden'|'waiting'|'active'|'left'|'right'|'merged'|'done'
+             */
+            function generateSteps(treeRows) {
               let steps = [];
-              let n = arr.length;
-              
-              steps.push({ arr: [...arr], range: [-1, -1], cmp: [], write: -1, msg: 'Initial state', pass: 'Start' });
+              let NR = 7; // 7 rows
 
-              function merge(left, mid, right, depth) {
-                let temp = [];
-                let i = left;
-                let j = mid + 1;
-
-                steps.push({ arr: [...arr], range: [left, right], cmp: [], write: -1, msg: `Merging sublists [${left}-${mid}] and [${mid+1}-${right}]`, pass: `Depth ${depth}` });
-
-                while (i <= mid && j <= right) {
-                  steps.push({ arr: [...arr], range: [left, right], cmp: [i, j], write: -1, msg: `Comparing ${arr[i]} and ${arr[j]}`, pass: `Depth ${depth}` });
-                  if (arr[i] <= arr[j]) {
-                    temp.push(arr[i++]);
-                  } else {
-                    temp.push(arr[j++]);
+              function makeStates(base) {
+                let s = [];
+                for (let r = 0; r < NR; r++) {
+                  s[r] = [];
+                  for (let n = 0; n < treeRows[r].length; n++) {
+                    s[r][n] = base;
                   }
                 }
+                return s;
+              }
 
-                while (i <= mid) temp.push(arr[i++]);
-                while (j <= right) temp.push(arr[j++]);
+              function cloneStates(st) {
+                return st.map(row => [...row]);
+              }
 
-                // Write back from temp to original array
-                for (let k = 0; k < temp.length; k++) {
-                  arr[left + k] = temp[k];
-                  steps.push({ arr: [...arr], range: [left, right], cmp: [], write: left + k, msg: `Writing ${temp[k]} into position ${left + k}`, pass: `Depth ${depth}` });
+              // helper: set all states, then override specifics
+              function step(overrides, msg, label) {
+                let st = makeStates('hidden');
+                for (let key in overrides) {
+                  let [r, n] = key.split(',').map(Number);
+                  st[r][n] = overrides[key];
                 }
+                steps.push({ states: st, msg, label });
               }
 
-              function mergeSortRecursive(left, right, depth) {
-                if (left >= right) return;
-                let mid = Math.floor((left + right) / 2);
-                mergeSortRecursive(left, mid, depth + 1);
-                mergeSortRecursive(mid + 1, right, depth + 1);
-                merge(left, mid, right, depth);
-              }
+              // ── Step 0: show full array ──
+              step({ '0,0': 'active' },
+                'Start: full array before sorting.',
+                'Start');
 
-              mergeSortRecursive(0, n - 1, 1);
+              // ── Step 1: split into two halves ──
+              step({ '0,0': 'waiting', '1,0': 'active', '1,1': 'active' },
+                'Split into two halves: left [0–3] and right [4–7].',
+                'Split 1');
+
+              // ── Step 2: split into quarters ──
+              step({ '0,0': 'waiting', '1,0': 'waiting', '1,1': 'waiting',
+                     '2,0': 'active', '2,1': 'active', '2,2': 'active', '2,3': 'active' },
+                'Split each half into quarters.',
+                'Split 2');
+
+              // ── Step 3: split into individual elements ──
+              let s3 = { '0,0': 'waiting', '1,0': 'waiting', '1,1': 'waiting',
+                         '2,0': 'waiting', '2,1': 'waiting', '2,2': 'waiting', '2,3': 'waiting' };
+              for (let i = 0; i < 8; i++) s3['3,' + i] = 'active';
+              step(s3, 'Split into individual elements — base cases reached.', 'Split 3');
+
+              // ── Steps 4–7: merge pairs from atoms → row 4 ──
+              let base4 = { '0,0': 'waiting', '1,0': 'waiting', '1,1': 'waiting',
+                            '2,0': 'waiting', '2,1': 'waiting', '2,2': 'waiting', '2,3': 'waiting' };
+              for (let i = 0; i < 8; i++) base4['3,' + i] = 'waiting';
               
-              steps.push({ arr: [...arr], range: [0, n-1], cmp: [], write: -1, sorted: true, msg: `Array is fully sorted!`, pass: 'Complete' });
+              let mergeLabels4 = [
+                { l: 0, r: 1, msg: 'Merge [0] and [1]' },
+                { l: 2, r: 3, msg: 'Merge [2] and [3]' },
+                { l: 4, r: 5, msg: 'Merge [4] and [5]' },
+                { l: 6, r: 7, msg: 'Merge [6] and [7]' },
+              ];
+              for (let m = 0; m < 4; m++) {
+                let s = Object.assign({}, base4);
+                // show previously merged results
+                for (let pm = 0; pm < m; pm++) s['4,' + pm] = 'merged';
+                // highlight the two atoms being merged
+                s['3,' + mergeLabels4[m].l] = 'left';
+                s['3,' + mergeLabels4[m].r] = 'right';
+                // show this merge result
+                s['4,' + m] = 'active';
+                let lv = treeRows[3][mergeLabels4[m].l][0];
+                let rv = treeRows[3][mergeLabels4[m].r][0];
+                let res = treeRows[4][m].join(', ');
+                step(s, `Merge ${lv} and ${rv} → [${res}]`, `Merge #${m + 1}`);
+              }
+
+              // ── Steps 8–9: merge pairs from row 4 → row 5 ──
+              let base5 = Object.assign({}, base4);
+              for (let i = 0; i < 4; i++) base5['4,' + i] = 'waiting';
+
+              for (let m = 0; m < 2; m++) {
+                let s = Object.assign({}, base5);
+                if (m > 0) s['5,0'] = 'merged';
+                s['4,' + (m * 2)] = 'left';
+                s['4,' + (m * 2 + 1)] = 'right';
+                s['5,' + m] = 'active';
+                let res = treeRows[5][m].join(', ');
+                step(s, `Merge [${treeRows[4][m*2].join(',')}] and [${treeRows[4][m*2+1].join(',')}] → [${res}]`, `Merge #${5 + m}`);
+              }
+
+              // ── Step 10: final merge → row 6 ──
+              let s10 = Object.assign({}, base5);
+              for (let i = 0; i < 4; i++) s10['4,' + i] = 'waiting';
+              s10['5,0'] = 'left';
+              s10['5,1'] = 'right';
+              s10['6,0'] = 'active';
+              let finalRes = treeRows[6][0].join(', ');
+              step(s10, `Final merge → [${finalRes}]`, 'Merge #7');
+
+              // ── Step 11: done ──
+              let s11 = {};
+              s11['0,0'] = 'waiting';
+              s11['1,0'] = 'waiting'; s11['1,1'] = 'waiting';
+              s11['2,0'] = 'waiting'; s11['2,1'] = 'waiting'; s11['2,2'] = 'waiting'; s11['2,3'] = 'waiting';
+              for (let i = 0; i < 8; i++) s11['3,' + i] = 'waiting';
+              for (let i = 0; i < 4; i++) s11['4,' + i] = 'waiting';
+              s11['5,0'] = 'waiting'; s11['5,1'] = 'waiting';
+              s11['6,0'] = 'done';
+              step(s11, 'Array is fully sorted!', 'Complete ✓');
+
               return steps;
             }
 
-            function renderVizStep(stepIndex) {
-              if (vizSteps.length === 0) return;
-              const step = vizSteps[stepIndex];
-              const container = document.getElementById('merge-viz-array');
-              if (!container) return; 
-              
-              let html = '';
-              const maxVal = Math.max(...step.arr);
-              
-              step.arr.forEach((val, idx) => {
-                const barHeight = Math.max(10, (val / maxVal) * 80); 
-                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
-                let transform = '';
+            /*
+             *  RENDER THE TREE
+             */
+            let treeRows = [];
 
-                if (step.sorted) {
-                  // Entire array is sorted at the end
-                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534';
-                } else if (idx >= step.range[0] && idx <= step.range[1]) {
-                  // In the active range being merged
-                  bg = '#dbeafe'; border = '#3b82f6'; textColor = '#1e3a8a';
-                  
-                  if (step.cmp.includes(idx)) {
-                    // Being actively compared
-                    bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e';
-                    transform = 'transform: translateY(-5px); box-shadow: 0 4px 10px rgba(245,158,11,0.2);';
-                  } else if (idx === step.write) {
-                    // Being written to
-                    bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534';
-                    transform = 'transform: scale(1.05);';
-                  }
-                }
-
-                html += `
-                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
-                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.2s;"></div>
-                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; transition:all 0.2s; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
-                  </div>`;
-              });
-
-              container.innerHTML = html;
-              document.getElementById('merge-viz-status').textContent = step.msg;
-              document.getElementById('merge-viz-pass').textContent = step.pass === 'Start' ? 'Press Play to begin' : step.pass;
+            function getNodeColor(state) {
+              switch (state) {
+                case 'active':  return { bg: '#fef9c3', border: '#f59e0b', text: '#92400e' };
+                case 'left':    return { bg: '#dbeafe', border: '#3b82f6', text: '#1e3a8a' };
+                case 'right':   return { bg: '#e0e7ff', border: '#6366f1', text: '#3730a3' };
+                case 'merged':  return { bg: '#dcfce7', border: '#16a34a', text: '#166534' };
+                case 'done':    return { bg: '#dcfce7', border: '#16a34a', text: '#166534' };
+                case 'waiting': return { bg: '#f8fafc', border: '#cbd5e1', text: '#64748b' };
+                default:        return { bg: '#f8fafc', border: '#e2e8f0', text: '#cbd5e1' };
+              }
             }
 
+            function renderTree(stepIndex) {
+              if (vizSteps.length === 0 || treeRows.length === 0) return;
+              const step = vizSteps[stepIndex];
+              const container = document.getElementById('merge-tree');
+              const svgEl = document.getElementById('merge-lines');
+              if (!container) return;
+
+              let html = '';
+
+              // ── DIVIDE LABEL ──
+              html += '<div style="text-align:center; font-size:10px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:.12em; margin-bottom:6px;">↓ Divide</div>';
+
+              // ── DIVIDE ROWS 0–3 ──
+              for (let r = 0; r < 4; r++) {
+                html += renderRow(r, step.states[r], treeRows[r]);
+                if (r < 3) html += '<div style="height:4px;"></div>';
+              }
+
+              // ── DIVIDER ──
+              html += '<div style="text-align:center; font-size:9px; font-weight:800; color:#94a3b8; margin:8px 0 6px; letter-spacing:.1em; border-top:1.5px dashed #e2e8f0; border-bottom:1.5px dashed #e2e8f0; padding:4px 0;">MERGE  ↑</div>';
+
+              // ── MERGE ROWS 4–6 ──
+              for (let r = 4; r < 7; r++) {
+                html += renderRow(r, step.states[r], treeRows[r]);
+                if (r < 6) html += '<div style="height:4px;"></div>';
+              }
+
+              container.innerHTML = html;
+
+              // ── DRAW SVG CONNECTION LINES ──
+              requestAnimationFrame(() => drawLines(step.states, svgEl, container));
+
+              // ── UPDATE STATUS ──
+              document.getElementById('merge-viz-status').textContent = step.msg;
+              document.getElementById('merge-viz-pass').textContent =
+                step.label === 'Start' ? 'Press Play to begin' : step.label;
+            }
+
+            function renderRow(rowIdx, nodeStates, nodes) {
+              // Each row uses a flex layout. Nodes share 8 "slots" total.
+              // Row 0: 1 node, 8 slots
+              // Row 1: 2 nodes, 4 slots each
+              // etc.
+              let slotsPerNode = [8, 4, 2, 1, 2, 4, 8];
+              let slotW = slotsPerNode[rowIdx];
+              let html = '<div style="display:flex; justify-content:center; gap:0; width:100%;" data-row="' + rowIdx + '">';
+
+              nodes.forEach((vals, ni) => {
+                let state = nodeStates[ni];
+                let c = getNodeColor(state);
+                let isHidden = (state === 'hidden');
+                let opacity = isHidden ? '0' : '1';
+                let boxScale = isHidden ? 'transform:scale(0.8);' : 'transform:scale(1);';
+
+                // node wrapper takes up slotW/8 of the width
+                let widthPct = (slotW / 8 * 100);
+                html += `<div data-node="${rowIdx},${ni}" style="width:${widthPct}%; display:flex; justify-content:center; align-items:center; transition:all 0.4s; opacity:${opacity}; ${boxScale}">`;
+
+                // inner: the value boxes
+                html += '<div style="display:flex; gap:2px;">';
+                vals.forEach(v => {
+                  let shadow = '';
+                  let lift = '';
+                  if (state === 'active') {
+                    shadow = 'box-shadow:0 2px 8px rgba(245,158,11,0.25);';
+                    lift = 'transform:translateY(-2px);';
+                  } else if (state === 'done') {
+                    shadow = 'box-shadow:0 3px 12px rgba(22,163,74,0.3);';
+                    lift = 'transform:translateY(-2px);';
+                  } else if (state === 'left') {
+                    shadow = 'box-shadow:0 2px 8px rgba(59,130,246,0.2);';
+                  } else if (state === 'right') {
+                    shadow = 'box-shadow:0 2px 8px rgba(99,102,241,0.2);';
+                  } else if (state === 'merged') {
+                    shadow = 'box-shadow:0 2px 6px rgba(22,163,74,0.15);';
+                  }
+
+                  html += `<div style="
+                    width:28px; height:26px; display:flex; align-items:center; justify-content:center;
+                    font-size:11px; font-weight:700; border-radius:5px;
+                    background:${c.bg}; border:2px solid ${c.border}; color:${c.text};
+                    transition:all 0.35s; ${shadow} ${lift}
+                  ">${v}</div>`;
+                });
+                html += '</div></div>';
+              });
+
+              html += '</div>';
+              return html;
+            }
+
+            /*
+             *  SVG CONNECTION LINES
+             */
+            function drawLines(states, svgEl, container) {
+              if (!svgEl || !container) return;
+              let cRect = container.closest('#merge-viz-container').getBoundingClientRect();
+              let svgW = cRect.width;
+              let svgH = cRect.height;
+              svgEl.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+
+              let lines = '';
+              let parentRef = svgEl.closest('#merge-viz-container');
+              let pRect = parentRef.getBoundingClientRect();
+
+              function getNodeCenter(row, nodeIdx) {
+                let el = container.querySelector(`[data-node="${row},${nodeIdx}"]`);
+                if (!el) return null;
+                let r = el.getBoundingClientRect();
+                return {
+                  x: r.left + r.width / 2 - pRect.left,
+                  y: r.top + r.height / 2 - pRect.top
+                };
+              }
+
+              // Divide connections: row r node n → row r+1 nodes n*2, n*2+1
+              for (let r = 0; r < 3; r++) {
+                let nodesInRow = treeRows[r].length;
+                for (let n = 0; n < nodesInRow; n++) {
+                  let parentState = states[r][n];
+                  let childLState = states[r + 1][n * 2];
+                  let childRState = states[r + 1][n * 2 + 1];
+                  if (parentState === 'hidden' || childLState === 'hidden') continue;
+
+                  let p = getNodeCenter(r, n);
+                  let cL = getNodeCenter(r + 1, n * 2);
+                  let cR = getNodeCenter(r + 1, n * 2 + 1);
+                  if (!p || !cL || !cR) continue;
+
+                  let color = '#cbd5e1';
+                  if (childLState === 'active' || childRState === 'active') color = '#f59e0b';
+
+                  lines += `<line x1="${p.x}" y1="${p.y + 13}" x2="${cL.x}" y2="${cL.y - 13}" stroke="${color}" stroke-width="1.5" stroke-opacity="0.5"/>`;
+                  lines += `<line x1="${p.x}" y1="${p.y + 13}" x2="${cR.x}" y2="${cR.y - 13}" stroke="${color}" stroke-width="1.5" stroke-opacity="0.5"/>`;
+                }
+              }
+
+              // Merge connections: row r+1 nodes n*2, n*2+1 → row r node n (merge rows 4–6)
+              // Row 4 sources: row 3 atoms paired
+              let mergeConnections = [
+                // { mergeRow, mergeNode, sourceRow, sourceNodeA, sourceNodeB }
+                { mr: 4, mn: 0, sr: 3, sa: 0, sb: 1 },
+                { mr: 4, mn: 1, sr: 3, sa: 2, sb: 3 },
+                { mr: 4, mn: 2, sr: 3, sa: 4, sb: 5 },
+                { mr: 4, mn: 3, sr: 3, sa: 6, sb: 7 },
+                { mr: 5, mn: 0, sr: 4, sa: 0, sb: 1 },
+                { mr: 5, mn: 1, sr: 4, sa: 2, sb: 3 },
+                { mr: 6, mn: 0, sr: 5, sa: 0, sb: 1 },
+              ];
+
+              mergeConnections.forEach(mc => {
+                let mState = states[mc.mr][mc.mn];
+                let sAState = states[mc.sr][mc.sa];
+                let sBState = states[mc.sr][mc.sb];
+                if (mState === 'hidden') return;
+
+                let m = getNodeCenter(mc.mr, mc.mn);
+                let sA = getNodeCenter(mc.sr, mc.sa);
+                let sB = getNodeCenter(mc.sr, mc.sb);
+                if (!m || !sA || !sB) return;
+
+                let color = '#cbd5e1';
+                if (mState === 'active') color = '#f59e0b';
+                else if (mState === 'merged') color = '#16a34a';
+
+                lines += `<line x1="${sA.x}" y1="${sA.y + 13}" x2="${m.x}" y2="${m.y - 13}" stroke="${color}" stroke-width="1.5" stroke-opacity="0.5"/>`;
+                lines += `<line x1="${sB.x}" y1="${sB.y + 13}" x2="${m.x}" y2="${m.y - 13}" stroke="${color}" stroke-width="1.5" stroke-opacity="0.5"/>`;
+              });
+
+              svgEl.innerHTML = lines;
+            }
+
+            /*
+             *  CONTROLS
+             */
             window.mergeVizInit = function(arr) {
               vizArr = arr || [8, 4, 6, 2, 7, 3, 1, 5];
-              vizSteps = generateMergeSortSteps(vizArr);
+              treeRows = buildTree([...vizArr]);
+              vizSteps = generateSteps(treeRows);
               vizCurrentStep = 0;
-              renderVizStep(0);
+              renderTree(0);
             };
 
             window.mergeVizPlay = function() {
               if (vizTimer) return;
-              const delay = 1000 - vizSpeed; 
+              if (vizCurrentStep >= vizSteps.length - 1) {
+                vizCurrentStep = 0;
+                renderTree(0);
+              }
+              const delay = 1000 - vizSpeed;
               vizTimer = setInterval(() => {
                 if (vizCurrentStep < vizSteps.length - 1) {
                   vizCurrentStep++;
-                  renderVizStep(vizCurrentStep);
+                  renderTree(vizCurrentStep);
                 } else {
                   window.mergeVizPause();
                 }
@@ -3059,37 +3562,35 @@
             };
 
             window.mergeVizPause = function() {
-              if (vizTimer) {
-                clearInterval(vizTimer);
-                vizTimer = null;
-              }
+              if (vizTimer) { clearInterval(vizTimer); vizTimer = null; }
             };
 
             window.mergeVizStep = function() {
               window.mergeVizPause();
               if (vizCurrentStep < vizSteps.length - 1) {
                 vizCurrentStep++;
-                renderVizStep(vizCurrentStep);
+                renderTree(vizCurrentStep);
               }
             };
 
             window.mergeVizReset = function() {
               window.mergeVizPause();
-              window.mergeVizInit([8, 4, 6, 2, 7, 3, 1, 5]); 
+              window.mergeVizInit([8, 4, 6, 2, 7, 3, 1, 5]);
             };
 
             window.mergeVizShuffle = function() {
               window.mergeVizPause();
-              let newArr = [...vizArr].sort(() => Math.random() - 0.5);
+              let newArr = Array.from({ length: vizArr.length }, (_, i) => i + 1);
+              for (let i = newArr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+              }
               window.mergeVizInit(newArr);
             };
 
             window.mergeVizSetSpeed = function(val) {
               vizSpeed = parseInt(val);
-              if (vizTimer) {
-                window.mergeVizPause();
-                window.mergeVizPlay(); 
-              }
+              if (vizTimer) { window.mergeVizPause(); window.mergeVizPlay(); }
             };
 
             setTimeout(() => {
@@ -3393,12 +3894,15 @@
         <div class="viz-panel" id="qs-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
           <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;" id="qs-viz-pass">Press Play to begin</div>
           
-          <div id="qs-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:16px;">
+          <div id="qs-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:140px; margin-bottom:0;">
             </div>
+
+          <!-- pointer row: shows i, j, pivot markers below each bar -->
+          <div id="qs-viz-pointers" style="display:flex; gap:8px; height:22px; margin-bottom:14px;"></div>
           
           <div id="qs-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
           
-          <div id="qs-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
+          <div id="qs-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center; flex-wrap:wrap;">
             <button class="viz-btn" onclick="qsVizPlay()">▶ Play</button>
             <button class="viz-btn" onclick="qsVizPause()" style="background:#374151;">⏸ Pause</button>
             <button class="viz-btn" onclick="qsVizStep()">⏭ Step</button>
@@ -3416,9 +3920,10 @@
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Inactive</div>
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dbeafe; border:2px solid #3b82f6;"></div>Active Range</div>
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f3e8ff; border:2px solid #a855f7;"></div>Pivot</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Comparing</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Scanning (j)</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#e0e7ff; border:2px solid #6366f1;"></div>Boundary (i)</div>
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#ffedd5; border:2px solid #f97316;"></div>Swapping</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Final Sorted Position</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Sorted Position</div>
         </div>
 
         <div class="slide-footer">
@@ -3434,112 +3939,256 @@
             let vizTimer = null;
             let vizSpeed = 500;
 
+            /*
+             *  STEP GENERATOR
+             *
+             *  Each step stores per-index roles so rendering is pure
+             *  lookup — no ambiguous range logic.
+             *
+             *  Roles: 'inactive' | 'range' | 'pivot' | 'scan' |
+             *         'boundary' | 'swap' | 'sorted'
+             *
+             *  Additionally: iPtr, jPtr for pointer labels below bars.
+             */
             function generateQuickSortSteps(initialArr) {
               let arr = [...initialArr];
               let steps = [];
-              let sortedIndices = [];
+              let n = arr.length;
+              let sorted = new Set();
 
-              function swap(i, j) {
-                let temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+              function snap(roles, iPtr, jPtr, pivotIdx, msg, label) {
+                steps.push({
+                  arr: [...arr],
+                  roles: [...roles],
+                  iPtr: iPtr,
+                  jPtr: jPtr,
+                  pivotIdx: pivotIdx,
+                  msg: msg,
+                  label: label
+                });
               }
 
-              steps.push({ arr: [...arr], range: [-1, -1], pivot: -1, cmp: [], swp: [], sorted: [...sortedIndices], msg: 'Initial state', pass: 'Start' });
+              function makeRoles(low, high, pivotIdx) {
+                let r = new Array(n).fill('inactive');
+                sorted.forEach(s => { r[s] = 'sorted'; });
+                for (let k = low; k <= high; k++) {
+                  if (!sorted.has(k)) r[k] = 'range';
+                }
+                if (pivotIdx >= 0) r[pivotIdx] = 'pivot';
+                return r;
+              }
+
+              // initial
+              snap(new Array(n).fill('inactive'), -1, -1, -1,
+                   'Initial state: begin quicksort.', 'Start');
 
               function partition(low, high) {
                 let pivotVal = arr[high];
-                steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [], swp: [], sorted: [...sortedIndices], msg: `Selected pivot: ${pivotVal} at index ${high}`, pass: `Partition [${low}-${high}]` });
+                let tag = `Partition [${low}–${high}]`;
 
-                let i = low - 1;
+                // 1 ─ select pivot
+                let r1 = makeRoles(low, high, high);
+                snap(r1, -1, -1, high,
+                     `Pivot = ${pivotVal} (last element, index ${high})`, tag);
+
+                let i = low - 1; // boundary: everything ≤ i is < pivot
+
                 for (let j = low; j < high; j++) {
-                  steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [j, high], swp: [], sorted: [...sortedIndices], msg: `Checking if arr[${j}] (${arr[j]}) < pivot (${pivotVal})`, pass: `Partition [${low}-${high}]` });
-                  
+                  // 2 ─ scan j, show boundary i
+                  let r2 = makeRoles(low, high, high);
+                  if (i >= low) r2[i] = 'boundary';
+                  r2[j] = 'scan';
+                  snap(r2, i, j, high,
+                       `Scan: arr[${j}] = ${arr[j]}  ${arr[j] < pivotVal ? '<' : '≥'}  pivot ${pivotVal}`,
+                       tag);
+
                   if (arr[j] < pivotVal) {
                     i++;
-                    steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [], swp: [i, j], sorted: [...sortedIndices], msg: `${arr[j]} < ${pivotVal}, expanding lower boundary and swapping arr[${i}] with arr[${j}]`, pass: `Partition [${low}-${high}]` });
-                    swap(i, j);
-                    steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [], swp: [i, j], sorted: [...sortedIndices], msg: `Swapped. Boundary 'i' is now at index ${i}`, pass: `Partition [${low}-${high}]` });
+
+                    if (i !== j) {
+                      // 3a ─ highlight swap pair
+                      let r3 = makeRoles(low, high, high);
+                      r3[i] = 'swap';
+                      r3[j] = 'swap';
+                      snap(r3, i, j, high,
+                           `${arr[j]} < ${pivotVal} → swap arr[${i}] = ${arr[i]} with arr[${j}] = ${arr[j]}`,
+                           tag);
+
+                      // perform swap
+                      let tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+
+                      // 3b ─ show result
+                      let r4 = makeRoles(low, high, high);
+                      r4[i] = 'boundary';
+                      snap(r4, i, j, high,
+                           `Swapped. Boundary i = ${i}.`,
+                           tag);
+                    } else {
+                      // i caught up to j, no physical swap needed
+                      let r3 = makeRoles(low, high, high);
+                      r3[i] = 'boundary';
+                      snap(r3, i, j, high,
+                           `${arr[j]} < ${pivotVal} → i advances to ${i} (no swap needed, i = j).`,
+                           tag);
+                    }
                   }
                 }
-                
-                i++;
-                steps.push({ arr: [...arr], range: [low, high], pivot: high, cmp: [], swp: [i, high], sorted: [...sortedIndices], msg: `End of loop. Moving pivot into its sorted place at index ${i}`, pass: `Partition [${low}-${high}]` });
-                swap(i, high);
-                sortedIndices.push(i);
-                steps.push({ arr: [...arr], range: [low, high], pivot: i, cmp: [], swp: [], sorted: [...sortedIndices], msg: `Pivot ${pivotVal} locked in place.`, pass: `Partition [${low}-${high}]` });
-                
-                return i;
+
+                // 4 ─ place pivot: swap arr[i+1] with arr[high]
+                let pivotDest = i + 1;
+
+                if (pivotDest !== high) {
+                  let r5 = makeRoles(low, high, high);
+                  r5[pivotDest] = 'swap';
+                  r5[high] = 'swap';
+                  snap(r5, i, -1, high,
+                       `Place pivot: swap arr[${pivotDest}] = ${arr[pivotDest]} with pivot ${pivotVal} at index ${high}`,
+                       tag);
+
+                  let tmp = arr[pivotDest]; arr[pivotDest] = arr[high]; arr[high] = tmp;
+                }
+
+                sorted.add(pivotDest);
+
+                // 5 ─ pivot locked
+                let r6 = makeRoles(low, high, -1);
+                r6[pivotDest] = 'sorted';
+                snap(r6, -1, -1, -1,
+                     `Pivot ${pivotVal} locked at index ${pivotDest}. Everything left is smaller, everything right is larger.`,
+                     tag + ' ✓');
+
+                return pivotDest;
               }
 
               function quickSortRec(low, high) {
-                if (low < high) {
-                  let pi = partition(low, high);
-                  quickSortRec(low, pi - 1);
-                  quickSortRec(pi + 1, high);
-                } else if (low === high) {
-                  if (!sortedIndices.includes(low)) sortedIndices.push(low);
-                  steps.push({ arr: [...arr], range: [low, high], pivot: -1, cmp: [], swp: [], sorted: [...sortedIndices], msg: `Sub-array of length 1 is inherently sorted.`, pass: `Base Case` });
+                if (low > high) return;
+
+                if (low === high) {
+                  sorted.add(low);
+                  let r = new Array(n).fill('inactive');
+                  sorted.forEach(s => { r[s] = 'sorted'; });
+                  snap(r, -1, -1, -1,
+                       `Single element arr[${low}] = ${arr[low]} is trivially sorted.`,
+                       'Base Case');
+                  return;
                 }
+
+                let pi = partition(low, high);
+                quickSortRec(low, pi - 1);
+                quickSortRec(pi + 1, high);
               }
 
-              quickSortRec(0, arr.length - 1);
-              steps.push({ arr: [...arr], range: [-1, -1], pivot: -1, cmp: [], swp: [], sorted: Array.from({length: arr.length}, (_, i) => i), msg: `Array is fully sorted!`, pass: 'Complete' });
+              quickSortRec(0, n - 1);
+
+              // final
+              let rF = new Array(n).fill('sorted');
+              snap(rF, -1, -1, -1, 'Array is fully sorted!', 'Complete ✓');
+
               return steps;
             }
 
+            /*
+             *  RENDERER
+             */
             function renderVizStep(stepIndex) {
               if (vizSteps.length === 0) return;
               const step = vizSteps[stepIndex];
-              const container = document.getElementById('qs-viz-array');
-              if (!container) return; 
-              
-              let html = '';
-              const maxVal = Math.max(...step.arr);
-              
+              const arrContainer = document.getElementById('qs-viz-array');
+              const ptrContainer = document.getElementById('qs-viz-pointers');
+              if (!arrContainer) return;
+
+              const maxVal = Math.max(...step.arr, 1);
+              let arrHTML = '';
+              let ptrHTML = '';
+
               step.arr.forEach((val, idx) => {
-                const barHeight = Math.max(10, (val / maxVal) * 80); 
-                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
-                let transform = '';
+                const barH = Math.max(14, (val / maxVal) * 80);
+                const role = step.roles[idx];
 
-                // Apply colors based on state
-                if (step.sorted.includes(idx)) {
-                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; // Sorted
-                } else if (idx >= step.range[0] && idx <= step.range[1]) {
-                  bg = '#dbeafe'; border = '#3b82f6'; textColor = '#1e3a8a'; // Active range
+                let bg, border, textColor, extra = '';
+
+                switch (role) {
+                  case 'pivot':
+                    bg = '#f3e8ff'; border = '#a855f7'; textColor = '#6b21a8';
+                    extra = 'transform:translateY(-10px); box-shadow:0 6px 16px rgba(168,85,247,0.3);';
+                    break;
+                  case 'scan':
+                    bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e';
+                    extra = 'transform:translateY(-5px); box-shadow:0 4px 10px rgba(245,158,11,0.2);';
+                    break;
+                  case 'boundary':
+                    bg = '#e0e7ff'; border = '#6366f1'; textColor = '#3730a3';
+                    extra = 'transform:translateY(-4px); box-shadow:0 3px 8px rgba(99,102,241,0.18);';
+                    break;
+                  case 'swap':
+                    bg = '#ffedd5'; border = '#f97316'; textColor = '#9a3412';
+                    extra = 'transform:translateY(-8px); box-shadow:0 5px 14px rgba(249,115,22,0.25);';
+                    break;
+                  case 'sorted':
+                    bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534';
+                    break;
+                  case 'range':
+                    bg = '#dbeafe'; border = '#3b82f6'; textColor = '#1e3a8a';
+                    break;
+                  default:
+                    bg = '#f8fafc'; border = '#cbd5e1'; textColor = '#0f172a';
                 }
 
-                // Overrides for specific actions
-                if (idx === step.pivot) {
-                  bg = '#f3e8ff'; border = '#a855f7'; textColor = '#6b21a8'; // Pivot
-                  transform = 'transform: translateY(-8px); box-shadow: 0 4px 10px rgba(168,85,247,0.3);';
-                } else if (step.swp.includes(idx)) {
-                  bg = '#ffedd5'; border = '#f97316'; textColor = '#9a3412'; // Swapping
-                  transform = 'transform: scale(1.05);';
-                } else if (step.cmp.includes(idx)) {
-                  bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e'; // Comparing
-                }
-
-                html += `
-                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
-                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.2s;"></div>
-                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; transition:all 0.2s; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
+                arrHTML += `
+                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${extra}">
+                    <div style="width:100%; height:${barH}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0; transition:all 0.25s;"></div>
+                    <div style="width:100%; height:46px; background:${bg}; border:2.5px solid ${border}; border-top:none; color:${textColor}; transition:all 0.25s; border-radius:0 0 6px 6px; margin:0; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px;">${val}</div>
                   </div>`;
+
+                // pointer label
+                let ptrLabel = '';
+                let ptrColor = 'transparent';
+                let ptrText = 'transparent';
+
+                if (idx === step.pivotIdx) {
+                  ptrLabel = 'pivot'; ptrColor = '#a855f7'; ptrText = '#6b21a8';
+                }
+                // j takes priority over i for label when they overlap
+                if (idx === step.iPtr && idx === step.jPtr) {
+                  ptrLabel = 'i, j'; ptrColor = '#6366f1'; ptrText = '#3730a3';
+                } else if (idx === step.iPtr) {
+                  if (ptrLabel) ptrLabel += ' i'; else { ptrLabel = 'i'; ptrColor = '#6366f1'; ptrText = '#3730a3'; }
+                } else if (idx === step.jPtr) {
+                  if (ptrLabel) ptrLabel += ' j'; else { ptrLabel = 'j'; ptrColor = '#f59e0b'; ptrText = '#92400e'; }
+                }
+
+                if (ptrLabel) {
+                  ptrHTML += `<div style="flex:1; text-align:center; font-size:10px; font-weight:800; color:${ptrText}; border-top:2.5px solid ${ptrColor}; padding-top:2px; transition:all 0.3s;">${ptrLabel}</div>`;
+                } else {
+                  ptrHTML += `<div style="flex:1; border-top:2.5px solid transparent;"></div>`;
+                }
               });
 
-              container.innerHTML = html;
+              arrContainer.innerHTML = arrHTML;
+              if (ptrContainer) ptrContainer.innerHTML = ptrHTML;
+
               document.getElementById('qs-viz-status').textContent = step.msg;
-              document.getElementById('qs-viz-pass').textContent = step.pass;
+              document.getElementById('qs-viz-pass').textContent =
+                step.label === 'Start' ? 'Press Play to begin' : step.label;
             }
 
+            /*
+             *  CONTROLS
+             */
             window.qsVizInit = function(arr) {
               vizArr = arr || [9, 3, 5, 15, 7, 8, 2, 11];
-              vizSteps = generateQuickSortSteps(vizArr);
+              vizSteps = generateQuickSortSteps([...vizArr]);
               vizCurrentStep = 0;
               renderVizStep(0);
             };
 
             window.qsVizPlay = function() {
               if (vizTimer) return;
-              const delay = 1000 - vizSpeed; 
+              if (vizCurrentStep >= vizSteps.length - 1) {
+                vizCurrentStep = 0;
+                renderVizStep(0);
+              }
+              const delay = 1000 - vizSpeed;
               vizTimer = setInterval(() => {
                 if (vizCurrentStep < vizSteps.length - 1) {
                   vizCurrentStep++;
@@ -3551,10 +4200,7 @@
             };
 
             window.qsVizPause = function() {
-              if (vizTimer) {
-                clearInterval(vizTimer);
-                vizTimer = null;
-              }
+              if (vizTimer) { clearInterval(vizTimer); vizTimer = null; }
             };
 
             window.qsVizStep = function() {
@@ -3567,21 +4213,22 @@
 
             window.qsVizReset = function() {
               window.qsVizPause();
-              window.qsVizInit([9, 3, 5, 15, 7, 8, 2, 11]); 
+              window.qsVizInit([9, 3, 5, 15, 7, 8, 2, 11]);
             };
 
             window.qsVizShuffle = function() {
               window.qsVizPause();
-              let newArr = [...vizArr].sort(() => Math.random() - 0.5);
+              let newArr = Array.from({ length: vizArr.length }, (_, i) => i + 1);
+              for (let i = newArr.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+              }
               window.qsVizInit(newArr);
             };
 
             window.qsVizSetSpeed = function(val) {
               vizSpeed = parseInt(val);
-              if (vizTimer) {
-                window.qsVizPause();
-                window.qsVizPlay(); 
-              }
+              if (vizTimer) { window.qsVizPause(); window.qsVizPlay(); }
             };
 
             setTimeout(() => {
@@ -3590,7 +4237,6 @@
           })();
         </script>
       </section>
-
 
       <section class="slide">
         <style>
@@ -3829,158 +4475,6 @@
           <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
           <div class="slide-no" data-slide-no></div>
         </div>
-      </section>
-
-
-      <section class="slide">
-        <div class="slide-top">
-          <div class="meta">
-            <div class="course">Linear Search</div>
-            <div class="sub">Interactive Demo</div>
-          </div>
-          <span class="pill">Visualiser</span>
-        </div>
-
-        <h2>Live Linear Search Visualiser</h2>
-
-        <div class="viz-panel" id="ls-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
-          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
-            <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;" id="ls-viz-pass">Press Play to begin</div>
-            <div style="font-size:16px; font-weight:800; color:var(--ink); background:var(--soft2); padding:6px 16px; border-radius:8px; border:1px solid var(--soft);">Target: <span style="color:var(--accent);">17</span></div>
-          </div>
-          
-          <div id="ls-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:100px; margin-bottom:16px;">
-            </div>
-          
-          <div id="ls-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
-          
-          <div id="ls-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
-            <button class="viz-btn" onclick="lsVizPlay()">▶ Play</button>
-            <button class="viz-btn" onclick="lsVizPause()" style="background:#374151;">⏸ Pause</button>
-            <button class="viz-btn" onclick="lsVizStep()">⏭ Step</button>
-            <button class="viz-btn" onclick="lsVizReset()" style="background:#374151;">↺ Reset</button>
-          </div>
-        </div>
-
-        <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#f8fafc; border:2px solid #cbd5e1;"></div>Unchecked</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Currently Checking</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fee2e2; border:2px solid #ef4444;"></div>Not a Match</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Target Found</div>
-        </div>
-
-        <div class="slide-footer">
-          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
-          <div class="slide-no" data-slide-no></div>
-        </div>
-
-        <script>
-          (function() {
-            let vizArr = [14, 2, 9, 17, 5, 8, 11, 3];
-            let target = 17;
-            let vizSteps = [];
-            let vizCurrentStep = 0;
-            let vizTimer = null;
-
-            function generateLinearSearchSteps() {
-              let steps = [];
-              steps.push({ arr: [...vizArr], curr: -1, checked: [], found: false, msg: 'Initial state: Starting search from index 0.', pass: 'Start' });
-
-              let checked = [];
-              for (let i = 0; i < vizArr.length; i++) {
-                steps.push({ arr: [...vizArr], curr: i, checked: [...checked], found: false, msg: `Checking index ${i}. Is ${vizArr[i]} == ${target}?`, pass: `Step ${i+1}` });
-                
-                if (vizArr[i] === target) {
-                  steps.push({ arr: [...vizArr], curr: i, checked: [...checked], found: true, msg: `Match found! ${vizArr[i]} == ${target}. Search complete at index ${i}.`, pass: 'Found!' });
-                  return steps;
-                }
-                
-                checked.push(i);
-                steps.push({ arr: [...vizArr], curr: -1, checked: [...checked], found: false, msg: `${vizArr[i]} != ${target}. Moving to next element.`, pass: `Step ${i+1}` });
-              }
-              
-              steps.push({ arr: [...vizArr], curr: -1, checked: [...checked], found: false, msg: `End of array reached. Target ${target} not found.`, pass: 'Not Found' });
-              return steps;
-            }
-
-            function renderVizStep(stepIndex) {
-              if (vizSteps.length === 0) return;
-              const step = vizSteps[stepIndex];
-              const container = document.getElementById('ls-viz-array');
-              if (!container) return; 
-              
-              let html = '';
-              const maxVal = Math.max(...step.arr);
-              
-              step.arr.forEach((val, idx) => {
-                const barHeight = Math.max(10, (val / maxVal) * 50); 
-                let bg = '#f8fafc', border = '#cbd5e1', textColor = '#0f172a'; 
-                let transform = '';
-
-                if (step.found && idx === step.curr) {
-                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; // Found
-                  transform = 'transform: scale(1.1); box-shadow: 0 4px 10px rgba(22,163,74,.3);';
-                } else if (idx === step.curr) {
-                  bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e'; // Checking
-                  transform = 'transform: translateY(-5px);';
-                } else if (step.checked.includes(idx)) {
-                  bg = '#fee2e2'; border = '#fca5a5'; textColor = '#991b1b'; // Checked & Failed
-                  transform = 'opacity: 0.5;';
-                }
-
-                html += `
-                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
-                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0;"></div>
-                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
-                  </div>`;
-              });
-
-              container.innerHTML = html;
-              document.getElementById('ls-viz-status').textContent = step.msg;
-              document.getElementById('ls-viz-pass').textContent = step.pass === 'Start' ? 'Press Play to begin' : step.pass;
-            }
-
-            window.lsVizInit = function() {
-              vizSteps = generateLinearSearchSteps();
-              vizCurrentStep = 0;
-              renderVizStep(0);
-            };
-
-            window.lsVizPlay = function() {
-              if (vizTimer) return;
-              vizTimer = setInterval(() => {
-                if (vizCurrentStep < vizSteps.length - 1) {
-                  vizCurrentStep++;
-                  renderVizStep(vizCurrentStep);
-                } else {
-                  window.lsVizPause();
-                }
-              }, 800);
-            };
-
-            window.lsVizPause = function() {
-              if (vizTimer) {
-                clearInterval(vizTimer);
-                vizTimer = null;
-              }
-            };
-
-            window.lsVizStep = function() {
-              window.lsVizPause();
-              if (vizCurrentStep < vizSteps.length - 1) {
-                vizCurrentStep++;
-                renderVizStep(vizCurrentStep);
-              }
-            };
-
-            window.lsVizReset = function() {
-              window.lsVizPause();
-              window.lsVizInit(); 
-            };
-
-            setTimeout(() => { window.lsVizInit(); }, 50);
-          })();
-        </script>
       </section>
 
 
