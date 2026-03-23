@@ -692,97 +692,6 @@
         <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
       </section>
 
-<section class="slide">
-        <div class="slide-top">
-          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Linear Search</div></div>
-          <span class="pill">Code Walkthrough</span>
-        </div>
-        <h2>Linear Search — Code &amp; Memory</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;z-index:2;">
-
-          <!-- LEFT: Code panel -->
-          <div class="sort-panel">
-            <div class="sort-panel-hdr" style="background:#1e293b;">
-              <div class="sort-panel-title">Java Pseudocode</div>
-              <span class="sort-badge">Searching for 60</span>
-            </div>
-            <div id="ls-code" style="padding:14px 10px;font-family:var(--mono);font-size:14px;line-height:2.1;background:#0f172a;border-radius:0 0 18px 18px;flex:1;"></div>
-          </div>
-
-          <!-- RIGHT: Array + Memory frame -->
-          <div style="display:flex;flex-direction:column;gap:12px;">
-
-            <!-- Array row -->
-            <div class="viz-panel" style="padding:14px;">
-              <div class="viz-label">Array Iteration</div>
-              <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">arr = [10, 20, 30, 40, 50, 60, 70] &nbsp;|&nbsp; target = <strong>60</strong></div>
-              <div id="ls-arr" style="display:flex;gap:6px;margin-bottom:6px;"></div>
-              <div id="ls-idx" style="display:flex;gap:6px;margin-bottom:8px;"></div>
-              <div id="ls-msg" style="font-size:13px;color:#374151;padding:8px 10px;background:#f8fafc;border-left:3px solid #94a3b8;border-radius:4px;min-height:34px;line-height:1.55;" id="ls-msg"></div>
-            </div>
-
-            <!-- Stack frame / memory -->
-            <div class="viz-panel" style="padding:14px;">
-              <div class="viz-label">Stack Frame — Active Variables</div>
-              <div id="ls-mem" style="display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px 14px;align-items:center;"></div>
-            </div>
-
-            <!-- Legend -->
-            <div style="display:flex;gap:14px;flex-wrap:wrap;">
-              <span style="font-size:12px;font-weight:700;color:#f59e0b;">■ Current (arr[i])</span>
-              <span style="font-size:12px;font-weight:700;color:#dc2626;">■ Checked — not a match</span>
-              <span style="font-size:12px;font-weight:700;color:#16a34a;">■ Found!</span>
-            </div>
-          </div>
-
-        </div>
-
-        <div style="display:flex;align-items:center;gap:12px;margin-top:8px;position:relative;z-index:2;">
-          <button class="viz-btn" id="ls-next-btn" onclick="lsStep()">Next Step →</button>
-          <button class="viz-btn" onclick="lsReset()" style="background:#374151;">Reset</button>
-          <span id="ls-step-lbl" style="font-size:13px;color:var(--muted);">Step 0 / 6</span>
-          <span style="font-size:13px;color:var(--muted);margin-left:8px;">Each step = one loop iteration — O(n) in the worst case</span>
-        </div>
-
-        <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
-      </section>
-
-
-      <!-- ═══ SLIDE 6 — Search Visualization ═══ -->
-      <section class="slide" id="slide-searchviz">
-        <div class="slide-top">
-          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Searching</div></div>
-          <span class="pill">Visualization</span>
-        </div>
-        <h2>Search Step-by-Step — Looking for <span style="color:#16a34a;background:#f0fdf4;padding:2px 10px;border-radius:8px;font-size:28px;">60</span></h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;z-index:2;">
-          <!-- Linear Search -->
-          <div class="viz-panel">
-            <div class="viz-label" style="color:#dc2626;">Linear Search — O(n)</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Array: [10, 20, 30, 40, 50, 60, 70]</div>
-            <div id="linearArr" style="display:flex;gap:5px;margin-bottom:10px;"></div>
-            <div style="font-size:13px;min-height:32px;color:var(--muted);" id="linearMsg"></div>
-            <div style="margin-top:8px;font-size:13px;">Checks: <span class="cmp-counter" id="linearCmp" style="color:#dc2626;">0</span></div>
-          </div>
-          <!-- BST Search -->
-          <div class="viz-panel">
-            <div class="viz-label" style="color:#16a34a;">BST Search — O(log n)</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Pre-built balanced BST</div>
-            <svg id="bstSearchSVG" viewBox="0 0 340 190" style="width:100%;display:block;background:#fff;border-radius:10px;border:1px solid #e2e8f0;"></svg>
-            <div style="font-size:13px;min-height:32px;color:var(--muted);margin-top:6px;" id="bstSearchMsg"></div>
-            <div style="margin-top:4px;font-size:13px;">Checks: <span class="cmp-counter" id="bstSearchCmp" style="color:#16a34a;">0</span></div>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:12px;position:relative;z-index:2;align-items:center;">
-          <button class="viz-btn" id="searchStepBtn" onclick="searchStep()">Next Step</button>
-          <button class="viz-btn" id="searchPlayBtn" onclick="searchPlay()">Play</button>
-          <button class="viz-btn" onclick="searchReset()" style="background:#374151;">Reset</button>
-          <span style="font-size:13px;color:var(--muted);margin-left:8px;" id="searchStatus">Press Step or Play to begin</span>
-        </div>
-        <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
-      </section>
-
-
       <!-- ═══ SLIDE 7 — Search Big-O ═══ -->
       <section class="slide">
         <div class="slide-top">
@@ -813,232 +722,6 @@
         <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
       </section>
 
-
-      <!-- ═══ SLIDE 7b — Sorting ═══ -->
-      
-<section class="slide">
-  <div class="slide-top">
-    <div class="meta">
-      <div class="course">COIS 2020H</div>
-      <div class="sub">Algorithms — Data Organization</div>
-    </div>
-    <span class="pill">Foundations</span>
-  </div>
-
-  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; margin-top: -20px;">
-    <h1 style="font-size: 48px; margin-bottom: 24px; color: #1e293b;">Sorting Algorithms</h1>
-    
-    <div class="card" style="padding: 24px; max-width: 80%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
-      <div style="font-weight: 800; font-size: 14px; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Definition</div>
-      <p style="font-size: 20px; line-height: 1.6; color: #334155; margin: 0;">
-        A <strong>Sorting Algorithm</strong> is a step-by-step procedure used to rearrange a large number of items into a specific order—typically <strong>numerical</strong> or <strong>lexicographical</strong> (alphabetical).
-      </p>
-      
-      <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
-        <div class="info-card" style="padding: 8px 16px; border-left: 4px solid #16a34a; background: white;">
-          <div style="font-size: 12px; font-weight: 800; color: #16a34a;">ASCENDING</div>
-          <div style="font-size: 14px;">1, 2, 3, 4, 5</div>
-        </div>
-        <div class="info-card" style="padding: 8px 16px; border-left: 4px solid #dc2626; background: white;">
-          <div style="font-size: 12px; font-weight: 800; color: #dc2626;">DESCENDING</div>
-          <div style="font-size: 14px;">5, 4, 3, 2, 1</div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="callout" style="margin-top: 24px; font-size: 14px; color: #64748b;">
-      <strong>Why it matters:</strong> Efficient sorting is fundamental for optimizing other algorithms (like Binary Search) that require input data to be in a predictable order.
-    </div>
-  </div>
-
-  <div class="slide-footer">
-    <div class="muted">COIS 2020H — Sorting</div>
-    <div class="slide-no" data-slide-no></div>
-  </div>
-</section>
-      <!-- ═══ SLIDE 9a — In-Place vs Not In-Place ═══ -->
-      <section class="slide">
-        <div class="slide-top">
-          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting — Classification 1 of 3</div></div>
-          <span class="pill">Interactive</span>
-        </div>
-        <h2>In-Place vs Not In-Place</h2>
-        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
-          <span style="font-size:14px;color:#374151;">Does the algorithm need to <strong>allocate a new array</strong> to produce the sorted result, or does it sort within the original array?</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;z-index:2;">
-          <!-- In-Place panel -->
-          <div class="sort-panel">
-            <div class="sort-panel-hdr" style="background:#1e293b;">
-              <div><div class="sort-panel-title">In-Place Sort</div><div class="sort-panel-sub">e.g. Bubble Sort, Insertion Sort</div></div>
-              <span class="sort-badge">Extra memory: O(1)</span>
-            </div>
-            <div class="sort-panel-body" style="padding:15px;">
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Array in Memory</div>
-              <div id="ip-arr" style="display:flex;gap:8px;margin-bottom:14px;"></div>
-              <div style="display:flex;align-items:center;gap:10px;min-height:38px;margin-bottom:12px;">
-                <span style="font-size:12px;font-weight:700;color:var(--muted);">Only extra:</span>
-                <span style="font-size:12px;color:#64748b;">temp =</span>
-                <div id="ip-temp" style="width:40px;height:34px;border:1.5px dashed #94a3b8;border-radius:6px;display:grid;place-items:center;font-weight:900;font-size:15px;color:#64748b;font-family:var(--mono);transition:all .25s;">—</div>
-                <span style="font-size:11px;color:#94a3b8;">← one variable, always O(1)</span>
-              </div>
-              <div id="ip-msg" style="font-size:13px;color:#374151;padding:9px 12px;background:#f8fafc;border-left:3px solid var(--accent);border-radius:4px;min-height:44px;line-height:1.55;"></div>
-            </div>
-          </div>
-          <!-- Not In-Place panel -->
-          <div class="sort-panel">
-            <div class="sort-panel-hdr" style="background:#1e293b;">
-              <div><div class="sort-panel-title">Not In-Place Sort</div><div class="sort-panel-sub">e.g. Merge Sort, Counting Sort</div></div>
-              <span class="sort-badge">Extra memory: O(n)</span>
-            </div>
-            <div class="sort-panel-body" style="padding:15px;">
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Original Array (read only)</div>
-              <div id="nip-orig" style="display:flex;gap:8px;margin-bottom:14px;"></div>
-              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">New Output Array (allocated)</div>
-              <div id="nip-out" style="display:flex;gap:8px;align-items:center;min-height:44px;margin-bottom:12px;"></div>
-              <div id="nip-msg" style="font-size:13px;color:#374151;padding:9px 12px;background:#f8fafc;border-left:3px solid #94a3b8;border-radius:4px;min-height:44px;line-height:1.55;"></div>
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:14px;margin-top:12px;position:relative;z-index:2;">
-          <button class="viz-btn" id="ip-next-btn" onclick="ipStep()">Next Step →</button>
-          <button class="viz-btn" onclick="ipReset()">Reset</button>
-          <span id="ip-step-lbl" style="font-size:13px;color:var(--muted);">Step 0 / 4</span>
-          <div style="flex:1;display:flex;gap:20px;justify-content:flex-end;">
-            <span style="font-size:12px;font-weight:700;color:var(--accent);">&#9632; In-Place: O(1) extra</span>
-            <span style="font-size:12px;font-weight:700;color:#64748b;">&#9632; Not In-Place: O(n) extra</span>
-          </div>
-        </div>
-        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
-      </section>
-
-
-      <!-- ═══ SLIDE 9b — Internal vs External ═══ -->
-      <section class="slide">
-        <div class="slide-top">
-          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting — Classification 2 of 3</div></div>
-          <span class="pill">Interactive</span>
-        </div>
-        <h2>Internal vs External Sort</h2>
-        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
-          <span style="font-size:14px;color:#374151;">Is all the data being sorted held in <strong>RAM at once</strong>, or does the dataset <strong>overflow into secondary storage</strong>?</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:start;position:relative;z-index:2;">
-
-          <!-- Memory diagram -->
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div style="border:2px solid #1e293b;border-radius:12px;overflow:hidden;">
-              <div style="background:#1e293b;padding:9px 14px;font-size:13px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center;">
-                <span>RAM — Main Memory</span><span style="font-size:11px;font-weight:400;color:#94a3b8;">limited capacity (5 slots)</span>
-              </div>
-              <div id="ie-ram" style="padding:12px;display:flex;flex-wrap:wrap;gap:7px;min-height:72px;align-items:flex-start;background:#fff;"></div>
-            </div>
-            <div style="text-align:center;font-size:22px;color:#cbd5e1;">&#8597;</div>
-            <div style="border:2px solid #94a3b8;border-radius:12px;overflow:hidden;">
-              <div style="background:#94a3b8;padding:9px 14px;font-size:13px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center;">
-                <span>Secondary Storage — Disk</span><span style="font-size:11px;font-weight:400;color:#f1f5f9;">large capacity</span>
-              </div>
-              <div id="ie-disk" style="padding:12px;display:flex;flex-wrap:wrap;gap:7px;min-height:72px;align-items:flex-start;background:#f8fafc;"></div>
-            </div>
-          </div>
-
-          <!-- Controls + explanation -->
-          <div style="display:flex;flex-direction:column;gap:14px;">
-            <div style="display:flex;gap:10px;">
-              <button class="viz-btn" id="ie-small-btn" onclick="setIE('small')" style="flex:1;">Small Dataset (4 items)</button>
-              <button class="viz-btn" id="ie-large-btn" onclick="setIE('large')" style="flex:1;background:#374151;">Large Dataset (10 items)</button>
-            </div>
-            <div style="border:1px solid var(--soft);border-radius:12px;padding:16px;background:#fff;">
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-                <div id="ie-verdict-badge" style="font-size:13px;font-weight:800;padding:4px 14px;border-radius:6px;border:1.5px solid var(--accent);background:#f0fdf4;color:#166534;">Internal Sort</div>
-              </div>
-              <div id="ie-desc" style="font-size:14px;color:#374151;line-height:1.6;"></div>
-            </div>
-            <div style="border:1px solid var(--soft);border-radius:12px;padding:14px;background:#fff;">
-              <div style="font-size:12px;font-weight:800;color:#0f172a;margin-bottom:6px;">Key Difference</div>
-              <div style="display:flex;flex-direction:column;gap:7px;">
-                <div style="font-size:13px;color:#374151;padding-left:10px;border-left:3px solid var(--accent);"><strong>Internal:</strong> All data in RAM. Fast random access. Standard algorithms apply directly.</div>
-                <div style="font-size:13px;color:#374151;padding-left:10px;border-left:3px solid #94a3b8;"><strong>External:</strong> Sort small RAM-sized chunks, write sorted chunks to disk, then <em>merge</em> them. Used for databases, large files.</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
-      </section>
-
-
-      <!-- ═══ SLIDE 9c — Stable vs Unstable Intro ═══ -->
-      <section class="slide">
-        <div class="slide-top">
-          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting — Classification 3 of 3</div></div>
-          <span class="pill">Interactive</span>
-        </div>
-        <h2>Stable vs Unstable Sort</h2>
-        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
-          <span style="font-size:14px;color:#374151;">When two elements have the <strong>same sort key</strong>, does the algorithm preserve their original relative order?</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;position:relative;z-index:2;">
-
-          <!-- Left: Input + buttons -->
-          <div style="display:flex;flex-direction:column;gap:12px;">
-            <div class="sort-panel">
-              <div class="sort-panel-hdr" style="background:#1e293b;">
-                <div><div class="sort-panel-title">Student Records — Sort by Grade</div><div class="sort-panel-sub">A comes before B alphabetically. Equal grades = tied keys.</div></div>
-              </div>
-              <div class="sort-panel-body" style="padding:14px;">
-                <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Original Input Order</div>
-                <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
-                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
-                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">1.</span>
-                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Sam</span>
-                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #0284c7;background:#eff6ff;color:#0284c7;">B</span>
-                  </div>
-                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
-                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">2.</span>
-                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Alex</span>
-                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #0284c7;background:#eff6ff;color:#0284c7;">B</span>
-                  </div>
-                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
-                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">3.</span>
-                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Jordan</span>
-                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #16a34a;background:#f0fdf4;color:#16a34a;">A</span>
-                  </div>
-                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
-                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">4.</span>
-                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Casey</span>
-                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #16a34a;background:#f0fdf4;color:#16a34a;">A</span>
-                  </div>
-                </div>
-                <div style="display:flex;gap:10px;">
-                  <button class="viz-btn" onclick="suSort(true)" style="flex:1;">Sort — Stable</button>
-                  <button class="viz-btn" onclick="suSort(false)" style="flex:1;background:#374151;">Sort — Unstable</button>
-                </div>
-                <div style="font-size:11px;color:#94a3b8;margin-top:6px;text-align:center;">Click "Unstable" multiple times — observe what changes</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right: Result -->
-          <div style="display:flex;flex-direction:column;gap:12px;">
-            <div style="display:flex;align-items:center;gap:10px;min-height:32px;">
-              <span style="font-size:13px;font-weight:700;color:#475569;">Result:</span>
-              <div id="su-badge" style="font-size:13px;font-weight:800;padding:4px 16px;border-radius:6px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#94a3b8;">—</div>
-            </div>
-            <div id="su-result" style="display:flex;flex-direction:column;gap:5px;"></div>
-            <div id="su-msg" style="font-size:13px;font-weight:500;padding:11px 14px;border-left:4px solid #e2e8f0;background:#f8fafc;border-radius:4px;color:#374151;line-height:1.55;min-height:52px;"></div>
-            <div class="callout" style="margin-top:0;">
-              <div style="font-size:13px;color:#14532d;">A detailed example with A, B, C, D is on the <strong>next slide</strong>.</div>
-            </div>
-          </div>
-
-        </div>
-        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
-      </section>
-
-
-      <!-- ═══ SLIDE 10 — Sort Stability ═══ -->
-    
 
 <section class="slide">
         <style>
@@ -1322,6 +1005,232 @@
     resetBoBuilder();
   </script>
 </section>
+      <!-- ═══ SLIDE 7b — Sorting ═══ -->
+      
+<section class="slide">
+  <div class="slide-top">
+    <div class="meta">
+      <div class="course">COIS 2020H</div>
+      <div class="sub">Algorithms — Data Organization</div>
+    </div>
+    <span class="pill">Foundations</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; margin-top: -20px;">
+    <h1 style="font-size: 48px; margin-bottom: 24px; color: #1e293b;">Sorting Algorithms</h1>
+    
+    <div class="card" style="padding: 24px; max-width: 80%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+      <div style="font-weight: 800; font-size: 14px; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Definition</div>
+      <p style="font-size: 20px; line-height: 1.6; color: #334155; margin: 0;">
+        A <strong>Sorting Algorithm</strong> is a step-by-step procedure used to rearrange a large number of items into a specific order—typically <strong>numerical</strong> or <strong>lexicographical</strong> (alphabetical).
+      </p>
+      
+      <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
+        <div class="info-card" style="padding: 8px 16px; border-left: 4px solid #16a34a; background: white;">
+          <div style="font-size: 12px; font-weight: 800; color: #16a34a;">ASCENDING</div>
+          <div style="font-size: 14px;">1, 2, 3, 4, 5</div>
+        </div>
+        <div class="info-card" style="padding: 8px 16px; border-left: 4px solid #dc2626; background: white;">
+          <div style="font-size: 12px; font-weight: 800; color: #dc2626;">DESCENDING</div>
+          <div style="font-size: 14px;">5, 4, 3, 2, 1</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="callout" style="margin-top: 24px; font-size: 14px; color: #64748b;">
+      <strong>Why it matters:</strong> Efficient sorting is fundamental for optimizing other algorithms (like Binary Search) that require input data to be in a predictable order.
+    </div>
+  </div>
+
+  <div class="slide-footer">
+    <div class="muted">COIS 2020H — Sorting</div>
+    <div class="slide-no" data-slide-no></div>
+  </div>
+</section>
+      <!-- ═══ SLIDE 9a — In-Place vs Not In-Place ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting — Classification 1 of 3</div></div>
+          <span class="pill">Interactive</span>
+        </div>
+        <h2>In-Place vs Not In-Place</h2>
+        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
+          <span style="font-size:14px;color:#374151;">Does the algorithm need to <strong>allocate a new array</strong> to produce the sorted result, or does it sort within the original array?</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative;z-index:2;">
+          <!-- In-Place panel -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div><div class="sort-panel-title">In-Place Sort</div><div class="sort-panel-sub">e.g. Bubble Sort, Insertion Sort</div></div>
+              <span class="sort-badge">Extra memory: O(1)</span>
+            </div>
+            <div class="sort-panel-body" style="padding:15px;">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Array in Memory</div>
+              <div id="ip-arr" style="display:flex;gap:8px;margin-bottom:14px;"></div>
+              <div style="display:flex;align-items:center;gap:10px;min-height:38px;margin-bottom:12px;">
+                <span style="font-size:12px;font-weight:700;color:var(--muted);">Only extra:</span>
+                <span style="font-size:12px;color:#64748b;">temp =</span>
+                <div id="ip-temp" style="width:40px;height:34px;border:1.5px dashed #94a3b8;border-radius:6px;display:grid;place-items:center;font-weight:900;font-size:15px;color:#64748b;font-family:var(--mono);transition:all .25s;">—</div>
+                <span style="font-size:11px;color:#94a3b8;">← one variable, always O(1)</span>
+              </div>
+              <div id="ip-msg" style="font-size:13px;color:#374151;padding:9px 12px;background:#f8fafc;border-left:3px solid var(--accent);border-radius:4px;min-height:44px;line-height:1.55;"></div>
+            </div>
+          </div>
+          <!-- Not In-Place panel -->
+          <div class="sort-panel">
+            <div class="sort-panel-hdr" style="background:#1e293b;">
+              <div><div class="sort-panel-title">Not In-Place Sort</div><div class="sort-panel-sub">e.g. Merge Sort, Counting Sort</div></div>
+              <span class="sort-badge">Extra memory: O(n)</span>
+            </div>
+            <div class="sort-panel-body" style="padding:15px;">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Original Array (read only)</div>
+              <div id="nip-orig" style="display:flex;gap:8px;margin-bottom:14px;"></div>
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">New Output Array (allocated)</div>
+              <div id="nip-out" style="display:flex;gap:8px;align-items:center;min-height:44px;margin-bottom:12px;"></div>
+              <div id="nip-msg" style="font-size:13px;color:#374151;padding:9px 12px;background:#f8fafc;border-left:3px solid #94a3b8;border-radius:4px;min-height:44px;line-height:1.55;"></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:12px;position:relative;z-index:2;">
+          <button class="viz-btn" id="ip-next-btn" onclick="ipStep()">Next Step →</button>
+          <button class="viz-btn" onclick="ipReset()">Reset</button>
+          <span id="ip-step-lbl" style="font-size:13px;color:var(--muted);">Step 0 / 4</span>
+          <div style="flex:1;display:flex;gap:20px;justify-content:flex-end;">
+            <span style="font-size:12px;font-weight:700;color:var(--accent);">&#9632; In-Place: O(1) extra</span>
+            <span style="font-size:12px;font-weight:700;color:#64748b;">&#9632; Not In-Place: O(n) extra</span>
+          </div>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 9b — Internal vs External ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting — Classification 2 of 3</div></div>
+          <span class="pill">Interactive</span>
+        </div>
+        <h2>Internal vs External Sort</h2>
+        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
+          <span style="font-size:14px;color:#374151;">Is all the data being sorted held in <strong>RAM at once</strong>, or does the dataset <strong>overflow into secondary storage</strong>?</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:start;position:relative;z-index:2;">
+
+          <!-- Memory diagram -->
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="border:2px solid #1e293b;border-radius:12px;overflow:hidden;">
+              <div style="background:#1e293b;padding:9px 14px;font-size:13px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center;">
+                <span>RAM — Main Memory</span><span style="font-size:11px;font-weight:400;color:#94a3b8;">limited capacity (5 slots)</span>
+              </div>
+              <div id="ie-ram" style="padding:12px;display:flex;flex-wrap:wrap;gap:7px;min-height:72px;align-items:flex-start;background:#fff;"></div>
+            </div>
+            <div style="text-align:center;font-size:22px;color:#cbd5e1;">&#8597;</div>
+            <div style="border:2px solid #94a3b8;border-radius:12px;overflow:hidden;">
+              <div style="background:#94a3b8;padding:9px 14px;font-size:13px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center;">
+                <span>Secondary Storage — Disk</span><span style="font-size:11px;font-weight:400;color:#f1f5f9;">large capacity</span>
+              </div>
+              <div id="ie-disk" style="padding:12px;display:flex;flex-wrap:wrap;gap:7px;min-height:72px;align-items:flex-start;background:#f8fafc;"></div>
+            </div>
+          </div>
+
+          <!-- Controls + explanation -->
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;gap:10px;">
+              <button class="viz-btn" id="ie-small-btn" onclick="setIE('small')" style="flex:1;">Small Dataset (4 items)</button>
+              <button class="viz-btn" id="ie-large-btn" onclick="setIE('large')" style="flex:1;background:#374151;">Large Dataset (10 items)</button>
+            </div>
+            <div style="border:1px solid var(--soft);border-radius:12px;padding:16px;background:#fff;">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                <div id="ie-verdict-badge" style="font-size:13px;font-weight:800;padding:4px 14px;border-radius:6px;border:1.5px solid var(--accent);background:#f0fdf4;color:#166534;">Internal Sort</div>
+              </div>
+              <div id="ie-desc" style="font-size:14px;color:#374151;line-height:1.6;"></div>
+            </div>
+            <div style="border:1px solid var(--soft);border-radius:12px;padding:14px;background:#fff;">
+              <div style="font-size:12px;font-weight:800;color:#0f172a;margin-bottom:6px;">Key Difference</div>
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="font-size:13px;color:#374151;padding-left:10px;border-left:3px solid var(--accent);"><strong>Internal:</strong> All data in RAM. Fast random access. Standard algorithms apply directly.</div>
+                <div style="font-size:13px;color:#374151;padding-left:10px;border-left:3px solid #94a3b8;"><strong>External:</strong> Sort small RAM-sized chunks, write sorted chunks to disk, then <em>merge</em> them. Used for databases, large files.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 9c — Stable vs Unstable Intro ═══ -->
+      <section class="slide">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Sorting — Classification 3 of 3</div></div>
+          <span class="pill">Interactive</span>
+        </div>
+        <h2>Stable vs Unstable Sort</h2>
+        <div style="background:#f8fafc;border:1px solid var(--soft);border-radius:10px;padding:11px 16px;margin-bottom:14px;position:relative;z-index:2;">
+          <span style="font-size:14px;color:#374151;">When two elements have the <strong>same sort key</strong>, does the algorithm preserve their original relative order?</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;position:relative;z-index:2;">
+
+          <!-- Left: Input + buttons -->
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="sort-panel">
+              <div class="sort-panel-hdr" style="background:#1e293b;">
+                <div><div class="sort-panel-title">Student Records — Sort by Grade</div><div class="sort-panel-sub">A comes before B alphabetically. Equal grades = tied keys.</div></div>
+              </div>
+              <div class="sort-panel-body" style="padding:14px;">
+                <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Original Input Order</div>
+                <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:14px;">
+                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
+                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">1.</span>
+                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Sam</span>
+                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #0284c7;background:#eff6ff;color:#0284c7;">B</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
+                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">2.</span>
+                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Alex</span>
+                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #0284c7;background:#eff6ff;color:#0284c7;">B</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
+                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">3.</span>
+                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Jordan</span>
+                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #16a34a;background:#f0fdf4;color:#16a34a;">A</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:#fff;border:1px solid var(--soft);border-radius:7px;">
+                    <span style="font-size:11px;color:#94a3b8;font-family:var(--mono);width:16px;">4.</span>
+                    <span style="font-size:14px;font-weight:700;color:#0f172a;flex:1;">Casey</span>
+                    <span style="font-size:12px;font-weight:800;padding:2px 10px;border-radius:5px;border:1px solid #16a34a;background:#f0fdf4;color:#16a34a;">A</span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:10px;">
+                  <button class="viz-btn" onclick="suSort(true)" style="flex:1;">Sort — Stable</button>
+                  <button class="viz-btn" onclick="suSort(false)" style="flex:1;background:#374151;">Sort — Unstable</button>
+                </div>
+                <div style="font-size:11px;color:#94a3b8;margin-top:6px;text-align:center;">Click "Unstable" multiple times — observe what changes</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Result -->
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:10px;min-height:32px;">
+              <span style="font-size:13px;font-weight:700;color:#475569;">Result:</span>
+              <div id="su-badge" style="font-size:13px;font-weight:800;padding:4px 16px;border-radius:6px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#94a3b8;">—</div>
+            </div>
+            <div id="su-result" style="display:flex;flex-direction:column;gap:5px;"></div>
+            <div id="su-msg" style="font-size:13px;font-weight:500;padding:11px 14px;border-left:4px solid #e2e8f0;background:#f8fafc;border-radius:4px;color:#374151;line-height:1.55;min-height:52px;"></div>
+            <div class="callout" style="margin-top:0;">
+              <div style="font-size:13px;color:#14532d;">A detailed example with A, B, C, D is on the <strong>next slide</strong>.</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Sorting</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+      <!-- ═══ SLIDE 10 — Sort Stability ═══ -->
+    
+
 
 
 <section class="slide">
@@ -4428,7 +4337,9 @@
           <div class="slide-no" data-slide-no></div>
         </div>
       </section>
-
+<!-- ═══════════════════════════════════════════════════════════════
+           SLIDE 1 — Linear Search: Overview
+           ═══════════════════════════════════════════════════════════════ -->
       <section class="slide">
         <div class="slide-top">
           <div class="meta">
@@ -4439,34 +4350,35 @@
         </div>
 
         <h2>What is Linear Search?</h2>
+
         <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <!-- Left Column: Core Explanation -->
           <div>
             <ul style="margin-bottom:14px;">
               <li>The most straightforward and intuitive searching method.</li>
-              <li>Scans the array sequentially from the <strong>very beginning to the end</strong>.</li>
-              <li>Checks each element one by one until the target value is found or the list ends.</li>
-              <li><strong>Major Advantage:</strong> The array does <em>not</em> need to be sorted. It works on any raw data.</li>
+              <li>Scans the array sequentially from the <strong>first element to the last</strong>.</li>
+              <li>Checks each element one by one until the target is found or the array is exhausted.</li>
+              <li><strong>Key Advantage:</strong> The array does <em>not</em> need to be sorted — works on any unordered data.</li>
             </ul>
 
             <div class="callout">
-              <p style="margin:0;">Think of it like looking for a specific book on an unorganized shelf by checking the spine of every single book from left to right.</p>
+              <p style="margin:0;">Think of it like searching for a specific book on an unorganised shelf — you check the spine of every book, one at a time, from left to right.</p>
             </div>
 
             <div class="card" style="margin-top:16px;">
               <p style="margin:0; font-size:17px;">
-                <strong>Best Case:</strong> <code style="background:#f0fdf4; color:#166534;">$O(1)$</code> (Target is the first item)<br/>
-                <strong>Worst Case:</strong> <strong style="color:#dc2626; font-size:19px;">$O(n)$</strong> (Target is the last item, or not present)<br/>
-                <strong>Space Complexity:</strong> <code>$O(1)$</code>
+                <strong>Best Case:</strong> <code style="background:#f0fdf4; color:#166534;">O(1)</code> — target is the first element<br/>
+                <strong>Worst Case:</strong> <strong style="color:#dc2626; font-size:19px;">O(n)</strong> — target is last, or absent<br/>
+                <strong>Space:</strong> <code>O(1)</code> — no additional memory required
               </p>
             </div>
           </div>
 
+          <!-- Right Column: Trade-off Card -->
           <div>
-            
-            
             <div class="info-card" style="margin-top:14px; border-left-color:var(--accent);">
               <h3 style="color:var(--accent); margin-top:0;">The Trade-off</h3>
-              <p style="margin:0; font-size:15px;">Because it checks every element, it is incredibly inefficient for large datasets. Searching a database of 1,000,000 users might take 1,000,000 checks in the worst case.</p>
+              <p style="margin:0; font-size:15px;">Because every element may be visited, linear search is inefficient for large datasets. A list of 1,000,000 entries could require up to 1,000,000 comparisons in the worst case.</p>
             </div>
           </div>
         </div>
@@ -4478,70 +4390,105 @@
       </section>
 
 
-      <section class="slide">
-        <style>
-          .kw { color: #38bdf8; font-weight: bold; }
-          .fn { color: #a3e635; }
-          .vr { color: #e2e8f0; }
-          .nu { color: #fcd34d; }
-          .cm { color: #64748b; font-style: italic; }
-        </style>
+      <!-- ═══════════════════════════════════════════════════════════════
+           SLIDE 2 — Linear Search: C# Implementation
+           ═══════════════════════════════════════════════════════════════ -->
+     
+<section class="slide">
         <div class="slide-top">
-          <div class="meta">
-            <div class="course">Linear Search</div>
-            <div class="sub">Algorithm</div>
-          </div>
-          <span class="pill">C# Implementation</span>
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Linear Search</div></div>
+          <span class="pill">Code Walkthrough</span>
         </div>
+        <h2>Linear Search — Code &amp; Memory</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;z-index:2;">
 
-        <h2>Linear Search — Code Example</h2>
-        <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
-          
+          <!-- LEFT: Code panel -->
           <div class="sort-panel">
             <div class="sort-panel-hdr" style="background:#1e293b;">
-              <div class="sort-panel-title">Standard Implementation</div>
+              <div class="sort-panel-title">Java Pseudocode</div>
+              <span class="sort-badge">Searching for 60</span>
             </div>
-            <div style="padding:16px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:14px; line-height:1.6; color:#e2e8f0; white-space:pre;"><span class="kw">public int</span> <span class="fn">LinearSearch</span>(<span class="kw">int</span>[] <span class="vr">arr</span>, <span class="kw">int</span> <span class="vr">target</span>) 
-{
-  <span class="cm">// Traverse the array from start to finish</span>
-  <span class="kw">for</span> (<span class="kw">int</span> <span class="vr">i</span> = <span class="nu">0</span>; <span class="vr">i</span> < <span class="vr">arr</span>.Length; <span class="vr">i</span>++) 
-  {
-    <span class="cm">// If the current element matches the target</span>
-    <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">i</span>] == <span class="vr">target</span>) 
-    {
-      <span class="kw">return</span> <span class="vr">i</span>; <span class="cm">// Return the index where it was found</span>
-    }
-  }
-  
-  <span class="cm">// If the loop completes without returning,</span>
-  <span class="cm">// the target is not in the array.</span>
-  <span class="kw">return</span> -<span class="nu">1</span>; 
-}</div>
+            <div id="ls-code" style="padding:14px 10px;font-family:var(--mono);font-size:14px;line-height:2.1;background:#0f172a;border-radius:0 0 18px 18px;flex:1;"></div>
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:14px;">
-            <div class="info-card">
-              <h3 style="margin-top:0;">The Loop</h3>
-              <p style="font-size:15px; margin-bottom:0;">A simple <code>for</code> loop controls the scan. It guarantees that we don't skip any elements and stops automatically at the end of the array.</p>
+          <!-- RIGHT: Array + Memory frame -->
+          <div style="display:flex;flex-direction:column;gap:12px;">
+
+            <!-- Array row -->
+            <div class="viz-panel" style="padding:14px;">
+              <div class="viz-label">Array Iteration</div>
+              <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">arr = [10, 20, 30, 40, 50, 60, 70] &nbsp;|&nbsp; target = <strong>60</strong></div>
+              <div id="ls-arr" style="display:flex;gap:6px;margin-bottom:6px;"></div>
+              <div id="ls-idx" style="display:flex;gap:6px;margin-bottom:8px;"></div>
+              <div id="ls-msg" style="font-size:13px;color:#374151;padding:8px 10px;background:#f8fafc;border-left:3px solid #94a3b8;border-radius:4px;min-height:34px;line-height:1.55;" id="ls-msg"></div>
             </div>
-            <div class="info-card">
-              <h3 style="margin-top:0;">Early Exit</h3>
-              <p style="font-size:15px; margin-bottom:0;">The moment the <code>if</code> statement evaluates to true, the method <strong>returns</strong>. It does not waste time checking the rest of the array.</p>
+
+            <!-- Stack frame / memory -->
+            <div class="viz-panel" style="padding:14px;">
+              <div class="viz-label">Stack Frame — Active Variables</div>
+              <div id="ls-mem" style="display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px 14px;align-items:center;"></div>
             </div>
-            <div class="info-card" style="border-left-color:var(--accent);">
-              <h3 style="margin-top:0; color:var(--accent);">Returning -1</h3>
-              <p style="font-size:15px; margin-bottom:0;">It is a standard programming convention to return <code>-1</code> when a search fails, because <code>-1</code> can never be a valid array index.</p>
+
+            <!-- Legend -->
+            <div style="display:flex;gap:14px;flex-wrap:wrap;">
+              <span style="font-size:12px;font-weight:700;color:#f59e0b;">■ Current (arr[i])</span>
+              <span style="font-size:12px;font-weight:700;color:#dc2626;">■ Checked — not a match</span>
+              <span style="font-size:12px;font-weight:700;color:#16a34a;">■ Found!</span>
             </div>
           </div>
+
         </div>
 
-        <div class="slide-footer">
-          <div class="muted">Lecture 8 — Searching &amp; Sorting</div>
-          <div class="slide-no" data-slide-no></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:8px;position:relative;z-index:2;">
+          <button class="viz-btn" id="ls-next-btn" onclick="lsStep()">Next Step →</button>
+          <button class="viz-btn" onclick="lsReset()" style="background:#374151;">Reset</button>
+          <span id="ls-step-lbl" style="font-size:13px;color:var(--muted);">Step 0 / 6</span>
+          <span style="font-size:13px;color:var(--muted);margin-left:8px;">Each step = one loop iteration — O(n) in the worst case</span>
         </div>
+
+        <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
       </section>
 
 
+      <!-- ═══ SLIDE 6 — Search Visualization ═══ -->
+      <section class="slide" id="slide-searchviz">
+        <div class="slide-top">
+          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Searching</div></div>
+          <span class="pill">Visualization</span>
+        </div>
+        <h2>Search Step-by-Step — Looking for <span style="color:#16a34a;background:#f0fdf4;padding:2px 10px;border-radius:8px;font-size:28px;">60</span></h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;z-index:2;">
+          <!-- Linear Search -->
+          <div class="viz-panel">
+            <div class="viz-label" style="color:#dc2626;">Linear Search — O(n)</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Array: [10, 20, 30, 40, 50, 60, 70]</div>
+            <div id="linearArr" style="display:flex;gap:5px;margin-bottom:10px;"></div>
+            <div style="font-size:13px;min-height:32px;color:var(--muted);" id="linearMsg"></div>
+            <div style="margin-top:8px;font-size:13px;">Checks: <span class="cmp-counter" id="linearCmp" style="color:#dc2626;">0</span></div>
+          </div>
+          <!-- BST Search -->
+          <div class="viz-panel">
+            <div class="viz-label" style="color:#16a34a;">BST Search — O(log n)</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Pre-built balanced BST</div>
+            <svg id="bstSearchSVG" viewBox="0 0 340 190" style="width:100%;display:block;background:#fff;border-radius:10px;border:1px solid #e2e8f0;"></svg>
+            <div style="font-size:13px;min-height:32px;color:var(--muted);margin-top:6px;" id="bstSearchMsg"></div>
+            <div style="margin-top:4px;font-size:13px;">Checks: <span class="cmp-counter" id="bstSearchCmp" style="color:#16a34a;">0</span></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px;position:relative;z-index:2;align-items:center;">
+          <button class="viz-btn" id="searchStepBtn" onclick="searchStep()">Next Step</button>
+          <button class="viz-btn" id="searchPlayBtn" onclick="searchPlay()">Play</button>
+          <button class="viz-btn" onclick="searchReset()" style="background:#374151;">Reset</button>
+          <span style="font-size:13px;color:var(--muted);margin-left:8px;" id="searchStatus">Press Step or Play to begin</span>
+        </div>
+        <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
+      </section>
+
+
+
+      <!-- ═══════════════════════════════════════════════════════════════
+           SLIDE 3 — Binary Search: Overview
+           ═══════════════════════════════════════════════════════════════ -->
       <section class="slide">
         <div class="slide-top">
           <div class="meta">
@@ -4552,34 +4499,35 @@
         </div>
 
         <h2>What is Binary Search?</h2>
+
         <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
+          <!-- Left Column: Core Explanation -->
           <div>
             <ul style="margin-bottom:14px;">
-              <li>A highly efficient search algorithm that follows the <strong style="color:var(--accent);">Divide and Conquer</strong> paradigm.</li>
-              <li><strong>Strict Requirement:</strong> The array <span style="text-decoration:underline; color:#dc2626; font-weight:bold;">MUST be sorted</span> beforehand.</li>
-              <li>It compares the target value to the <strong>middle element</strong> of the array.</li>
-              <li>If they aren't equal, the half in which the target cannot lie is eliminated, and the search continues on the remaining half.</li>
+              <li>A highly efficient algorithm that follows the <strong style="color:var(--accent);">Divide and Conquer</strong> paradigm.</li>
+              <li><strong>Strict Requirement:</strong> The array <span style="text-decoration:underline; color:#dc2626; font-weight:bold;">MUST be sorted</span> before searching.</li>
+              <li>Compares the target to the <strong>middle element</strong> of the current search space.</li>
+              <li>If unequal, the half that cannot contain the target is eliminated, and the search continues on the remaining half.</li>
             </ul>
 
             <div class="callout">
-              <p style="margin:0;">Think of searching for a word in a physical dictionary. You don't read page 1, then page 2. You open to the middle. If your word comes alphabetically later, you ignore the entire first half of the book.</p>
+              <p style="margin:0;">Think of finding a word in a physical dictionary. You open to the middle — if your word comes later alphabetically, you discard the entire first half and repeat.</p>
             </div>
 
             <div class="card" style="margin-top:16px;">
               <p style="margin:0; font-size:17px;">
-                <strong>Best Case:</strong> <code style="background:#f0fdf4; color:#166534;">$O(1)$</code> (Target is exactly in the middle)<br/>
-                <strong>Worst Case:</strong> <strong style="color:var(--accent); font-size:19px;">$O(\log n)$</strong> (Halves the dataset each step)<br/>
-                <strong>Space Complexity:</strong> <code>$O(1)$</code> (Iterative approach)
+                <strong>Best Case:</strong> <code style="background:#f0fdf4; color:#166534;">O(1)</code> — target is exactly at the midpoint<br/>
+                <strong>Worst Case:</strong> <strong style="color:var(--accent); font-size:19px;">O(log n)</strong> — halves the data each step<br/>
+                <strong>Space:</strong> <code>O(1)</code> — iterative approach uses constant memory
               </p>
             </div>
           </div>
 
+          <!-- Right Column: Insight Card -->
           <div>
-            
-            
             <div class="info-card" style="margin-top:14px; border-left-color:var(--accent);">
-              <h3 style="color:var(--accent); margin-top:0;">The Power of Log(n)</h3>
-              <p style="margin:0; font-size:15px;">Because it halves the search space every single step, searching an array of <strong>1,000,000</strong> items takes at most <strong>20 comparisons</strong>. Linear search could take 1,000,000!</p>
+              <h3 style="color:var(--accent); margin-top:0;">The Power of log(n)</h3>
+              <p style="margin:0; font-size:15px;">Halving the search space at every step means an array of <strong>1,000,000</strong> elements needs at most <strong>~20 comparisons</strong>. Linear search could need all 1,000,000.</p>
             </div>
           </div>
         </div>
@@ -4591,6 +4539,9 @@
       </section>
 
 
+      <!-- ═══════════════════════════════════════════════════════════════
+           SLIDE 4 — Binary Search: Interactive Visualiser
+           ═══════════════════════════════════════════════════════════════ -->
       <section class="slide">
         <div class="slide-top">
           <div class="meta">
@@ -4603,18 +4554,22 @@
         <h2>Live Binary Search Visualiser</h2>
 
         <div class="viz-panel" id="bs-viz-container" style="position:relative; z-index:2; min-height:200px; padding:24px;">
+          <!-- Header Row -->
           <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
             <div style="font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;" id="bs-viz-pass">Press Play to begin</div>
             <div style="font-size:16px; font-weight:800; color:var(--ink); background:var(--soft2); padding:6px 16px; border-radius:8px; border:1px solid var(--soft);">Target: <span style="color:var(--accent);">11</span></div>
           </div>
-          
-          <div id="bs-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:80px; margin-bottom:4px;">
-            </div>
-          <div id="bs-viz-pointers" style="display:flex; gap:8px; height:20px; margin-bottom:16px;">
-            </div>
-          
-          <div id="bs-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready...</div>
-          
+
+          <!-- Array Bars -->
+          <div id="bs-viz-array" style="display:flex; align-items:flex-end; gap:8px; height:80px; margin-bottom:4px;"></div>
+
+          <!-- Pointer Labels -->
+          <div id="bs-viz-pointers" style="display:flex; gap:8px; height:20px; margin-bottom:16px;"></div>
+
+          <!-- Status Message -->
+          <div id="bs-viz-status" style="font-size:14px; color:#374151; min-height:24px; font-weight:600;">Ready…</div>
+
+          <!-- Controls -->
           <div id="bs-viz-controls" style="display:flex; gap:10px; margin-top:20px; align-items:center;">
             <button class="viz-btn" onclick="bsVizPlay()">▶ Play</button>
             <button class="viz-btn" onclick="bsVizPause()" style="background:#374151;">⏸ Pause</button>
@@ -4623,11 +4578,12 @@
           </div>
         </div>
 
+        <!-- Legend -->
         <div class="sort-legend" style="position:relative; z-index:2; margin-top:16px;">
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#e2e8f0; border:2px solid #cbd5e1;"></div>Eliminated Range</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#e2e8f0; border:2px solid #cbd5e1;"></div>Eliminated</div>
           <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dbeafe; border:2px solid #3b82f6;"></div>Active Search Space</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Midpoint (Checking)</div>
-          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Target Found</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#fef9c3; border:2px solid #f59e0b;"></div>Midpoint</div>
+          <div class="sort-legend-item"><div class="sort-legend-dot" style="background:#dcfce7; border:2px solid #16a34a;"></div>Found</div>
         </div>
 
         <div class="slide-footer">
@@ -4636,149 +4592,181 @@
         </div>
 
         <script>
-          (function() {
-            let vizArr = [2, 3, 5, 8, 9, 11, 14, 17];
-            let target = 11;
-            let vizSteps = [];
-            let vizCurrentStep = 0;
-            let vizTimer = null;
+          (function () {
+            /* ---------- Configuration ---------- */
+            var vizArr    = [2, 3, 5, 8, 9, 11, 14, 17];
+            var target    = 11;
+            var vizSteps  = [];
+            var vizCurrent = 0;
+            var vizTimer  = null;
 
-            function generateBinarySearchSteps() {
-              let steps = [];
-              let low = 0;
-              let high = vizArr.length - 1;
-              let stepCount = 1;
+            /* ---------- Step Generation ---------- */
+            function generateSteps() {
+              var steps = [];
+              var low   = 0;
+              var high  = vizArr.length - 1;
+              var step  = 1;
 
-              steps.push({ arr: [...vizArr], low: low, high: high, mid: -1, found: false, msg: `Initial state: Search space spans index ${low} to ${high}.`, pass: 'Start' });
+              steps.push({
+                low: low, high: high, mid: -1, found: false,
+                msg:  'Initial state: search space spans index ' + low + ' to ' + high + '.',
+                pass: 'Start'
+              });
 
               while (low <= high) {
-                let mid = Math.floor((low + high) / 2);
-                steps.push({ arr: [...arr], low: low, high: high, mid: mid, found: false, msg: `Calculated Midpoint: floor((${low} + ${high}) / 2) = index ${mid}. Checking if ${vizArr[mid]} == ${target}.`, pass: `Step ${stepCount}` });
+                var mid = Math.floor((low + high) / 2);
+
+                steps.push({
+                  low: low, high: high, mid: mid, found: false,
+                  msg:  'Midpoint = floor((' + low + ' + ' + high + ') / 2) = ' + mid + '.  Checking ' + vizArr[mid] + ' against ' + target + '.',
+                  pass: 'Step ' + step
+                });
 
                 if (vizArr[mid] === target) {
-                  steps.push({ arr: [...vizArr], low: low, high: high, mid: mid, found: true, msg: `Match found! ${vizArr[mid]} == ${target}. Search complete.`, pass: 'Found!' });
+                  steps.push({
+                    low: low, high: high, mid: mid, found: true,
+                    msg:  'Match! ' + vizArr[mid] + ' == ' + target + '. Target found at index ' + mid + '.',
+                    pass: 'Found!'
+                  });
                   return steps;
                 }
 
                 if (vizArr[mid] < target) {
-                  steps.push({ arr: [...vizArr], low: low, high: high, mid: mid, found: false, msg: `${vizArr[mid]} < ${target}. Target must be in the right half. Eliminating left half.`, pass: `Step ${stepCount}` });
+                  steps.push({
+                    low: low, high: high, mid: mid, found: false,
+                    msg:  vizArr[mid] + ' < ' + target + ' — eliminate left half.',
+                    pass: 'Step ' + step
+                  });
                   low = mid + 1;
                 } else {
-                  steps.push({ arr: [...vizArr], low: low, high: high, mid: mid, found: false, msg: `${vizArr[mid]} > ${target}. Target must be in the left half. Eliminating right half.`, pass: `Step ${stepCount}` });
+                  steps.push({
+                    low: low, high: high, mid: mid, found: false,
+                    msg:  vizArr[mid] + ' > ' + target + ' — eliminate right half.',
+                    pass: 'Step ' + step
+                  });
                   high = mid - 1;
                 }
-                
-                if(low <= high) {
-                   steps.push({ arr: [...vizArr], low: low, high: high, mid: -1, found: false, msg: `New search space boundaries: Low = ${low}, High = ${high}.`, pass: `Step ${stepCount}` });
+
+                if (low <= high) {
+                  steps.push({
+                    low: low, high: high, mid: -1, found: false,
+                    msg:  'New boundaries: Low = ' + low + ', High = ' + high + '.',
+                    pass: 'Step ' + step
+                  });
                 }
-                stepCount++;
+                step++;
               }
-              
-              steps.push({ arr: [...vizArr], low: low, high: high, mid: -1, found: false, msg: `Low boundary (${low}) crossed High boundary (${high}). Target not found.`, pass: 'Not Found' });
+
+              steps.push({
+                low: low, high: high, mid: -1, found: false,
+                msg:  'Low (' + low + ') crossed High (' + high + '). Target not found.',
+                pass: 'Not Found'
+              });
               return steps;
             }
 
-            function renderVizStep(stepIndex) {
-              if (vizSteps.length === 0) return;
-              const step = vizSteps[stepIndex];
-              const container = document.getElementById('bs-viz-array');
-              const ptrContainer = document.getElementById('bs-viz-pointers');
-              if (!container || !ptrContainer) return; 
-              
-              let html = '';
-              let ptrHtml = '';
-              const maxVal = Math.max(...step.arr);
-              
-              step.arr.forEach((val, idx) => {
-                const barHeight = Math.max(10, (val / maxVal) * 35); 
-                let bg = '#e2e8f0', border = '#cbd5e1', textColor = '#94a3b8'; // Eliminated default
-                let transform = 'opacity:0.4;';
-                let ptrText = '';
+            /* ---------- Rendering ---------- */
+            function render(index) {
+              if (!vizSteps.length) return;
+              var s           = vizSteps[index];
+              var container   = document.getElementById('bs-viz-array');
+              var ptrContainer = document.getElementById('bs-viz-pointers');
+              if (!container || !ptrContainer) return;
 
-                // Determine active pointers
-                if (idx === step.low && idx === step.high && idx === step.mid) ptrText = 'L/M/H';
-                else if (idx === step.low && idx === step.mid) ptrText = 'L/M';
-                else if (idx === step.high && idx === step.mid) ptrText = 'M/H';
-                else if (idx === step.low && idx === step.high) ptrText = 'L/H';
-                else if (idx === step.low) ptrText = 'L';
-                else if (idx === step.high) ptrText = 'H';
-                else if (idx === step.mid) ptrText = 'M';
+              var maxVal = Math.max.apply(null, vizArr);
+              var html   = '';
+              var ptrs   = '';
 
-                if (step.found && idx === step.mid) {
-                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534'; // Found
-                  transform = 'transform: scale(1.1); box-shadow: 0 4px 10px rgba(22,163,74,.3); opacity:1;';
-                  ptrText = 'Found';
-                } else if (idx === step.mid) {
-                  bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e'; // Checking Mid
-                  transform = 'transform: translateY(-5px); opacity:1;';
-                } else if (idx >= step.low && idx <= step.high) {
-                  bg = '#dbeafe'; border = '#3b82f6'; textColor = '#1e3a8a'; // Active space
-                  transform = 'opacity:1;';
+              for (var i = 0; i < vizArr.length; i++) {
+                var val       = vizArr[i];
+                var barH      = Math.max(10, (val / maxVal) * 35);
+                var bg        = '#e2e8f0';
+                var border    = '#cbd5e1';
+                var textColor = '#94a3b8';
+                var style     = 'opacity:0.4;';
+                var ptrLabel  = '';
+
+                /* Pointer labels */
+                if (i === s.low && i === s.high && i === s.mid) ptrLabel = 'L/M/H';
+                else if (i === s.low  && i === s.mid)  ptrLabel = 'L/M';
+                else if (i === s.high && i === s.mid)  ptrLabel = 'M/H';
+                else if (i === s.low  && i === s.high) ptrLabel = 'L/H';
+                else if (i === s.low)  ptrLabel = 'L';
+                else if (i === s.high) ptrLabel = 'H';
+                else if (i === s.mid)  ptrLabel = 'M';
+
+                /* Colour logic */
+                if (s.found && i === s.mid) {
+                  bg = '#dcfce7'; border = '#16a34a'; textColor = '#166534';
+                  style = 'transform:scale(1.1); box-shadow:0 4px 10px rgba(22,163,74,.3); opacity:1;';
+                  ptrLabel = 'Found';
+                } else if (i === s.mid) {
+                  bg = '#fef9c3'; border = '#f59e0b'; textColor = '#92400e';
+                  style = 'transform:translateY(-5px); opacity:1;';
+                } else if (i >= s.low && i <= s.high) {
+                  bg = '#dbeafe'; border = '#3b82f6'; textColor = '#1e3a8a';
+                  style = 'opacity:1;';
                 }
 
-                html += `
-                  <div style="display:flex; flex-direction:column; align-items:center; flex:1; transition:all 0.3s ease; ${transform}">
-                    <div style="width:100%; height:${barHeight}px; background:${bg}; border:2.5px solid ${border}; border-bottom:none; border-radius:6px 6px 0 0;"></div>
-                    <div class="arr-box" style="width:100%; height:46px; background:${bg}; border-color:${border}; color:${textColor}; border-radius: 0 0 6px 6px; margin:0;">${val}</div>
-                  </div>`;
-                  
-                ptrHtml += `
-                  <div style="flex:1; text-align:center; font-size:12px; font-family:var(--mono); font-weight:800; color:var(--muted);">
-                    ${ptrText}
-                  </div>
-                `;
-              });
+                html += '<div style="display:flex;flex-direction:column;align-items:center;flex:1;transition:all .3s ease;' + style + '">'
+                      +   '<div style="width:100%;height:' + barH + 'px;background:' + bg + ';border:2.5px solid ' + border + ';border-bottom:none;border-radius:6px 6px 0 0;"></div>'
+                      +   '<div class="arr-box" style="width:100%;height:46px;background:' + bg + ';border-color:' + border + ';color:' + textColor + ';border-radius:0 0 6px 6px;margin:0;">' + val + '</div>'
+                      + '</div>';
 
-              container.innerHTML = html;
-              ptrContainer.innerHTML = ptrHtml;
-              document.getElementById('bs-viz-status').textContent = step.msg;
-              document.getElementById('bs-viz-pass').textContent = step.pass === 'Start' ? 'Press Play to begin' : step.pass;
+                ptrs += '<div style="flex:1;text-align:center;font-size:12px;font-family:var(--mono);font-weight:800;color:var(--muted);">' + ptrLabel + '</div>';
+              }
+
+              container.innerHTML    = html;
+              ptrContainer.innerHTML = ptrs;
+              document.getElementById('bs-viz-status').textContent = s.msg;
+              document.getElementById('bs-viz-pass').textContent   = (s.pass === 'Start') ? 'Press Play to begin' : s.pass;
             }
 
-            window.bsVizInit = function() {
-              vizSteps = generateBinarySearchSteps();
-              vizCurrentStep = 0;
-              renderVizStep(0);
+            /* ---------- Controls ---------- */
+            window.bsVizInit = function () {
+              vizSteps   = generateSteps();
+              vizCurrent = 0;
+              render(0);
             };
 
-            window.bsVizPlay = function() {
+            window.bsVizPlay = function () {
               if (vizTimer) return;
-              vizTimer = setInterval(() => {
-                if (vizCurrentStep < vizSteps.length - 1) {
-                  vizCurrentStep++;
-                  renderVizStep(vizCurrentStep);
+              vizTimer = setInterval(function () {
+                if (vizCurrent < vizSteps.length - 1) {
+                  vizCurrent++;
+                  render(vizCurrent);
                 } else {
                   window.bsVizPause();
                 }
-              }, 1200); // Slightly slower to read the logic
+              }, 1200);
             };
 
-            window.bsVizPause = function() {
-              if (vizTimer) {
-                clearInterval(vizTimer);
-                vizTimer = null;
+            window.bsVizPause = function () {
+              if (vizTimer) { clearInterval(vizTimer); vizTimer = null; }
+            };
+
+            window.bsVizStep = function () {
+              window.bsVizPause();
+              if (vizCurrent < vizSteps.length - 1) {
+                vizCurrent++;
+                render(vizCurrent);
               }
             };
 
-            window.bsVizStep = function() {
+            window.bsVizReset = function () {
               window.bsVizPause();
-              if (vizCurrentStep < vizSteps.length - 1) {
-                vizCurrentStep++;
-                renderVizStep(vizCurrentStep);
-              }
+              window.bsVizInit();
             };
 
-            window.bsVizReset = function() {
-              window.bsVizPause();
-              window.bsVizInit(); 
-            };
-
-            setTimeout(() => { window.bsVizInit(); }, 50);
+            setTimeout(function () { window.bsVizInit(); }, 50);
           })();
         </script>
       </section>
 
 
+      <!-- ═══════════════════════════════════════════════════════════════
+           SLIDE 5 — Binary Search: C# Implementation
+           ═══════════════════════════════════════════════════════════════ -->
       <section class="slide">
         <style>
           .kw { color: #38bdf8; font-weight: bold; }
@@ -4787,6 +4775,7 @@
           .nu { color: #fcd34d; }
           .cm { color: #64748b; font-style: italic; }
         </style>
+
         <div class="slide-top">
           <div class="meta">
             <div class="course">Binary Search</div>
@@ -4796,48 +4785,50 @@
         </div>
 
         <h2>Binary Search — Code Example</h2>
+
         <div class="grid-2" style="position:relative; z-index:2; align-items:start;">
-          
+          <!-- Left Column: Code Panel -->
           <div class="sort-panel">
             <div class="sort-panel-hdr" style="background:#1e293b;">
               <div class="sort-panel-title">Iterative Implementation</div>
             </div>
-            <div style="padding:16px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:12.5px; line-height:1.5; color:#e2e8f0; white-space:pre;"><span class="kw">public int</span> <span class="fn">BinarySearch</span>(<span class="kw">int</span>[] <span class="vr">arr</span>, <span class="kw">int</span> <span class="vr">target</span>) 
+            <div style="padding:16px; background:#0f172a; border-radius:0 0 16px 16px; font-family:var(--mono); font-size:12.5px; line-height:1.5; color:#e2e8f0; white-space:pre;"><span class="kw">public int</span> <span class="fn">BinarySearch</span>(<span class="kw">int</span>[] <span class="vr">arr</span>, <span class="kw">int</span> <span class="vr">target</span>)
 {
-  <span class="kw">int</span> <span class="vr">low</span> = <span class="nu">0</span>;
+  <span class="kw">int</span> <span class="vr">low</span>  = <span class="nu">0</span>;
   <span class="kw">int</span> <span class="vr">high</span> = <span class="vr">arr</span>.Length - <span class="nu">1</span>;
 
   <span class="cm">// Loop until the boundaries cross</span>
-  <span class="kw">while</span> (<span class="vr">low</span> <= <span class="vr">high</span>) 
+  <span class="kw">while</span> (<span class="vr">low</span> &lt;= <span class="vr">high</span>)
   {
-    <span class="cm">// Calculate mid to prevent integer overflow</span>
+    <span class="cm">// Overflow-safe midpoint calculation</span>
     <span class="kw">int</span> <span class="vr">mid</span> = <span class="vr">low</span> + (<span class="vr">high</span> - <span class="vr">low</span>) / <span class="nu">2</span>;
 
-    <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">mid</span>] == <span class="vr">target</span>) 
-      <span class="kw">return</span> <span class="vr">mid</span>; <span class="cm">// Target found!</span>
+    <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">mid</span>] == <span class="vr">target</span>)
+      <span class="kw">return</span> <span class="vr">mid</span>;       <span class="cm">// Target found</span>
 
-    <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">mid</span>] < <span class="vr">target</span>) 
-      <span class="vr">low</span> = <span class="vr">mid</span> + <span class="nu">1</span>; <span class="cm">// Search right half</span>
-    <span class="kw">else</span> 
-      <span class="vr">high</span> = <span class="vr">mid</span> - <span class="nu">1</span>; <span class="cm">// Search left half</span>
+    <span class="kw">if</span> (<span class="vr">arr</span>[<span class="vr">mid</span>] &lt; <span class="vr">target</span>)
+      <span class="vr">low</span>  = <span class="vr">mid</span> + <span class="nu">1</span>;   <span class="cm">// Search right half</span>
+    <span class="kw">else</span>
+      <span class="vr">high</span> = <span class="vr">mid</span> - <span class="nu">1</span>;   <span class="cm">// Search left half</span>
   }
-  
-  <span class="kw">return</span> -<span class="nu">1</span>; <span class="cm">// Target not found</span>
+
+  <span class="kw">return</span> -<span class="nu">1</span>;            <span class="cm">// Target not found</span>
 }</div>
           </div>
 
+          <!-- Right Column: Explanation Cards -->
           <div style="display:flex; flex-direction:column; gap:14px;">
             <div class="info-card">
               <h3 style="margin-top:0;">The Boundaries</h3>
-              <p style="font-size:15px; margin-bottom:0;"><code>low</code> and <code>high</code> act as walls containing the active search space. The loop continues as long as these walls haven't crossed over each other.</p>
+              <p style="font-size:15px; margin-bottom:0;"><code>low</code> and <code>high</code> define the active search window. The loop runs as long as these two boundaries have not crossed each other.</p>
             </div>
             <div class="info-card" style="border-left-color:#f59e0b;">
-              <h3 style="margin-top:0; color:#92400e;">Calculating Mid</h3>
-              <p style="font-size:15px; margin-bottom:0;"><code>low + (high - low) / 2</code> is mathematically identical to <code>(low + high) / 2</code>, but is used in professional code to prevent integer overflow errors on massive arrays.</p>
+              <h3 style="margin-top:0; color:#92400e;">Calculating Mid Safely</h3>
+              <p style="font-size:15px; margin-bottom:0;"><code>low + (high - low) / 2</code> is mathematically equivalent to <code>(low + high) / 2</code> but avoids integer overflow when <code>low</code> and <code>high</code> are very large values.</p>
             </div>
             <div class="info-card" style="border-left-color:var(--accent);">
-              <h3 style="margin-top:0; color:var(--accent);">Elimination</h3>
-              <p style="font-size:15px; margin-bottom:0;">Adjusting <code>low = mid + 1</code> or <code>high = mid - 1</code> instantly discards half of the remaining array without needing to actively delete or modify any data.</p>
+              <h3 style="margin-top:0; color:var(--accent);">Half-Elimination</h3>
+              <p style="font-size:15px; margin-bottom:0;">Setting <code>low = mid + 1</code> or <code>high = mid - 1</code> instantly discards half the remaining array — no data needs to be moved or deleted.</p>
             </div>
           </div>
         </div>
@@ -4847,7 +4838,6 @@
           <div class="slide-no" data-slide-no></div>
         </div>
       </section>
-
       <!-- ═══ SLIDE 12 — Thank You ═══ -->
       <section class="slide">
         <div class="slide-top">
