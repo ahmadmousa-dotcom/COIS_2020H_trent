@@ -133,25 +133,26 @@
     <div class="deck" id="deck">
 
       <!-- ═══ SLIDE 1 — Title ═══ -->
-      <section class="slide active">
-        <div class="slide-top">
-          <div class="meta">
-            <div class="course">COIS 2020H — Trent University</div>
-            <div class="sub">Lecture 11 — Trees &amp; Algorithms</div>
-          </div>
-        </div>
-        <h1>Trees, Sorting &amp; Searching</h1>
-        <h2 style="margin-top:0;border:none;color:var(--muted);">Data Structures in Action</h2>
-        <div class="card" style="margin-top:20px;">
-          <p style="margin:0;"><strong>Topics:</strong> Tree Terminology · Tree Types · Bubble vs Tree Sort · Linear vs BST Search</p>
-          <div class="grid-3" style="margin-top:14px;">
-            <div class="info-card"><div style="font-size:11px;font-weight:800;color:var(--muted);">DATE</div><div style="font-weight:900;">2026</div></div>
-            <div class="info-card"><div style="font-size:11px;font-weight:800;color:var(--muted);">TOPIC</div><div style="font-weight:900;">Trees</div></div>
-            <div class="info-card"><div style="font-size:11px;font-weight:800;color:var(--muted);">FORMAT</div><div style="font-weight:900;">Interactive</div></div>
-          </div>
-        </div>
-        <div class="slide-footer"><div class="muted">COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
-      </section>
+<section class="slide active">
+  <canvas id="titleCanvas"></canvas>
+  <div class="slide-top">
+    <div class="meta">
+      <div class="course">COIS 2020H &mdash; Data Structures &amp; Algorithms</div>
+      <div class="sub">Lecture 11 &bull; Ahmad Mousa</div>
+    </div>
+  </div>
+  <h1 style="position:relative;z-index:2;">Trees, Sorting<br>&amp; Searching</h1>
+  <h2 style="margin-top:0;border:none;color:var(--muted);position:relative;z-index:2;">Data Structures in Action</h2>
+  <div class="card" style="margin-top:18px;position:relative;z-index:2;">
+    <p style="margin:0 0 12px;"><strong>Instructor:</strong> Ahmad Mousa &nbsp;&bull;&nbsp; Trent University</p>
+    <div class="grid-3">
+      <div class="info-card"><div style="font-size:11px;font-weight:800;color:var(--muted);">DATA CONCEPT</div><div style="font-weight:900;font-size:17px;">Trees &amp; Graphs</div></div>
+      <div class="info-card"><div style="font-size:11px;font-weight:800;color:var(--muted);">FOCUS</div><div style="font-weight:900;font-size:17px;">Sort &amp; Search</div></div>
+      <div class="info-card"><div style="font-size:11px;font-weight:800;color:var(--muted);">TOPICS</div><div style="font-weight:900;font-size:17px;">BST &amp; Bubble</div></div>
+    </div>
+  </div>
+  <div class="slide-footer"><div class="muted">Ahmad Mousa &bull; COIS 2020H</div><div class="slide-no" data-slide-no></div></div>
+</section>
 
 
       <!-- ═══ SLIDE 2 — Tree Terminology QUIZ ═══ -->
@@ -4448,42 +4449,6 @@
 
         <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
       </section>
-
-
-      <!-- ═══ SLIDE 6 — Search Visualization ═══ -->
-      <section class="slide" id="slide-searchviz">
-        <div class="slide-top">
-          <div class="meta"><div class="course">COIS 2020H</div><div class="sub">Algorithms — Searching</div></div>
-          <span class="pill">Visualization</span>
-        </div>
-        <h2>Search Step-by-Step — Looking for <span style="color:#16a34a;background:#f0fdf4;padding:2px 10px;border-radius:8px;font-size:28px;">60</span></h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;position:relative;z-index:2;">
-          <!-- Linear Search -->
-          <div class="viz-panel">
-            <div class="viz-label" style="color:#dc2626;">Linear Search — O(n)</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Array: [10, 20, 30, 40, 50, 60, 70]</div>
-            <div id="linearArr" style="display:flex;gap:5px;margin-bottom:10px;"></div>
-            <div style="font-size:13px;min-height:32px;color:var(--muted);" id="linearMsg"></div>
-            <div style="margin-top:8px;font-size:13px;">Checks: <span class="cmp-counter" id="linearCmp" style="color:#dc2626;">0</span></div>
-          </div>
-          <!-- BST Search -->
-          <div class="viz-panel">
-            <div class="viz-label" style="color:#16a34a;">BST Search — O(log n)</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">Pre-built balanced BST</div>
-            <svg id="bstSearchSVG" viewBox="0 0 340 190" style="width:100%;display:block;background:#fff;border-radius:10px;border:1px solid #e2e8f0;"></svg>
-            <div style="font-size:13px;min-height:32px;color:var(--muted);margin-top:6px;" id="bstSearchMsg"></div>
-            <div style="margin-top:4px;font-size:13px;">Checks: <span class="cmp-counter" id="bstSearchCmp" style="color:#16a34a;">0</span></div>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:12px;position:relative;z-index:2;align-items:center;">
-          <button class="viz-btn" id="searchStepBtn" onclick="searchStep()">Next Step</button>
-          <button class="viz-btn" id="searchPlayBtn" onclick="searchPlay()">Play</button>
-          <button class="viz-btn" onclick="searchReset()" style="background:#374151;">Reset</button>
-          <span style="font-size:13px;color:var(--muted);margin-left:8px;" id="searchStatus">Press Step or Play to begin</span>
-        </div>
-        <div class="slide-footer"><div class="muted">COIS 2020H — Searching</div><div class="slide-no" data-slide-no></div></div>
-      </section>
-
 
 
       <!-- ═══════════════════════════════════════════════════════════════
