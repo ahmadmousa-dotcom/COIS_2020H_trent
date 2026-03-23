@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>In-Class Activity — Binary Search Trees</title>
+
+  <style>
+    :root{
+      --stage-0: #0b1220;
+      --stage-1: #0f1a2e;
+      --slide-bg: #ffffff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --soft: #e2e8f0;
+      --soft2: #f1f5f9;
+      --accent: #16a34a;
+      --accent-2: #22c55e;
+      --radius: 20px;
+      --shadow: 0 25px 60px rgba(0,0,0,.45);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --sans: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+      --baseW: 1600;
+      --baseH: 900;
+      --scale: 1;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      font-family: var(--sans);
+      background:
+        radial-gradient(1400px 800px at 20% 10%, rgba(34,197,94,.15), transparent 60%),
+        radial-gradient(1200px 800px at 85% 20%, rgba(22,163,74,.10), transparent 55%),
+        linear-gradient(180deg, var(--stage-0), var(--stage-1));
+      color:#e5e7eb;
+      overflow:hidden;
+    }
+
+    #progress-container{
+      position:fixed; top:0; left:0; width:100%; height:8px;
+      background: rgba(255,255,255,.10); z-index:9999; backdrop-filter: blur(6px);
+    }
+    #progress-bar{
+      height:100%; width:0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .25s ease;
+    }
+
+    .stage{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding: 18px;
+    }
+    .deck-wrap{
+      width: calc(var(--baseW) * 1px);
+      height: calc(var(--baseH) * 1px);
+      transform: scale(var(--scale));
+      transform-origin:center center;
+      position:relative;
+    }
+    .deck{ width:100%; height:100%; position:relative; }
+
+    .slide{
+      width:100%; height:100%;
+      background: var(--slide-bg);
+      color: var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position:absolute; inset:0;
+      display:none;
+      overflow:hidden;
+      padding: 50px 60px;
+      animation: slideIn .28s ease;
+    }
+    .slide.active{ display:block; }
+
+    @keyframes slideIn{
+      from{ opacity:0; transform: translateY(14px) scale(.99); }
+      to{ opacity:1; transform: translateY(0) scale(1); }
+    }
+
+    .slide::before, .slide::after{
+      content:""; position:absolute; width: 240px; height: 240px; pointer-events:none; opacity:.95; z-index: 0;
+    }
+    .slide::before{
+      top:-1px; left:-1px;
+      background: radial-gradient(circle at 0% 0%, rgba(34,197,94,.22), transparent 55%),
+                  linear-gradient(135deg, rgba(22,163,74,.95), rgba(34,197,94,.55));
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+    .slide::after{
+      bottom:-1px; right:-1px;
+      background: radial-gradient(circle at 100% 100%, rgba(34,197,94,.22), transparent 55%),
+                  linear-gradient(315deg, rgba(22,163,74,.95), rgba(34,197,94,.55));
+      clip-path: polygon(100% 100%, 100% 0, 0 100%);
+    }
+
+    .slide-top{
+      position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom: 22px;
+    }
+    .meta{ display:flex; flex-direction:column; gap:4px; line-height:1.15; }
+    .meta .course{ font-weight:800; letter-spacing:.06em; text-transform:uppercase; color: var(--ink); font-size: 16px; }
+    .meta .sub{ font-size: 15px; color: var(--muted); }
+
+    h1{ font-size: 56px; margin: 8px 0 10px; letter-spacing:-1.1px; line-height:1.06; position:relative; z-index:2; }
+    h2{ font-size: 38px; margin: 6px 0 18px; letter-spacing:-0.8px; position:relative; z-index:2; border-bottom: 3px solid var(--accent); padding-bottom:10px; display:inline-block; }
+    h3{ font-size: 24px; margin: 14px 0 10px; color: #0b2a14; position:relative; z-index:2; }
+    p, li{ font-size: 19px; line-height:1.6; color: var(--ink); position:relative; z-index:2; }
+
+    .muted{ color: var(--muted); }
+    code{ font-family: var(--mono); font-size: .92em; background: #f3f4f6; padding: 2px 6px; border-radius: 8px; border: 1px solid #e5e7eb; }
+
+    .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items:start; position:relative; z-index:2; }
+    .grid-3{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; align-items:start; position:relative; z-index:2; }
+
+    .card{ background: var(--soft2); border: 1px solid var(--soft); border-radius: 18px; padding: 18px; position:relative; z-index:2; }
+    .card-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 14px; position:relative; z-index:2; }
+
+    .info-card{ background: #ffffff; border: 1px solid var(--soft); border-left: 6px solid var(--accent); border-radius: 16px; padding: 16px; transition: transform .15s ease, box-shadow .15s ease; cursor: default; }
+    .info-card:hover{ transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.10); }
+
+    .pill{ display:inline-block; border:1px solid var(--soft); background: var(--soft2); border-radius: 999px; padding: 6px 14px; font-size: 14px; color: var(--muted); font-family: var(--mono); white-space:nowrap; }
+    .callout{ border-left: 6px solid var(--accent); padding: 18px 22px; background: #f6fffa; border-radius: 16px; margin-top: 14px; position:relative; z-index:2; }
+
+    table{ width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius: 18px; border: 1px solid var(--soft); margin-top: 14px; position:relative; z-index:2; background:#fff; }
+    th, td{ padding: 12px 16px; text-align:left; border-bottom: 1px solid var(--soft); font-size: 17px; vertical-align:top; }
+    th{ background:#0b2a14; color:#fff; font-weight:800; letter-spacing:.2px; }
+    tr:last-child td{ border-bottom:none; }
+    tr:nth-child(even) td{ background:#fbfdff; }
+
+    .slide-footer{ position:absolute; left: 60px; right: 60px; bottom: 26px; display:flex; align-items:center; justify-content:space-between; color: var(--muted); font-size: 14px; z-index:2; }
+    .slide-no{ font-family: var(--mono); background: var(--soft2); border: 1px solid var(--soft); padding: 6px 12px; border-radius: 999px; color: var(--muted); }
+
+    .controls{ position:fixed; right: 18px; bottom: 18px; z-index:10000; display:flex; gap: 10px; align-items:center; }
+    .iconbtn{ width: 44px; height: 44px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: rgba(15,23,42,.45); color:#e5e7eb; display:grid; place-items:center; cursor:pointer; backdrop-filter: blur(10px); transition: transform .12s ease, background .12s ease; user-select:none; }
+    .iconbtn:hover{ transform: translateY(-2px); background: rgba(15,23,42,.65); }
+    .iconbtn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+    .iconbtn svg{ width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── Timer ── */
+    .timer-wrap{
+      position:relative; z-index:2; display:inline-flex; align-items:center; gap:10px;
+      background: #0b2a14; color:#fff; padding: 8px 18px; border-radius: 999px; font-family: var(--mono); font-size: 22px; font-weight:800; letter-spacing:.05em; cursor:pointer; user-select:none;
+    }
+    .timer-wrap .timer-icon{ width:20px; height:20px; stroke:#22c55e; fill:none; stroke-width:2.4; }
+    .timer-wrap.running{ background: #14532d; }
+    .timer-wrap.done{ background: #991b1b; animation: pulse 1s ease infinite; }
+    @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.65; } }
+
+    /* ── Tree SVG styling ── */
+    .tree-svg text{ font-family: var(--sans); }
+    .node-circle{ stroke-width:2.5; }
+    .node-fill{ fill:#ffffff; stroke: #0b2a14; }
+    .node-accent{ fill:#dcfce7; stroke: #16a34a; }
+    .node-blank{ fill:#fef9c3; stroke: #ca8a04; stroke-dasharray: 5 3; }
+    .node-red{ fill:#fee2e2; stroke: #dc2626; }
+    .edge{ stroke: #94a3b8; stroke-width: 2; fill: none; }
+
+    /* ── Term badges ── */
+    .term-badge{
+      display:inline-block; background:#f0fdf4; border:2px solid #16a34a; border-radius:12px;
+      padding: 6px 14px; font-size:16px; font-weight:700; color:#0b2a14; margin: 4px;
+    }
+    .term-badge.orange{ background:#fffbeb; border-color:#d97706; color:#78350f; }
+
+    /* ── Q4 sub-trees ── */
+    .subtree-panel{
+      background: var(--soft2); border:1px solid var(--soft); border-radius:16px; padding:14px; text-align:center;
+    }
+    .subtree-label{
+      font-weight:800; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px;
+    }
+
+    /* util */
+    .z2{ position:relative; z-index:2; }
+  </style>
+</head>
+
+<body>
+  <div id="progress-container"><div id="progress-bar"></div></div>
+
+  <div class="stage">
+    <div class="deck-wrap" id="deckWrap">
+      <div class="deck" id="deck">
+
+        <!-- ═══════════════════════════════════════════ SLIDE 1 : TITLE ═══ -->
+        <section class="slide active">
+          <div class="slide-top">
+            <div class="meta">
+              <div class="course">Data Structures &amp; Algorithms</div>
+              <div class="sub">In-Class Activity</div>
+            </div>
+          </div>
+
+          <h1>Binary Search Trees<br/>In-Class Activity</h1>
+          <h2 style="margin-top:0; border:none; color:var(--muted);">Terminology · Balance Factors · Valid BSTs · AVL Rotations</h2>
+
+          <div class="card" style="margin-top: 22px;">
+            <p style="margin:0;"><strong>Instructions:</strong> Answer each question on paper. You have <strong>20 minutes</strong> per question.</p>
+            <div class="grid-3" style="margin-top:16px;">
+              <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">FORMAT</div><div style="font-weight:900;">Pen &amp; Paper</div></div>
+              <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">TIME</div><div style="font-weight:900;">20 min × 4 Questions</div></div>
+              <div class="info-card"><div style="font-size:12px; font-weight:800; color:var(--muted);">TOTAL</div><div style="font-weight:900;">80 minutes</div></div>
+            </div>
+          </div>
+
+          <div class="slide-footer"><div class="muted">Binary Search Trees — In-Class Activity</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════════ SLIDE 2 : QUESTION 1 ═══ -->
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Question 1</div><div class="sub">Tree Terminology</div></div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <span class="pill">20 min</span>
+              <div class="timer-wrap" onclick="toggleTimer(this)" data-seconds="1200"><svg class="timer-icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 1h6"/><path d="M12 1v3"/></svg><span class="timer-display">20:00</span></div>
+            </div>
+          </div>
+
+          <h2>Identify the Tree Nodes</h2>
+
+          <div class="grid-2">
+            <!-- LEFT: Tree SVG -->
+            <div class="card" style="padding:10px 8px 8px; text-align:center;">
+              <svg class="tree-svg" viewBox="0 0 520 420" width="100%" style="max-height:370px;">
+                <!-- Edges -->
+                <line class="edge" x1="260" y1="50" x2="140" y2="130"/>
+                <line class="edge" x1="260" y1="50" x2="380" y2="130"/>
+                <line class="edge" x1="140" y1="130" x2="80" y2="210"/>
+                <line class="edge" x1="140" y1="130" x2="200" y2="210"/>
+                <line class="edge" x1="380" y1="130" x2="320" y2="210"/>
+                <line class="edge" x1="380" y1="130" x2="440" y2="210"/>
+                <line class="edge" x1="80" y1="210" x2="50" y2="290"/>
+                <line class="edge" x1="440" y1="210" x2="470" y2="290"/>
+                <!-- Nodes -->
+                <circle class="node-circle node-accent" cx="260" cy="50" r="26"/>
+                <text x="260" y="56" text-anchor="middle" font-size="20" font-weight="800" fill="#0b2a14">50</text>
+
+                <circle class="node-circle node-fill" cx="140" cy="130" r="26"/>
+                <text x="140" y="136" text-anchor="middle" font-size="20" font-weight="800" fill="#0b2a14">30</text>
+
+                <circle class="node-circle node-fill" cx="380" cy="130" r="26"/>
+                <text x="380" y="136" text-anchor="middle" font-size="20" font-weight="800" fill="#0b2a14">70</text>
+
+                <circle class="node-circle node-fill" cx="80" cy="210" r="26"/>
+                <text x="80" y="216" text-anchor="middle" font-size="20" font-weight="800" fill="#0b2a14">20</text>
+
+                <circle class="node-circle node-fill" cx="200" cy="210" r="26"/>
+                <text x="200" y="216" text-anchor="middle" font-size="20" font-weight="800" fill="#0b2a14">40</text>
+
+                <circle class="node-circle node-fill" cx="320" cy="210" r="26"/>
+                <text x="320" y="216" text-anchor="middle" font-size="20" font-weight="800" fill="#0b2a14">60</text>
+
+                <circle class="node-circle node-fill" cx="440" cy="210" r="26"/>
+                <text x="440" y="216" text-anchor="middle" font-size="20" font-weight="800" fill="#0b2a14">80</text>
+
+                <circle class="node-circle node-fill" cx="50" cy="290" r="26"/>
+                <text x="50" y="296" text-anchor="middle" font-size="20" font-weight="800" fill="#0b2a14">10</text>
+
+                <circle class="node-circle node-fill" cx="470" cy="290" r="26"/>
+                <text x="470" y="296" text-anchor="middle" font-size="20" font-weight="800" fill="#0b2a14">90</text>
+
+                <!-- Depth labels on the right -->
+                <text x="510" y="56" font-size="13" fill="#64748b" font-style="italic">d = 0</text>
+                <text x="510" y="136" font-size="13" fill="#64748b" font-style="italic">d = 1</text>
+                <text x="510" y="216" font-size="13" fill="#64748b" font-style="italic">d = 2</text>
+                <text x="510" y="296" font-size="13" fill="#64748b" font-style="italic">d = 3</text>
+              </svg>
+            </div>
+
+            <!-- RIGHT: Questions -->
+            <div>
+              <p style="margin-top:0;font-size:17px;">For the BST shown, write down the node(s) that match each description:</p>
+              <table>
+                <tr><th style="width:10%;">#</th><th>Term / Description</th></tr>
+                <tr><td><strong>a</strong></td><td>The <strong>root</strong> node</td></tr>
+                <tr><td><strong>b</strong></td><td>All <strong>leaf</strong> nodes</td></tr>
+                <tr><td><strong>c</strong></td><td>The <strong>parent</strong> of node 40</td></tr>
+                <tr><td><strong>d</strong></td><td>The <strong>left child</strong> of node 70</td></tr>
+                <tr><td><strong>e</strong></td><td>The <strong>siblings</strong> of node 20</td></tr>
+                <tr><td><strong>f</strong></td><td>All nodes in the <strong>right subtree</strong> of 50</td></tr>
+                <tr><td><strong>g</strong></td><td>The <strong>height</strong> of the tree</td></tr>
+                <tr><td><strong>h</strong></td><td>The <strong>depth</strong> of node 60</td></tr>
+                <tr><td><strong>i</strong></td><td>All <strong>internal</strong> (non-leaf) nodes</td></tr>
+                <tr><td><strong>j</strong></td><td>The <strong>in-order traversal</strong> of this tree</td></tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="slide-footer"><div class="muted">Binary Search Trees — In-Class Activity</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════ SLIDE 3 : QUESTION 2 ═══ -->
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Question 2</div><div class="sub">Balance Factors &amp; Insertion</div></div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <span class="pill">20 min</span>
+              <div class="timer-wrap" onclick="toggleTimer(this)" data-seconds="1200"><svg class="timer-icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 1h6"/><path d="M12 1v3"/></svg><span class="timer-display">20:00</span></div>
+            </div>
+          </div>
+
+          <h2>Balance Factors &amp; BST Insertion</h2>
+
+          <div class="grid-2">
+            <!-- LEFT: Tree SVG with BF labels -->
+            <div class="card" style="padding:10px 8px 8px; text-align:center;">
+              <div style="font-size:13px;color:var(--muted);margin-bottom:4px;font-weight:700;">BF = height(left) − height(right)</div>
+              <svg class="tree-svg" viewBox="0 0 560 440" width="100%" style="max-height:350px;">
+                <!-- Edges -->
+                <line class="edge" x1="280" y1="48" x2="150" y2="120"/>
+                <line class="edge" x1="280" y1="48" x2="410" y2="120"/>
+                <line class="edge" x1="150" y1="120" x2="80" y2="200"/>
+                <line class="edge" x1="150" y1="120" x2="220" y2="200"/>
+                <line class="edge" x1="410" y1="120" x2="340" y2="200"/>
+                <line class="edge" x1="410" y1="120" x2="480" y2="200"/>
+                <line class="edge" x1="80" y1="200" x2="50" y2="280"/>
+                <line class="edge" x1="220" y1="200" x2="190" y2="280"/>
+                <line class="edge" x1="340" y1="200" x2="370" y2="280"/>
+                <line class="edge" x1="190" y1="280" x2="215" y2="360"/>
+
+                <!-- Level 0: root 44 -->
+                <circle class="node-circle node-fill" cx="280" cy="48" r="24"/>
+                <text x="280" y="54" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">44</text>
+                <rect x="306" y="30" width="36" height="22" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+                <text x="324" y="46" text-anchor="middle" font-size="13" font-weight="800" fill="#92400e">?</text>
+
+                <!-- Level 1: 17, 62 -->
+                <circle class="node-circle node-fill" cx="150" cy="120" r="24"/>
+                <text x="150" y="126" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">17</text>
+                <rect x="176" y="102" width="36" height="22" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+                <text x="194" y="118" text-anchor="middle" font-size="13" font-weight="800" fill="#92400e">?</text>
+
+                <circle class="node-circle node-fill" cx="410" cy="120" r="24"/>
+                <text x="410" y="126" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">62</text>
+                <rect x="436" y="102" width="36" height="22" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+                <text x="454" y="118" text-anchor="middle" font-size="13" font-weight="800" fill="#92400e">?</text>
+
+                <!-- Level 2: 8, 28, 50, 78 -->
+                <circle class="node-circle node-fill" cx="80" cy="200" r="24"/>
+                <text x="80" y="206" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">8</text>
+                <rect x="106" y="182" width="36" height="22" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+                <text x="124" y="198" text-anchor="middle" font-size="13" font-weight="800" fill="#14532d">+1</text>
+
+                <circle class="node-circle node-fill" cx="220" cy="200" r="24"/>
+                <text x="220" y="206" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">28</text>
+                <rect x="246" y="182" width="36" height="22" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+                <text x="264" y="198" text-anchor="middle" font-size="13" font-weight="800" fill="#92400e">?</text>
+
+                <circle class="node-circle node-fill" cx="340" cy="200" r="24"/>
+                <text x="340" y="206" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">50</text>
+                <rect x="366" y="182" width="36" height="22" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+                <text x="384" y="198" text-anchor="middle" font-size="13" font-weight="800" fill="#92400e">?</text>
+
+                <circle class="node-circle node-fill" cx="480" cy="200" r="24"/>
+                <text x="480" y="206" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">78</text>
+                <rect x="506" y="182" width="36" height="22" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+                <text x="524" y="198" text-anchor="middle" font-size="13" font-weight="800" fill="#14532d">0</text>
+
+                <!-- Level 3: 3, 21, 55 -->
+                <circle class="node-circle node-fill" cx="50" cy="280" r="24"/>
+                <text x="50" y="286" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">3</text>
+
+                <circle class="node-circle node-fill" cx="190" cy="280" r="24"/>
+                <text x="190" y="286" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">21</text>
+
+                <circle class="node-circle node-fill" cx="370" cy="280" r="24"/>
+                <text x="370" y="286" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">55</text>
+
+                <!-- Level 4: 25 -->
+                <circle class="node-circle node-fill" cx="215" cy="360" r="24"/>
+                <text x="215" y="366" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">25</text>
+
+                <!-- Legend -->
+                <rect x="0" y="410" width="16" height="16" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+                <text x="22" y="423" font-size="12" fill="#64748b">= Calculate this BF</text>
+                <rect x="150" y="410" width="16" height="16" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+                <text x="172" y="423" font-size="12" fill="#64748b">= Given BF</text>
+              </svg>
+            </div>
+
+            <!-- RIGHT: Tasks -->
+            <div>
+              <h3 style="margin-top:0;">Part A — Calculate Balance Factors</h3>
+              <p style="font-size:16px;">Compute the <strong>balance factor</strong> for each node marked with <span style="color:#ca8a04;font-weight:800;">?</span> on the tree.</p>
+              <table style="margin-top:8px;">
+                <tr><th>Node</th><th>BF = ?</th></tr>
+                <tr><td>44</td><td></td></tr>
+                <tr><td>17</td><td></td></tr>
+                <tr><td>62</td><td></td></tr>
+                <tr><td>28</td><td></td></tr>
+                <tr><td>50</td><td></td></tr>
+              </table>
+
+              <h3>Part B — Where Would These Be Inserted?</h3>
+              <p style="font-size:16px;">If each value below is inserted into the <em>original</em> tree, write the <strong>parent node</strong> and whether it becomes a <strong>left</strong> or <strong>right</strong> child.</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+                <span class="term-badge orange">15</span>
+                <span class="term-badge orange">35</span>
+                <span class="term-badge orange">72</span>
+                <span class="term-badge orange">1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide-footer"><div class="muted">Binary Search Trees — In-Class Activity</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════ SLIDE 4 : QUESTION 3 ═══ -->
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Question 3</div><div class="sub">Valid BST Construction</div></div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <span class="pill">20 min</span>
+              <div class="timer-wrap" onclick="toggleTimer(this)" data-seconds="1200"><svg class="timer-icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 1h6"/><path d="M12 1v3"/></svg><span class="timer-display">20:00</span></div>
+            </div>
+          </div>
+
+          <h2>Fill In the Missing Values</h2>
+          <p style="margin-top:0;font-size:17px;">Each tree below has <span style="background:#fef9c3;padding:2px 8px;border-radius:8px;font-weight:700;border:1.5px solid #ca8a04;">blank</span> nodes. Choose an <strong>integer value</strong> for each blank so the result is a <strong>valid Binary Search Tree</strong>. Write your answers on paper.</p>
+
+          <div class="grid-3" style="margin-top:12px;">
+            <!-- Tree A -->
+            <div class="subtree-panel">
+              <div class="subtree-label">Tree A</div>
+              <svg class="tree-svg" viewBox="0 0 300 280" width="100%">
+                <line class="edge" x1="150" y1="45" x2="80" y2="115"/>
+                <line class="edge" x1="150" y1="45" x2="220" y2="115"/>
+                <line class="edge" x1="80" y1="115" x2="45" y2="195"/>
+                <line class="edge" x1="80" y1="115" x2="115" y2="195"/>
+                <line class="edge" x1="220" y1="115" x2="185" y2="195"/>
+                <line class="edge" x1="220" y1="115" x2="255" y2="195"/>
+
+                <!-- Root: blank -->
+                <circle class="node-circle node-blank" cx="150" cy="45" r="24"/>
+                <text x="150" y="51" text-anchor="middle" font-size="18" font-weight="800" fill="#92400e">?</text>
+
+                <circle class="node-circle node-fill" cx="80" cy="115" r="24"/>
+                <text x="80" y="121" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">25</text>
+
+                <circle class="node-circle node-fill" cx="220" cy="115" r="24"/>
+                <text x="220" y="121" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">60</text>
+
+                <!-- Blank leaf -->
+                <circle class="node-circle node-blank" cx="45" cy="195" r="24"/>
+                <text x="45" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#92400e">?</text>
+
+                <circle class="node-circle node-fill" cx="115" cy="195" r="24"/>
+                <text x="115" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">30</text>
+
+                <circle class="node-circle node-fill" cx="185" cy="195" r="24"/>
+                <text x="185" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">55</text>
+
+                <!-- Blank leaf -->
+                <circle class="node-circle node-blank" cx="255" cy="195" r="24"/>
+                <text x="255" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#92400e">?</text>
+              </svg>
+            </div>
+
+            <!-- Tree B -->
+            <div class="subtree-panel">
+              <div class="subtree-label">Tree B</div>
+              <svg class="tree-svg" viewBox="0 0 300 280" width="100%">
+                <line class="edge" x1="150" y1="45" x2="80" y2="115"/>
+                <line class="edge" x1="150" y1="45" x2="220" y2="115"/>
+                <line class="edge" x1="80" y1="115" x2="45" y2="195"/>
+                <line class="edge" x1="220" y1="115" x2="185" y2="195"/>
+                <line class="edge" x1="220" y1="115" x2="255" y2="195"/>
+                <line class="edge" x1="255" y1="195" x2="270" y2="260"/>
+
+                <circle class="node-circle node-fill" cx="150" cy="45" r="24"/>
+                <text x="150" y="51" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">40</text>
+
+                <!-- Blank -->
+                <circle class="node-circle node-blank" cx="80" cy="115" r="24"/>
+                <text x="80" y="121" text-anchor="middle" font-size="18" font-weight="800" fill="#92400e">?</text>
+
+                <circle class="node-circle node-fill" cx="220" cy="115" r="24"/>
+                <text x="220" y="121" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">65</text>
+
+                <circle class="node-circle node-fill" cx="45" cy="195" r="24"/>
+                <text x="45" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">10</text>
+
+                <!-- Blank -->
+                <circle class="node-circle node-blank" cx="185" cy="195" r="24"/>
+                <text x="185" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#92400e">?</text>
+
+                <circle class="node-circle node-fill" cx="255" cy="195" r="24"/>
+                <text x="255" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">80</text>
+
+                <circle class="node-circle node-fill" cx="270" cy="260" r="24"/>
+                <text x="270" y="266" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">90</text>
+              </svg>
+            </div>
+
+            <!-- Tree C -->
+            <div class="subtree-panel">
+              <div class="subtree-label">Tree C</div>
+              <svg class="tree-svg" viewBox="0 0 300 280" width="100%">
+                <line class="edge" x1="150" y1="45" x2="80" y2="115"/>
+                <line class="edge" x1="150" y1="45" x2="220" y2="115"/>
+                <line class="edge" x1="80" y1="115" x2="45" y2="195"/>
+                <line class="edge" x1="80" y1="115" x2="115" y2="195"/>
+                <line class="edge" x1="220" y1="115" x2="255" y2="195"/>
+
+                <circle class="node-circle node-fill" cx="150" cy="45" r="24"/>
+                <text x="150" y="51" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">50</text>
+
+                <circle class="node-circle node-fill" cx="80" cy="115" r="24"/>
+                <text x="80" y="121" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">20</text>
+
+                <!-- Blank -->
+                <circle class="node-circle node-blank" cx="220" cy="115" r="24"/>
+                <text x="220" y="121" text-anchor="middle" font-size="18" font-weight="800" fill="#92400e">?</text>
+
+                <circle class="node-circle node-fill" cx="45" cy="195" r="24"/>
+                <text x="45" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">5</text>
+
+                <!-- Blank -->
+                <circle class="node-circle node-blank" cx="115" cy="195" r="24"/>
+                <text x="115" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#92400e">?</text>
+
+                <circle class="node-circle node-fill" cx="255" cy="195" r="24"/>
+                <text x="255" y="201" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">90</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top:14px;">
+            <p style="margin:0;font-size:16px;"><strong>Hint:</strong> Remember the BST property — every node in the <em>left</em> subtree must be <strong>less than</strong> the parent, and every node in the <em>right</em> subtree must be <strong>greater than</strong> the parent. Consider the full range of valid values, not just the immediate parent.</p>
+          </div>
+
+          <div class="slide-footer"><div class="muted">Binary Search Trees — In-Class Activity</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════ SLIDE 5 : QUESTION 4 ═══ -->
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Question 4</div><div class="sub">AVL Rotations</div></div>
+            <div style="display:flex;gap:10px;align-items:center;">
+              <span class="pill">20 min</span>
+              <div class="timer-wrap" onclick="toggleTimer(this)" data-seconds="1200"><svg class="timer-icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 1h6"/><path d="M12 1v3"/></svg><span class="timer-display">20:00</span></div>
+            </div>
+          </div>
+
+          <h2>Describe the Rotations to Balance</h2>
+          <p style="margin-top:0;font-size:16px;">Each tree below is <strong style="color:#dc2626;">imbalanced</strong>. For each one: <strong>(1)</strong> identify the imbalance type (LL, RR, LR, or RL), <strong>(2)</strong> describe which rotation(s) are needed, <strong>(3)</strong> name the nodes that swap, and <strong>(4)</strong> draw the balanced result.</p>
+
+          <div class="grid-3" style="margin-top:8px;">
+            <!-- Tree 1: RR case — 10 → 20 → 30 (left rotation at 10) -->
+            <div class="subtree-panel">
+              <div class="subtree-label">Tree 1 — Right-Heavy</div>
+              <svg class="tree-svg" viewBox="0 0 260 300" width="100%">
+                <line class="edge" x1="80" y1="50" x2="150" y2="130"/>
+                <line class="edge" x1="150" y1="130" x2="220" y2="210"/>
+                <!-- Imbalance marker -->
+                <circle class="node-circle node-red" cx="80" cy="50" r="24"/>
+                <text x="80" y="56" text-anchor="middle" font-size="18" font-weight="800" fill="#7f1d1d">10</text>
+                <rect x="106" y="32" width="36" height="22" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+                <text x="124" y="48" text-anchor="middle" font-size="12" font-weight="800" fill="#991b1b">BF −2</text>
+
+                <circle class="node-circle node-fill" cx="150" cy="130" r="24"/>
+                <text x="150" y="136" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">20</text>
+                <rect x="176" y="112" width="36" height="22" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+                <text x="194" y="128" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">BF −1</text>
+
+                <circle class="node-circle node-fill" cx="220" cy="210" r="24"/>
+                <text x="220" y="216" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">30</text>
+              </svg>
+            </div>
+
+            <!-- Tree 2: LL case — 30 → 20 → 10 (right rotation at 30) -->
+            <div class="subtree-panel">
+              <div class="subtree-label">Tree 2 — Left-Heavy</div>
+              <svg class="tree-svg" viewBox="0 0 260 300" width="100%">
+                <line class="edge" x1="190" y1="50" x2="120" y2="130"/>
+                <line class="edge" x1="120" y1="130" x2="50" y2="210"/>
+                <line class="edge" x1="120" y1="130" x2="155" y2="210"/>
+                <line class="edge" x1="190" y1="50" x2="230" y2="130"/>
+
+                <circle class="node-circle node-red" cx="190" cy="50" r="24"/>
+                <text x="190" y="56" text-anchor="middle" font-size="18" font-weight="800" fill="#7f1d1d">50</text>
+                <rect x="216" y="32" width="36" height="22" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+                <text x="234" y="48" text-anchor="middle" font-size="12" font-weight="800" fill="#991b1b">BF +2</text>
+
+                <circle class="node-circle node-fill" cx="120" cy="130" r="24"/>
+                <text x="120" y="136" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">30</text>
+                <rect x="70" y="112" width="36" height="22" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+                <text x="88" y="128" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">BF +1</text>
+
+                <circle class="node-circle node-fill" cx="230" cy="130" r="24"/>
+                <text x="230" y="136" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">60</text>
+
+                <circle class="node-circle node-fill" cx="50" cy="210" r="24"/>
+                <text x="50" y="216" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">10</text>
+
+                <circle class="node-circle node-fill" cx="155" cy="210" r="24"/>
+                <text x="155" y="216" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">35</text>
+              </svg>
+            </div>
+
+            <!-- Tree 3: LR case — 30 left child 10, 10 right child 20 -->
+            <div class="subtree-panel">
+              <div class="subtree-label">Tree 3 — Left-Right</div>
+              <svg class="tree-svg" viewBox="0 0 260 300" width="100%">
+                <line class="edge" x1="180" y1="50" x2="90" y2="130"/>
+                <line class="edge" x1="180" y1="50" x2="230" y2="130"/>
+                <line class="edge" x1="90" y1="130" x2="145" y2="210"/>
+                <line class="edge" x1="145" y1="210" x2="120" y2="270"/>
+
+                <circle class="node-circle node-red" cx="180" cy="50" r="24"/>
+                <text x="180" y="56" text-anchor="middle" font-size="18" font-weight="800" fill="#7f1d1d">40</text>
+                <rect x="206" y="32" width="36" height="22" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+                <text x="224" y="48" text-anchor="middle" font-size="12" font-weight="800" fill="#991b1b">BF +2</text>
+
+                <circle class="node-circle node-fill" cx="90" cy="130" r="24"/>
+                <text x="90" y="136" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">15</text>
+                <rect x="40" y="112" width="36" height="22" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+                <text x="58" y="128" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">BF −1</text>
+
+                <circle class="node-circle node-fill" cx="230" cy="130" r="24"/>
+                <text x="230" y="136" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">50</text>
+
+                <circle class="node-circle node-fill" cx="145" cy="210" r="24"/>
+                <text x="145" y="216" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">30</text>
+
+                <circle class="node-circle node-fill" cx="120" cy="270" r="24"/>
+                <text x="120" y="276" text-anchor="middle" font-size="18" font-weight="800" fill="#0b2a14">25</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top:10px;">
+            <p style="margin:0;font-size:15px;"><strong>Remember:</strong> LL → single right rotation &nbsp;|&nbsp; RR → single left rotation &nbsp;|&nbsp; LR → left rotation on child, then right rotation on root &nbsp;|&nbsp; RL → right rotation on child, then left rotation on root</p>
+          </div>
+
+          <div class="slide-footer"><div class="muted">Binary Search Trees — In-Class Activity</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+
+        <!-- ═══════════════════════════════════ SLIDE 6 : END ═══ -->
+        <section class="slide">
+          <div class="slide-top">
+            <div class="meta"><div class="course">Wrap Up</div><div class="sub">Final</div></div>
+            <span class="pill">End</span>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:55%; position:relative; z-index:2;">
+            <h1 style="font-size:52px;">Time's Up — Pens Down! ✏️</h1>
+            <p style="font-size:22px; color:var(--muted); margin-top:8px;">Please hand in your answer sheets.</p>
+            <div class="card" style="margin-top:28px; max-width:600px; text-align:center;">
+              <p style="margin:0;font-size:18px;">We will go over the solutions together.</p>
+            </div>
+          </div>
+
+          <div class="slide-footer"><div class="muted">Binary Search Trees — In-Class Activity</div><div class="slide-no" data-slide-no></div></div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="controls" aria-label="Presentation controls">
+    <button class="iconbtn" id="prevBtn" onclick="go(-1)" aria-label="Previous slide" title="Previous (←)">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="iconbtn" id="nextBtn" onclick="go(1)" aria-label="Next slide" title="Next (→ / Space)">
+      <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <button class="iconbtn" id="fsBtn" onclick="toggleFullScreen()" aria-label="Toggle fullscreen" title="Fullscreen (F)">
+      <svg viewBox="0 0 24 24">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+        <path d="M16 3h3a2 2 0 0 1 2 2v3"/>
+        <path d="M8 21H5a2 2 0 0 1-2-2v-3"/>
+        <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    /* ── Core Engine ── */
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const progressBar = document.getElementById("progress-bar");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    let current = 0;
+
+    function applyScale(){
+      const pad = 24;
+      const w = window.innerWidth - pad*2;
+      const h = window.innerHeight - pad*2;
+      const s = Math.min(w/1600, h/900);
+      document.documentElement.style.setProperty('--scale', String(Math.max(0.3, Math.min(s, 1.5))));
+    }
+
+    function updateSlideNumbers(){
+      slides.forEach((s, i) => {
+        const holder = s.querySelector("[data-slide-no]");
+        if (holder) holder.textContent = `${i + 1} / ${slides.length}`;
+      });
+    }
+
+    function updateProgress(){
+      progressBar.style.width = ((current + 1) / slides.length) * 100 + "%";
+    }
+
+    function updateUI(){
+      slides.forEach(s => s.classList.remove("active"));
+      slides[current].classList.add("active");
+      updateProgress();
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === slides.length - 1;
+    }
+
+    function go(dir){
+      const next = current + dir;
+      if(next < 0 || next >= slides.length) return;
+      current = next;
+      updateUI();
+    }
+
+    function toggleFullScreen(){
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "ArrowRight" || e.key === " " || e.key === "Enter"){ e.preventDefault(); go(1); }
+      else if(e.key === "ArrowLeft"){ go(-1); }
+      else if(e.key.toLowerCase() === "f"){ toggleFullScreen(); }
+    });
+
+    window.addEventListener("resize", applyScale);
+    applyScale();
+    updateSlideNumbers();
+    updateUI();
+
+    /* ── Per-Slide Timers ── */
+    function toggleTimer(el){
+      if(el._interval){
+        clearInterval(el._interval);
+        el._interval = null;
+        el.classList.remove("running");
+        return;
+      }
+      if(el._remaining == null) el._remaining = parseInt(el.dataset.seconds);
+      if(el._remaining <= 0) {
+        el._remaining = parseInt(el.dataset.seconds);
+        el.classList.remove("done");
+      }
+      el.classList.add("running");
+      el._interval = setInterval(() => {
+        el._remaining--;
+        if(el._remaining <= 0){
+          clearInterval(el._interval);
+          el._interval = null;
+          el.classList.remove("running");
+          el.classList.add("done");
+          el._remaining = 0;
+        }
+        const m = Math.floor(el._remaining / 60);
+        const s = el._remaining % 60;
+        el.querySelector(".timer-display").textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
